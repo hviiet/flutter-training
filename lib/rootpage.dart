@@ -18,7 +18,7 @@ class RootPage extends StatelessWidget {
       body: _pages[tabProvider.currentIndex],
 
       bottomNavigationBar: Container(
-        height: 60,
+        height: 64,
         decoration: BoxDecoration(
           color: Colors.white,
           boxShadow: [
