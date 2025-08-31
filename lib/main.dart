@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:weather_app/onboarding.dart';
 import 'package:weather_app/rootpage.dart';
 import 'providers/tab_provider.dart';
 
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: RootPage(),
+      home: Onboarding(),
     );
   }
 }
