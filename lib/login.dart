@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:weather_app/rootpage.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -201,7 +202,14 @@ class _LoginState extends State<Login> {
                         letterSpacing: 0.5,
                       ),
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const RootPage(),
+                        ),
+                      );
+                    },
                     child: const Text('Login'),
                   ),
                 ),
