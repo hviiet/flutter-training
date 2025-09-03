@@ -1,40 +1,22 @@
 import 'package:flutter/material.dart';
+import 'onboarding.dart';
+import 'login.dart';
 
-void main() {
-  runApp(MyApp());
-}
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
-  MyApp({super.key});
-
-  //VARIABLES:
-  String name = "Quang Thinh";
-  int age = 25;
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        backgroundColor: Colors.blueGrey,
-        body: Container(
-          height: 300,
-          width: 300,
-          decoration: BoxDecoration(
-            color: Colors.green,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          padding: const EdgeInsets.all(16.0),
-          child: Text(
-            "Hello $name, you are $age years old",
-            style: const TextStyle(
-              fontSize: 24,
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
+      title: 'AQI UI',
+      theme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
       ),
+      home: const OnboardingScreen(), 
     );
   }
 }
