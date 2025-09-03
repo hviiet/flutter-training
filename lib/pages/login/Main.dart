@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/pages/databank/DataBank.dart';
+import 'package:flutter_application_1/pages/home/Home.dart';
+import 'package:flutter_application_1/pages/more/More.dart';
 
 class Main extends StatefulWidget {
   const Main({super.key});
@@ -14,6 +17,9 @@ class _MainState extends State<Main> {
     
 
     final List<Widget> pages = [
+      Home(),
+      DataBank(),
+      More()
     ];
 
     void onTap(int index){
