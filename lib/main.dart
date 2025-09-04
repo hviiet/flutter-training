@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:weather_app/onboarding.dart';
-import 'package:weather_app/rootpage.dart';
 import 'providers/tab_provider.dart';
 
 void main() {
