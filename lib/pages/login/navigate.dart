@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/pages/databank/DataBank.dart';
-import 'package:flutter_application_1/pages/home/Home.dart';
-import 'package:flutter_application_1/pages/more/More.dart';
+import 'package:flutter_application_1/pages/databank/data_bank.dart';
+import 'package:flutter_application_1/pages/home/home.dart';
+import 'package:flutter_application_1/pages/more/more.dart';
 
-class Main extends StatefulWidget {
-  const Main({super.key});
+class Navigate extends StatefulWidget {
+  const Navigate({super.key});
 
   @override
-  State<Main> createState() => _MainState();
+  State<Navigate> createState() => _NavigateState();
 }
 
-class _MainState extends State<Main> {
+class _NavigateState extends State<Navigate> {
   int current_page = 0;
   @override
   Widget build(BuildContext context) {

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/pages/home/Home.dart';
-import 'package:flutter_application_1/pages/login/Main.dart';
+import 'package:flutter_application_1/pages/login/navigate.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -156,7 +155,7 @@ class _LoginState extends State<Login> {
               onPressed: (){
                 if(formKey.currentState!.validate()){
                   Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => const Main())
+                    MaterialPageRoute(builder: (_) => const Navigate())
                   );
                 }
               },

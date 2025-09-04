@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/widgets/Aqi.dart';
-import 'package:flutter_application_1/widgets/Degree.dart';
+import 'package:flutter_application_1/widgets/aqi.dart';
+import 'package:flutter_application_1/widgets/degree.dart';
 
-class Forecastitem extends StatelessWidget {
+class ForecastItem extends StatelessWidget {
   final String day;
   final IconData aqiIcon;
   final int aqi;
   final IconData weatherIcon;
   final int degree;
 
-  const Forecastitem({
+  const ForecastItem({
     super.key,
     required this.day,
     required this.aqiIcon,

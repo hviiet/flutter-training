@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-class Moreitem extends StatelessWidget {
+class MoreItem extends StatelessWidget {
   final String text;
   final IconData prefixIcon;
 
-  const Moreitem({super.key, required this.text, required this.prefixIcon});
+  const MoreItem({super.key, required this.text, required this.prefixIcon});
 
   @override
   Widget build(BuildContext context) {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/pages/more/MoreItem.dart';
+import 'package:flutter_application_1/pages/more/more_item.dart';
 
 class More extends StatelessWidget {
   const More({super.key});
@@ -45,7 +45,7 @@ class More extends StatelessWidget {
                   width: double.infinity,
                   height: 0,
                   decoration: BoxDecoration(
-                    border: BoxBorder.all(width: 1,color: Color(0xFFF3F4F6))
+                    border: Border.all(width: 1,color: Color(0xFFF3F4F6))
                   ),
                 ),
                 SizedBox(
@@ -53,9 +53,9 @@ class More extends StatelessWidget {
                   child: ListView(
                     padding: EdgeInsets.zero,
                     children: [
-                      Moreitem(text: "Profile", prefixIcon: Icons.account_box_rounded),
-                      Moreitem(text: "Save Location", prefixIcon: Icons.location_on_rounded),
-                      Moreitem(text: "FAQ", prefixIcon: Icons.question_mark_rounded),
+                      MoreItem(text: "Profile", prefixIcon: Icons.account_box_rounded),
+                      MoreItem(text: "Save Location", prefixIcon: Icons.location_on_rounded),
+                      MoreItem(text: "FAQ", prefixIcon: Icons.question_mark_rounded),
                     ],
                   ),
                 ),
@@ -63,7 +63,7 @@ class More extends StatelessWidget {
                   width: double.infinity,
                   height: 0,
                   decoration: BoxDecoration(
-                    border: BoxBorder.all(width: 1,color: Color(0xFFF3F4F6))
+                    border: Border.all(width: 1,color: Color(0xFFF3F4F6))
                   ),
                 ),
                 SizedBox(
@@ -71,10 +71,10 @@ class More extends StatelessWidget {
                   child: ListView(
                     padding: EdgeInsets.zero,
                     children: [
-                      Moreitem(text: "Settings", prefixIcon: Icons.settings),
-                      Moreitem(text: "About Us", prefixIcon: Icons.diamond_sharp),
-                      Moreitem(text: "Contact Us", prefixIcon: Icons.call_rounded),
-                      Moreitem(text: "Logout", prefixIcon: Icons.logout_outlined),
+                      MoreItem(text: "Settings", prefixIcon: Icons.settings),
+                      MoreItem(text: "About Us", prefixIcon: Icons.diamond_sharp),
+                      MoreItem(text: "Contact Us", prefixIcon: Icons.call_rounded),
+                      MoreItem(text: "Logout", prefixIcon: Icons.logout_outlined),
                     ],
                   ),
                 ),

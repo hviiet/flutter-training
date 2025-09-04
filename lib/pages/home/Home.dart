@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/pages/databank/DataBank.dart';
-import 'package:flutter_application_1/pages/home/AddPlace.dart';
-import 'package:flutter_application_1/pages/home/ForcastItem.dart';
-import 'package:flutter_application_1/pages/home/LiveLocation.dart';
-import 'package:flutter_application_1/pages/home/Location.dart';
-import 'package:flutter_application_1/pages/more/More.dart';
+import 'package:flutter_application_1/pages/databank/data_bank.dart';
+import 'package:flutter_application_1/pages/home/add_place.dart';
+import 'package:flutter_application_1/pages/home/forecast_item.dart';
+import 'package:flutter_application_1/pages/home/live_location.dart';
+import 'package:flutter_application_1/pages/home/location.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class Home extends StatefulWidget {
@@ -114,7 +113,7 @@ class _HomeState extends State<Home> {
                                   return Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: chunks[index].map((item)=>
-                                      Forecastitem(day: item["day"], aqiIcon: item["aqiIcon"], aqi: item["aqi"], weatherIcon: item["weather"], degree: item["degree"]),
+                                      ForecastItem(day: item["day"], aqiIcon: item["aqiIcon"], aqi: item["aqi"], weatherIcon: item["weather"], degree: item["degree"]),
                                     ).toList()
                                   );
                                 },
@@ -192,7 +191,7 @@ class _HomeState extends State<Home> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white ,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadiusGeometry.circular(8),
+                    borderRadius: BorderRadius.circular(8),
                   ),
                   maximumSize: Size.fromHeight(54)
                 ), 
