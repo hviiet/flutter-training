@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/pages/login/navigate.dart';
+import 'package:flutter_application_1/services/auth/auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -14,6 +16,45 @@ class _LoginState extends State<Login> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    loadData();
+  }
+
+  void loadData() async{
+    final prefs = await SharedPreferences.getInstance();
+    final email = prefs.getString("email");
+    final password = prefs.getString("password");
+    if(email!=null) emailController.text = email;
+    if(password!=null) passwordController.text = password;
+  }
+
+  void onPressedLogin() async{
+    if(formKey.currentState!.validate()){
+      final bool isLogin = await Auth().login(emailController.text, passwordController.text);
+      if (!mounted) return;
+      if(isLogin){
+        final prefs = await SharedPreferences.getInstance();
+        if(rememberMe){
+          await prefs.setString("email", emailController.text);
+          await prefs.setString("password", passwordController.text);
+        }else{
+          await prefs.remove("email");
+          await prefs.remove("password");
+        }
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => const Navigate())
+        );
+      }
+      else{
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Sai email hoặc mật khẩu"))
+        );
+      }
+    }
+  }
 
   String? emailValidate(String? value){
     if (value == null || value.isEmpty) {
@@ -41,142 +82,138 @@ class _LoginState extends State<Login> {
     return  Scaffold(
       body: Padding(
         padding: EdgeInsets.only(left: 24, right: 24),
-        child: Column(
-        spacing: 24,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Image.asset("assets/login.png"),
-          Column(
-            spacing: 4.0,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text("Login",
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 0.5,
-                  fontFamily: "SF Pro Display"
-                ),
-              ),
-              Text("Please login to get your local AQI data",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontFamily: "ABeeZee",
-                  letterSpacing: 0.5,
-                  color: Colors.grey[700]
-                ),
-              )
-            ],
-          ),
-          Form(
-            key: formKey,
-            child: Column(
-              spacing: 8,
+        child: SingleChildScrollView(
+          child: Column(
+          spacing: 24,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Image.asset("assets/login.png"),
+            Column(
+              spacing: 4.0,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                TextFormField(
-                  controller: emailController,
-                  decoration: InputDecoration(
-                    prefixIcon: const Icon(Icons.email_rounded),
-                    hintText: "Your email",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8)
-                    ),
-                    hintStyle: TextStyle(color: Colors.grey[600]),
-                  ),
+                Text("Login",
+                  textAlign: TextAlign.left,
                   style: TextStyle(
-                    fontFamily: "SF Pro Display",
-                    fontWeight: FontWeight.w600,
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
                     letterSpacing: 0.5,
+                    fontFamily: "SF Pro Display"
+                  ),
+                ),
+                Text("Please login to get your local AQI data",
+                  style: TextStyle(
                     fontSize: 16,
-                  ),
-                  validator: emailValidate,
-                ),
-                TextFormField(
-                  controller: passwordController,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    prefixIcon: const Icon(Icons.lock_rounded),
-                    hintText: "Your password",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8)
-                    ),
-                    hintStyle: TextStyle(color: Colors.grey[600]),
-                  ),
-                  style: TextStyle(
-                    fontFamily: "SF Pro Display",
-                    fontWeight: FontWeight.w600,
+                    fontFamily: "ABeeZee",
                     letterSpacing: 0.5,
-                    fontSize: 16
+                    color: Colors.grey[700]
                   ),
-                  validator: passwordValidate,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Checkbox(
-                          value: rememberMe, 
-                          onChanged: (value) {
-                            setState(() {
-                              rememberMe = value!;
-                            });
-                          },
-                        ),
-                      Text("Remember me", 
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontFamily: "ABeeZee"
-                          ),
-                        )
-                      ],
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        
-                      },
-                      child: Text("Forgot password", 
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontFamily: "SF Pro Display",
-                          color: Colors.blue[500]
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-                
+                )
               ],
-            )
-          ),
-          Center(
-            child: ElevatedButton(
-              onPressed: (){
-                if(formKey.currentState!.validate()){
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => const Navigate())
-                  );
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue[500],
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8)
-                ),
-                minimumSize: Size(327, 56),
-              ),
-              child: Text("Login", 
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                ),
+            ),
+            Form(
+              key: formKey,
+              child: Column(
+                spacing: 8,
+                children: [
+                  TextFormField(
+                    controller: emailController,
+                    decoration: InputDecoration(
+                      prefixIcon: const Icon(Icons.email_rounded),
+                      hintText: "Your email",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8)
+                      ),
+                      hintStyle: TextStyle(color: Colors.grey[600]),
+                    ),
+                    style: TextStyle(
+                      fontFamily: "SF Pro Display",
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.5,
+                      fontSize: 16,
+                    ),
+                    validator: emailValidate,
+                  ),
+                  TextFormField(
+                    controller: passwordController,
+                    obscureText: true,
+                    decoration: InputDecoration(
+                      prefixIcon: const Icon(Icons.lock_rounded),
+                      hintText: "Your password",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8)
+                      ),
+                      hintStyle: TextStyle(color: Colors.grey[600]),
+                    ),
+                    style: TextStyle(
+                      fontFamily: "SF Pro Display",
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.5,
+                      fontSize: 16
+                    ),
+                    validator: passwordValidate,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Checkbox(
+                            value: rememberMe, 
+                            onChanged: (value) {
+                              setState(() {
+                                rememberMe = value!;
+                              });
+                            },
+                          ),
+                        Text("Remember me", 
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontFamily: "ABeeZee"
+                            ),
+                          )
+                        ],
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          
+                        },
+                        child: Text("Forgot password", 
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontFamily: "SF Pro Display",
+                            color: Colors.blue[500]
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                  
+                ],
               )
             ),
-          ),
-        ],
-      ),
+            Center(
+              child: ElevatedButton(
+                onPressed: onPressedLogin,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue[500],
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8)
+                  ),
+                  minimumSize: Size(327, 56),
+                ),
+                child: Text("Login", 
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                )
+              ),
+            ),
+          ],
+                ),
+        ),
       )
     );
   }

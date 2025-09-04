@@ -1,11 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/pages/login/Login.dart';
 import 'package:flutter_application_1/pages/more/more_item.dart';
+import 'package:flutter_application_1/services/auth/auth.dart';
 
-class More extends StatelessWidget {
+class More extends StatefulWidget {
   const More({super.key});
 
   @override
+  State<More> createState() => _MoreState();
+}
+
+class _MoreState extends State<More> {
+  late String email = "";
+  late String name = "";
+  late String avatarUrl = "";
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration(seconds: 5));
+    loadData();
+  }
+
+  void loadData() async{
+    Map<String, dynamic>? information = await Auth().getProfile();
+    if (!mounted) return; 
+    setState(() {
+      email = information?["email"] ?? "";
+      name = information?["name"] ?? "";
+      avatarUrl = information?["avatar"] ?? "";
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       body: Stack(
         children: [
@@ -17,10 +46,15 @@ class More extends StatelessWidget {
               children: [
                 Column(
                   children: [
-                    Image.asset("assets/avater.png"),
+                    CircleAvatar(
+                      radius: 48,
+                      backgroundImage: (avatarUrl.isNotEmpty)?NetworkImage(avatarUrl):null,
+                      backgroundColor: Color(0xFFE0F6EE),
+                      child: (avatarUrl.isNotEmpty)?null:CircularProgressIndicator(strokeWidth: 2,),
+                    ),
                     Column(
                       children: [
-                        Text("Anamoul Rouf",
+                        Text(name,
                           style: TextStyle(
                             fontWeight: FontWeight.w700,
                             fontFamily: "SF Pro Display",
@@ -28,7 +62,7 @@ class More extends StatelessWidget {
                             letterSpacing: 0.5
                           ),
                         ),
-                        Text("anamoulrouf.bd@gmail.com",
+                        Text(email,
                           style: TextStyle(
                             fontWeight: FontWeight.w400,
                             fontFamily: "ABeeZee",
@@ -53,9 +87,9 @@ class More extends StatelessWidget {
                   child: ListView(
                     padding: EdgeInsets.zero,
                     children: [
-                      MoreItem(text: "Profile", prefixIcon: Icons.account_box_rounded),
-                      MoreItem(text: "Save Location", prefixIcon: Icons.location_on_rounded),
-                      MoreItem(text: "FAQ", prefixIcon: Icons.question_mark_rounded),
+                      MoreItem(text: "Profile", prefixIcon: Icons.account_box_rounded, onPressed: (){}),
+                      MoreItem(text: "Save Location", prefixIcon: Icons.location_on_rounded, onPressed: (){}),
+                      MoreItem(text: "FAQ", prefixIcon: Icons.question_mark_rounded, onPressed: (){}),
                     ],
                   ),
                 ),
@@ -71,10 +105,15 @@ class More extends StatelessWidget {
                   child: ListView(
                     padding: EdgeInsets.zero,
                     children: [
-                      MoreItem(text: "Settings", prefixIcon: Icons.settings),
-                      MoreItem(text: "About Us", prefixIcon: Icons.diamond_sharp),
-                      MoreItem(text: "Contact Us", prefixIcon: Icons.call_rounded),
-                      MoreItem(text: "Logout", prefixIcon: Icons.logout_outlined),
+                      MoreItem(text: "Settings", prefixIcon: Icons.settings, onPressed: (){}),
+                      MoreItem(text: "About Us", prefixIcon: Icons.diamond_sharp, onPressed: (){}),
+                      MoreItem(text: "Contact Us", prefixIcon: Icons.call_rounded, onPressed: (){}),
+                      MoreItem(text: "Logout", prefixIcon: Icons.logout_outlined, onPressed: (){
+                        Auth().logout();
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(builder: (_) => Login())
+                        );
+                      },),
                     ],
                   ),
                 ),

@@ -184,9 +184,6 @@ class _HomeState extends State<Home> {
               ),
               ElevatedButton(
                 onPressed: (){
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => const DataBank())
-                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white ,

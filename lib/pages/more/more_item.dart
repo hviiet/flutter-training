@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 class MoreItem extends StatelessWidget {
   final String text;
   final IconData prefixIcon;
+  final VoidCallback onPressed;
 
-  const MoreItem({super.key, required this.text, required this.prefixIcon});
+  const MoreItem({super.key, required this.text, required this.prefixIcon, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -22,9 +23,7 @@ class MoreItem extends StatelessWidget {
             letterSpacing: 0.15
           ),
         ),
-        onTap: () {
-          
-        },
+        onTap: onPressed,
       ),
     );
   }

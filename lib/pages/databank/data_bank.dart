@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/pages/databank/snack_bar.dart';
+import 'package:flutter_application_1/pages/home/Home.dart';
+import 'package:flutter_application_1/pages/login/navigate.dart';
 
 class DataBank extends StatefulWidget {
   const DataBank({super.key});
