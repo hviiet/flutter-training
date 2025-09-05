@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/pages/databank/data_bank.dart';
 import 'package:flutter_application_1/pages/home/add_place.dart';
 import 'package:flutter_application_1/pages/home/forecast_item.dart';
 import 'package:flutter_application_1/pages/home/live_location.dart';

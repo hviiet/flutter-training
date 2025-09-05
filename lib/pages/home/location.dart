@@ -12,7 +12,7 @@ class Location extends StatelessWidget {
   final IconData weatherIcon; 
 
   const Location({
-    Key? key,
+    super.key,
     required this.street,
     required this.location,
     required this.cardIcon,
@@ -20,7 +20,7 @@ class Location extends StatelessWidget {
     required this.aqiIcon,
     required this.degree,
     required this.weatherIcon,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +60,7 @@ class Location extends StatelessWidget {
                           ),),
                       ],
                     ),
-                    Transform.translate(child: Icon(cardIcon),offset: Offset(0, -5),)
+                    Transform.translate(offset: Offset(0, -5),)
                   ],
                 ),
                 Row(

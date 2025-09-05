@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/pages/login/Login.dart';
+import 'package:flutter_application_1/pages/login/login.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class Onboard extends StatefulWidget {
