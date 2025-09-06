@@ -11,7 +11,7 @@ class Navigate extends StatefulWidget {
 }
 
 class _NavigateState extends State<Navigate> {
-  int current_page = 0;
+  int currentPage = 0;
   @override
   Widget build(BuildContext context) {
     
@@ -24,14 +24,14 @@ class _NavigateState extends State<Navigate> {
 
     void onTap(int index){
       setState(() {
-        current_page = index;
+        currentPage = index;
       });
     }
     return Scaffold(
-      body: pages[current_page],
+      body: pages[currentPage],
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: Color(0xFF1882FF),
-        currentIndex: current_page,
+        currentIndex: currentPage,
         onTap: onTap,
         items: const [
           BottomNavigationBarItem(
