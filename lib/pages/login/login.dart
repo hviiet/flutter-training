@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/pages/login/navigate.dart';
+import 'package:flutter_application_1/providers/user_provider.dart';
 import 'package:flutter_application_1/services/auth/auth.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
@@ -44,6 +46,13 @@ class _LoginState extends State<Login> {
           await prefs.remove("email");
           await prefs.remove("password");
         }
+        
+        final profile = await Auth().getProfile();
+        if(profile != null){
+          final userProvider = Provider.of<UserProvider>(context, listen: false);
+          userProvider.setUser(name: profile["name"], mail: profile["email"], avatarUrl: profile["avatar"]);
+        }
+
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (_) => const Navigate())
         );

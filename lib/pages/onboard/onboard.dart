@@ -11,7 +11,7 @@ class Onboard extends StatefulWidget {
 
 class _OnboardState extends State<Onboard> {
   final PageController pg = PageController();
-  int current_page = 0;
+  int currentPage = 0;
 
   final List<String> titles = [
     "Breath Better",
@@ -50,7 +50,7 @@ class _OnboardState extends State<Onboard> {
               controller: pg,
               onPageChanged: (index) {
                 setState(() {
-                  current_page = index;
+                  currentPage = index;
                 });
               },
               children: [
@@ -76,11 +76,10 @@ class _OnboardState extends State<Onboard> {
             ),
           ),
           Expanded(
-            child: Container(
-              child: Column(
+            child: Column(
                 children: [
                   Text(
-                    titles[current_page],
+                    titles[currentPage],
                     style: TextStyle(
                       fontSize: 25,
                       fontWeight: FontWeight.bold,
@@ -90,7 +89,7 @@ class _OnboardState extends State<Onboard> {
                   Padding(
                     padding: const EdgeInsets.only(left: 32, top: 4, right: 32, bottom: 150),
                     child: Text(
-                      descriptions[current_page],
+                      descriptions[currentPage],
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 14,
@@ -125,7 +124,6 @@ class _OnboardState extends State<Onboard> {
                   )
                 ],
               ),
-            )
           ),
         ],
       ),

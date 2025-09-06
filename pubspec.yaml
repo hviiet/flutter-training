@@ -38,6 +38,8 @@ dependencies:
   cupertino_icons: ^1.0.8
   dio: ^5.9.0
   shared_preferences: ^2.5.3
+  syncfusion_flutter_gauges: ^31.1.17
+  provider: ^6.1.5+1
 
 
 dev_dependencies:
