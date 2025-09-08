@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'components/places_carousel.dart';
-import 'components/forecast_block.dart';
 
 /// Màn hình chính: chứa tiêu đề, thẻ “Current state” và khối Forcast có slider
 class Home extends StatefulWidget {
@@ -11,28 +9,61 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  // ----------------- DATA MẪU DÙNG ĐỂ TEST SLIDER -----------------
-  final List<Forecast> _forecasts = const [
-    Forecast(day: 'MON', aqi: 3, temp: 19),
-    Forecast(day: 'TUE', aqi: 5, temp: 21),
-    Forecast(day: 'WED', aqi: 2, temp: 22),
-    Forecast(day: 'THU', aqi: 4, temp: 18),
-    Forecast(day: 'FRI', aqi: 1, temp: 20),
-    Forecast(day: 'SAT', aqi: 6, temp: 23),
-    Forecast(day: 'SUN', aqi: 2, temp: 17),
-    Forecast(day: 'MON', aqi: 3, temp: 24),
-    Forecast(day: 'TUE', aqi: 4, temp: 19),
-    Forecast(day: 'WED', aqi: 1, temp: 20),
-    Forecast(day: 'THU', aqi: 3, temp: 22),
-    Forecast(day: 'FRI', aqi: 5, temp: 26),
+  // Dữ liệu mẫu cho phần forcast
+  final List<String> days = <String>[
+    'MON',
+    'TUE',
+    'WEN',
+    'THU',
+    'FRI',
+    'SAT',
+    'SUN',
   ];
 
-  final demoPlaces = <PlaceCardData>[
-    PlaceCardData('Edmund Street', 'Birmingham', 5, 21),
-    PlaceCardData('Berkley Street', 'Birmingham', 4, 21),
-    PlaceCardData('Colmore Row', 'Birmingham', 3, 20),
-    PlaceCardData('Victoria Sq.', 'Birmingham', 2, 22),
-    PlaceCardData('Snow Hill', 'Birmingham', 6, 19),
+  final List<String> aqiImg = <String>[
+    'assets/images/home/smile_normal.png',
+    'assets/images/home/smile_light.png',
+    'assets/images/home/smile_dark.png',
+    'assets/images/home/smile_normal.png',
+    'assets/images/home/smile_light.png',
+    'assets/images/home/smile_dark.png',
+    'assets/images/home/smile_dark.png',
+  ];
+
+  final List<int> aqi = <int>[1, 2, 2, 1, 3, 1, 2];
+
+  final List<String> weatherImg = <String>[
+    'assets/images/home/rain.png',
+    'assets/images/home/cloud.png',
+    'assets/images/home/cloud_sun.png',
+    'assets/images/home/sun.png',
+    'assets/images/home/cloud.png',
+    'assets/images/home/cloud_sun.png',
+    'assets/images/home/sun.png',
+  ];
+
+  final List<int> temp = <int>[20, 21, 22, 17, 23, 21, 19];
+
+  // Dữ liệu mẫu cho phần Location
+  final List<String> street = <String>[
+    'Edmund Street',
+    'Berkley Street',
+    'Fifth Avenue',
+    'Oxford Street',
+  ];
+
+  final List<String> city = <String>[
+    'Birmingham',
+    'Birmingham',
+    'New York',
+    'London',
+  ];
+
+  final List<String> aqiLocationImg = <String>[
+    'assets/images/home/smile_orange.png',
+    'assets/images/home/smile_yellow.png',
+    'assets/images/home/smile_normal.png',
+    'assets/images/home/smile_dark.png',
   ];
 
   @override
@@ -110,7 +141,7 @@ class _HomeState extends State<Home> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Image.asset(
-                          'assets/images/GPS icon.png',
+                          'assets/images/home/GPS icon.png',
                           width: 32,
                           height: 32,
                         ),
@@ -152,7 +183,7 @@ class _HomeState extends State<Home> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Image.asset(
-                              'assets/images/weather-icons.png',
+                              'assets/images/home/rain.png',
                               width: 32,
                               height: 32,
                             ),
@@ -186,7 +217,7 @@ class _HomeState extends State<Home> {
                                     ),
                                     const SizedBox(width: 4),
                                     Image.asset(
-                                      'assets/images/high.png',
+                                      'assets/images/home/high.png',
                                       width: 4,
                                       height: 6,
                                     ),
@@ -249,7 +280,7 @@ class _HomeState extends State<Home> {
                             ),
                             const SizedBox(width: 4),
                             Image.asset(
-                              'assets/images/icon.png',
+                              'assets/images/home/smile_normal.png',
                               width: 32,
                               height: 32,
                             ),
@@ -259,8 +290,207 @@ class _HomeState extends State<Home> {
                     ),
                     const SizedBox(height: 16),
 
-                    // ===================== FORCAST BLOCK =====================
-                    ForecastCarouselWithDots(forecasts: _forecasts),
+                    // ===================== FORCAST BLOCK (INLINE) =====================
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Forcast',
+                          style: TextStyle(
+                            fontFamily: 'SF Pro Display',
+                            fontWeight: FontWeight.w500,
+                            fontSize: 12,
+                            height: 14 / 12,
+                            color: Color.fromRGBO(0, 0, 0, 0.72),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+
+                        SizedBox(
+                          height: 130,
+                          child: ListView.separated(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: days.length,
+                            separatorBuilder: (_, __) =>
+                                const SizedBox(width: 4),
+                            itemBuilder: (BuildContext context, int index) {
+                              return Container(
+                                width: 48,
+                                height: 130,
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    // Day label
+                                    Text(
+                                      days[index],
+                                      style: TextStyle(
+                                        fontFamily: 'ABeeZee',
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 8,
+                                        height: 1.0,
+                                        color: Color.fromRGBO(0, 0, 0, 0.72),
+                                      ),
+                                    ),
+
+                                    // AQI block
+                                    Column(
+                                      children: [
+                                        Image.asset(
+                                          aqiImg[index],
+                                          width: 24,
+                                          height: 24,
+                                        ),
+                                        const SizedBox(height: 2),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              '${aqi[index]}',
+                                              style: TextStyle(
+                                                fontFamily: 'SF Pro Display',
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 14,
+                                                height: 1.0,
+                                                letterSpacing: -0.5,
+                                                color: Color.fromRGBO(
+                                                  0,
+                                                  0,
+                                                  0,
+                                                  0.96,
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(width: 2),
+                                            Text(
+                                              'AQI',
+                                              style: TextStyle(
+                                                fontFamily: 'SF Pro Display',
+                                                fontWeight: FontWeight.w300,
+                                                fontSize: 8,
+                                                height: 1.0,
+                                                color: Color.fromRGBO(
+                                                  0,
+                                                  0,
+                                                  0,
+                                                  0.72,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+
+                                    // Divider
+                                    const SizedBox(
+                                      width: 32,
+                                      child: Divider(
+                                        color: Color.fromRGBO(0, 0, 0, 0.08),
+                                        thickness: 1,
+                                        height: 1,
+                                      ),
+                                    ),
+
+                                    // Temp block
+                                    Column(
+                                      children: [
+                                        Image.asset(
+                                          weatherImg[index],
+                                          width: 24,
+                                          height: 24,
+                                        ),
+                                        const SizedBox(height: 2),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              '${temp[index]}',
+                                              style: TextStyle(
+                                                fontFamily: 'SF Pro Display',
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 14,
+                                                height: 1.0,
+                                                letterSpacing: -0.5,
+                                                color: Color.fromRGBO(
+                                                  0,
+                                                  0,
+                                                  0,
+                                                  0.96,
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(width: 2),
+                                            Text(
+                                              '°C',
+                                              style: TextStyle(
+                                                fontFamily: 'SF Pro Display',
+                                                fontWeight: FontWeight.w300,
+                                                fontSize: 8,
+                                                height: 1.0,
+                                                color: Color.fromRGBO(
+                                                  0,
+                                                  0,
+                                                  0,
+                                                  0.72,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+
+                        const SizedBox(height: 10),
+
+                        // Dot indicator
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              width: 20,
+                              height: 6,
+                              margin: const EdgeInsets.symmetric(horizontal: 4),
+                              decoration: BoxDecoration(
+                                color: const Color.fromRGBO(24, 130, 255, 1),
+                                borderRadius: BorderRadius.circular(100),
+                              ),
+                            ),
+                            Container(
+                              width: 6,
+                              height: 6,
+                              margin: const EdgeInsets.symmetric(horizontal: 4),
+                              decoration: BoxDecoration(
+                                color: const Color.fromRGBO(209, 213, 219, 1),
+                                borderRadius: BorderRadius.circular(100),
+                              ),
+                            ),
+                            Container(
+                              width: 6,
+                              height: 6,
+                              margin: const EdgeInsets.symmetric(horizontal: 4),
+                              decoration: BoxDecoration(
+                                color: const Color.fromRGBO(209, 213, 219, 1),
+                                borderRadius: BorderRadius.circular(100),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -311,7 +541,7 @@ class _HomeState extends State<Home> {
                             Row(
                               children: [
                                 Image.asset(
-                                  'assets/images/icon.png',
+                                  'assets/images/home/smile_normal.png',
                                   width: 20,
                                   height: 20,
                                 ),
@@ -352,7 +582,7 @@ class _HomeState extends State<Home> {
                             Row(
                               children: [
                                 Image.asset(
-                                  'assets/images/weather-icons.png',
+                                  'assets/images/home/rain.png',
                                   width: 20,
                                   height: 20,
                                 ),
@@ -435,7 +665,7 @@ class _HomeState extends State<Home> {
                             Row(
                               children: [
                                 Image.asset(
-                                  'assets/images/icon.png',
+                                  'assets/images/home/smile_normal.png',
                                   width: 20,
                                   height: 20,
                                 ),
@@ -476,7 +706,7 @@ class _HomeState extends State<Home> {
                             Row(
                               children: [
                                 Image.asset(
-                                  'assets/images/weather-icons.png',
+                                  'assets/images/home/rain.png',
                                   width: 20,
                                   height: 20,
                                 ),
@@ -520,8 +750,197 @@ class _HomeState extends State<Home> {
 
               const SizedBox(height: 16),
 
-              // LOCATIONS
-              PlacesCarouselWithIndicator(cards: demoPlaces),
+              // ===================== LOCATIONS =====================
+              Column(
+                children: [
+                  SizedBox(
+                    height: 88,
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: city.length,
+                      separatorBuilder: (_, __) => const SizedBox(width: 8),
+                      itemBuilder: (context, index) {
+                        return Container(
+                          width: 240,
+                          height: 88,
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Color.fromRGBO(255, 255, 255, 1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              // Locate
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          street[index],
+                                          style: TextStyle(
+                                            fontFamily: 'ABeeZee',
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 12,
+                                            height: 16 / 12,
+                                            color: Color.fromRGBO(
+                                              0,
+                                              0,
+                                              0,
+                                              0.96,
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(height: 2),
+                                        Text(
+                                          city[index],
+                                          style: TextStyle(
+                                            fontFamily: 'SF Pro Display',
+                                            fontWeight: FontWeight.w300,
+                                            fontSize: 8,
+                                            height: 10 / 8,
+                                            color: Color.fromRGBO(
+                                              0,
+                                              0,
+                                              0,
+                                              0.72,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const Spacer(),
+                                  Image.asset(
+                                    'assets/images/home/decorate_icon.png',
+                                    width: 16,
+                                    height: 16,
+                                  ),
+                                ],
+                              ),
+
+                              // AQI + Temp
+                              Row(
+                                children: [
+                                  // AQI block
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Image.asset(
+                                        aqiLocationImg[index],
+                                        width: 16,
+                                        height: 16,
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Text(
+                                        '${aqi[index]}',
+                                        style: TextStyle(
+                                          fontFamily: 'SF Pro Display',
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 16,
+                                          height: 1.0,
+                                          letterSpacing: -0.5,
+                                          color: Color.fromRGBO(0, 0, 0, 0.96),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 2),
+                                      const Text(
+                                        'AQI',
+                                        style: TextStyle(
+                                          fontFamily: 'SF Pro Display',
+                                          fontWeight: FontWeight.w300,
+                                          fontSize: 8,
+                                          height: 1.0,
+                                          color: Color.fromRGBO(0, 0, 0, 0.72),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const Spacer(),
+                                  // Temp block
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        '${temp[index]}',
+                                        style: TextStyle(
+                                          fontFamily: 'SF Pro Display',
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 16,
+                                          height: 1.0,
+                                          letterSpacing: -0.5,
+                                          color: Color.fromRGBO(0, 0, 0, 0.96),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 2),
+                                      const Text(
+                                        '°C',
+                                        style: TextStyle(
+                                          fontFamily: 'SF Pro Display',
+                                          fontWeight: FontWeight.w300,
+                                          fontSize: 8,
+                                          height: 1.0,
+                                          color: Color.fromRGBO(0, 0, 0, 0.72),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Image.asset(
+                                        'assets/images/home/cold_icon.png',
+                                        width: 16,
+                                        height: 16,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  // Dot indicator
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: 20,
+                        height: 6,
+                        margin: const EdgeInsets.symmetric(horizontal: 4),
+                        decoration: BoxDecoration(
+                          color: const Color.fromRGBO(24, 130, 255, 1),
+                          borderRadius: BorderRadius.circular(100),
+                        ),
+                      ),
+                      Container(
+                        width: 6,
+                        height: 6,
+                        margin: const EdgeInsets.symmetric(horizontal: 4),
+                        decoration: BoxDecoration(
+                          color: const Color.fromRGBO(209, 213, 219, 1),
+                          borderRadius: BorderRadius.circular(100),
+                        ),
+                      ),
+                      Container(
+                        width: 6,
+                        height: 6,
+                        margin: const EdgeInsets.symmetric(horizontal: 4),
+                        decoration: BoxDecoration(
+                          color: const Color.fromRGBO(209, 213, 219, 1),
+                          borderRadius: BorderRadius.circular(100),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
 
               const SizedBox(height: 16),
 
@@ -547,7 +966,7 @@ class _HomeState extends State<Home> {
                       Row(
                         children: [
                           Image.asset(
-                            'assets/images/Trailing Icon.png',
+                            'assets/images/home/Trailing Icon.png',
                             width: 24,
                             height: 24,
                           ),
@@ -567,7 +986,7 @@ class _HomeState extends State<Home> {
                       ),
                       const Spacer(),
                       Image.asset(
-                        'assets/images/right_arrow.png',
+                        'assets/images/home/right_arrow.png',
                         width: 24,
                         height: 24,
                       ),

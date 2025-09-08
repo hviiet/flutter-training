@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'components/button_more_page.dart';
 
 class More extends StatefulWidget {
   const More({super.key});
@@ -12,10 +11,16 @@ class _MoreState extends State<More> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromRGBO(250, 250, 250, 1),
+      backgroundColor: const Color.fromRGBO(250, 250, 250, 1),
       body: Stack(
         children: [
-          Image.asset('assets/images/background.png'),
+          // Background
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/more/background.png',
+              fit: BoxFit.cover,
+            ),
+          ),
 
           // Menus
           Align(
@@ -25,6 +30,7 @@ class _MoreState extends State<More> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
+                    // Avatar + name + email
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -44,7 +50,7 @@ class _MoreState extends State<More> {
                             ),
                             ClipOval(
                               child: Image.asset(
-                                'assets/images/avatar.png',
+                                'assets/images/more/avatar.png',
                                 width: 96,
                                 height: 96,
                                 fit: BoxFit.cover,
@@ -55,7 +61,7 @@ class _MoreState extends State<More> {
                         const SizedBox(height: 10),
                         Column(
                           children: [
-                            Text(
+                            const Text(
                               'Đặng Hữu Long',
                               style: TextStyle(
                                 fontFamily: "SF Pro Display",
@@ -66,7 +72,7 @@ class _MoreState extends State<More> {
                                 color: Color.fromRGBO(17, 24, 39, 1),
                               ),
                             ),
-                            Text(
+                            const Text(
                               'danghuulong394@gmail.com',
                               style: TextStyle(
                                 fontFamily: "ABeeZee",
@@ -75,74 +81,267 @@ class _MoreState extends State<More> {
                                 fontSize: 12,
                                 height: 1.5,
                                 letterSpacing: 0.3,
-                                color: const Color.fromRGBO(107, 114, 128, 1),
+                                color: Color.fromRGBO(107, 114, 128, 1),
                               ),
                             ),
                           ],
                         ),
                       ],
                     ),
+
                     const SizedBox(height: 16),
-                    Divider(
-                      color: const Color.fromRGBO(243, 244, 246, 1),
+                    const Divider(
+                      color: Color.fromRGBO(243, 244, 246, 1),
                       thickness: 1,
                       height: 1,
                     ),
                     const SizedBox(height: 16),
+
+                    // ===== Group 1 =====
                     Column(
                       children: [
-                        ReusableArrowButton(
-                          label: 'Profile',
-                          leading: Image.asset('assets/images/profile.png'),
-                          onPressed: () {},
-                        ),
-                        const SizedBox(height: 8),
-                        ReusableArrowButton(
-                          label: 'Saved Location',
-                          leading: Image.asset(
-                            'assets/images/savedlocation.png',
+                        // Profile
+                        Container(
+                          height: 54,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          decoration: BoxDecoration(
+                            color: const Color.fromRGBO(255, 255, 255, 1),
+                            borderRadius: BorderRadius.circular(8),
                           ),
-                          onPressed: () {},
+                          child: Row(
+                            children: [
+                              Image.asset('assets/images/more/profile.png'),
+                              const SizedBox(width: 12),
+                              const Expanded(
+                                child: Text(
+                                  'Profile',
+                                  style: TextStyle(
+                                    fontFamily: 'ABeeZee',
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 16,
+                                    color: Color.fromRGBO(0, 0, 0, 0.96),
+                                  ),
+                                ),
+                              ),
+                              Image.asset(
+                                'assets/images/more/right_arrow.png',
+                                width: 24,
+                                height: 24,
+                              ),
+                            ],
+                          ),
                         ),
                         const SizedBox(height: 8),
-                        ReusableArrowButton(
-                          label: 'FAQ',
-                          leading: Image.asset('assets/images/FAQ.png'),
-                          onPressed: () {},
+
+                        // Saved Location
+                        Container(
+                          height: 54,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          decoration: BoxDecoration(
+                            color: const Color.fromRGBO(255, 255, 255, 1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            children: [
+                              Image.asset(
+                                'assets/images/more/savedlocation.png',
+                              ),
+                              const SizedBox(width: 12),
+                              const Expanded(
+                                child: Text(
+                                  'Saved Location',
+                                  style: TextStyle(
+                                    fontFamily: 'ABeeZee',
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 16,
+                                    color: Color.fromRGBO(0, 0, 0, 0.96),
+                                  ),
+                                ),
+                              ),
+                              Image.asset(
+                                'assets/images/more/right_arrow.png',
+                                width: 24,
+                                height: 24,
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+
+                        // FAQ
+                        Container(
+                          height: 54,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          decoration: BoxDecoration(
+                            color: const Color.fromRGBO(255, 255, 255, 1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            children: [
+                              Image.asset('assets/images/more/FAQ.png'),
+                              const SizedBox(width: 12),
+                              const Expanded(
+                                child: Text(
+                                  'FAQ',
+                                  style: TextStyle(
+                                    fontFamily: 'ABeeZee',
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 16,
+                                    color: Color.fromRGBO(0, 0, 0, 0.96),
+                                  ),
+                                ),
+                              ),
+                              Image.asset(
+                                'assets/images/more/right_arrow.png',
+                                width: 24,
+                                height: 24,
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
+
                     const SizedBox(height: 16),
-                    Divider(
-                      color: const Color.fromRGBO(243, 244, 246, 1),
+                    const Divider(
+                      color: Color.fromRGBO(243, 244, 246, 1),
                       thickness: 1,
                       height: 1,
                     ),
                     const SizedBox(height: 16),
+
+                    // ===== Group 2 =====
                     Column(
                       children: [
-                        ReusableArrowButton(
-                          label: 'settings',
-                          leading: Image.asset('assets/images/setting.png'),
-                          onPressed: () {},
+                        // Settings
+                        Container(
+                          height: 54,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          decoration: BoxDecoration(
+                            color: const Color.fromRGBO(255, 255, 255, 1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            children: [
+                              Image.asset('assets/images/more/setting.png'),
+                              const SizedBox(width: 12),
+                              const Expanded(
+                                child: Text(
+                                  'settings',
+                                  style: TextStyle(
+                                    fontFamily: 'ABeeZee',
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 16,
+                                    color: Color.fromRGBO(0, 0, 0, 0.96),
+                                  ),
+                                ),
+                              ),
+                              Image.asset(
+                                'assets/images/more/right_arrow.png',
+                                width: 24,
+                                height: 24,
+                              ),
+                            ],
+                          ),
                         ),
                         const SizedBox(height: 8),
-                        ReusableArrowButton(
-                          label: 'About Us',
-                          leading: Image.asset('assets/images/aboutus.png'),
-                          onPressed: () {},
+
+                        // About Us
+                        Container(
+                          height: 54,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          decoration: BoxDecoration(
+                            color: const Color.fromRGBO(255, 255, 255, 1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            children: [
+                              Image.asset('assets/images/more/aboutus.png'),
+                              const SizedBox(width: 12),
+                              const Expanded(
+                                child: Text(
+                                  'About Us',
+                                  style: TextStyle(
+                                    fontFamily: 'ABeeZee',
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 16,
+                                    color: Color.fromRGBO(0, 0, 0, 0.96),
+                                  ),
+                                ),
+                              ),
+                              Image.asset(
+                                'assets/images/more/right_arrow.png',
+                                width: 24,
+                                height: 24,
+                              ),
+                            ],
+                          ),
                         ),
                         const SizedBox(height: 8),
-                        ReusableArrowButton(
-                          label: 'Contact Us',
-                          leading: Image.asset('assets/images/contactus.png'),
-                          onPressed: () {},
+
+                        // Contact Us
+                        Container(
+                          height: 54,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          decoration: BoxDecoration(
+                            color: const Color.fromRGBO(255, 255, 255, 1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            children: [
+                              Image.asset('assets/images/more/contactus.png'),
+                              const SizedBox(width: 12),
+                              const Expanded(
+                                child: Text(
+                                  'Contact Us',
+                                  style: TextStyle(
+                                    fontFamily: 'ABeeZee',
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 16,
+                                    color: Color.fromRGBO(0, 0, 0, 0.96),
+                                  ),
+                                ),
+                              ),
+                              Image.asset(
+                                'assets/images/more/right_arrow.png',
+                                width: 24,
+                                height: 24,
+                              ),
+                            ],
+                          ),
                         ),
                         const SizedBox(height: 8),
-                        ReusableArrowButton(
-                          label: 'Logout',
-                          leading: Image.asset('assets/images/logout.png'),
-                          onPressed: () {},
+
+                        // Logout
+                        Container(
+                          height: 54,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          decoration: BoxDecoration(
+                            color: const Color.fromRGBO(255, 255, 255, 1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            children: [
+                              Image.asset('assets/images/more/logout.png'),
+                              const SizedBox(width: 12),
+                              const Expanded(
+                                child: Text(
+                                  'Logout',
+                                  style: TextStyle(
+                                    fontFamily: 'ABeeZee',
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 16,
+                                    color: Color.fromRGBO(0, 0, 0, 0.96),
+                                  ),
+                                ),
+                              ),
+                              Image.asset(
+                                'assets/images/more/right_arrow.png',
+                                width: 24,
+                                height: 24,
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
@@ -156,11 +355,12 @@ class _MoreState extends State<More> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Image.asset('assets/images/logo_fab.png'),
+                          Image.asset('assets/images/more/logo_fab.png'),
                           const SizedBox(width: 16),
-                          Column(
+                          const Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
                               Text(
                                 'Air AQ',
                                 style: TextStyle(

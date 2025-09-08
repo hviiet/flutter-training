@@ -2,10 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:weather_app/onboarding.dart';
 import 'providers/tab_provider.dart';
+import 'providers/ui_overlay_provider.dart';
 
 void main() {
   runApp(
-    ChangeNotifierProvider(create: (_) => TabProvider(), child: const MyApp()),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => TabProvider()),
+        ChangeNotifierProvider(create: (_) => UiOverlayProvider()),
+      ],
+      child: const MyApp(),
+    ),
   );
 }
 

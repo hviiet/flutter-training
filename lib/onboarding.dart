@@ -13,9 +13,9 @@ class _OnboardingState extends State<Onboarding> {
   int _index = 0;
 
   final List<String> images = [
-    'assets/images/left.png',
-    'assets/images/mid.png',
-    'assets/images/right.png',
+    'assets/images/onboarding/left.png',
+    'assets/images/onboarding/mid.png',
+    'assets/images/onboarding/right.png',
   ];
   final List<String> title = [
     'Breath Better',
@@ -160,7 +160,7 @@ class _OnboardingState extends State<Onboarding> {
       ),
 
       bottomNavigationBar: SafeArea(
-        minimum: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        minimum: const EdgeInsets.only(bottom: 40, left: 32, right: 32),
         child: SizedBox(
           height: 56,
           width: double.infinity,

@@ -11,7 +11,7 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   late AnimationController _controller;
 
-  String image = 'assets/images/login.png';
+  String image = 'assets/images/login/login.png';
 
   @override
   void dispose() {
