@@ -1,19 +1,33 @@
 import 'package:flutter/material.dart';
+import 'home.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  bool rememberMe = false;
+
+  void _goHome(BuildContext context) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const HomeScreen()),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Login')),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Hình minh họa
-            Image.asset('assets/a.jpg', height: 200, fit: BoxFit.cover),
+            Image.asset('assets/login.png', height: 200, fit: BoxFit.cover),
             const SizedBox(height: 20),
 
             const Text(
@@ -52,7 +66,14 @@ class LoginScreen extends StatelessWidget {
             // Remember me + Forgot password
             Row(
               children: [
-                Checkbox(value: true, onChanged: null),
+                Checkbox(
+                  value: rememberMe,
+                  onChanged: (value) {
+                    setState(() {
+                      rememberMe = value ?? false;
+                    });
+                  },
+                ),
                 const Text('Remember me'),
                 const Spacer(),
                 TextButton(
@@ -68,11 +89,15 @@ class LoginScreen extends StatelessWidget {
               width: double.infinity,
               height: 48,
               child: ElevatedButton(
-                onPressed: () {},
-                child: const Text('Login'),
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+                onPressed: () => _goHome(context),
+                child: const Text(
+                  'Login',
+                  style: TextStyle(fontSize: 16, color: Colors.white),
+                ),
               ),
             ),
-          ],
+          ], // children
         ),
       ),
     );

@@ -1,8 +1,18 @@
 import 'package:flutter/material.dart';
-import 'onboarding.dart';
-import 'login.dart';
+import 'package:provider/provider.dart';
+import 'provider/tab_index_provider.dart';
+import 'screens/onboarding.dart';
+import 'screens/login.dart';
+import 'screens/home.dart';
+import 'screens/databank.dart';
+import 'screens/more.dart';
 
-void main() => runApp(const MyApp());
+void main() => runApp(
+  MultiProvider(
+    providers: [ChangeNotifierProvider(create: (_) => TabIndexProvider())],
+    child: const MyApp(),
+  ),
+);
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -16,7 +26,14 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
       ),
-      home: const OnboardingScreen(), 
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const OnboardingScreen(),
+        '/login': (context) => const LoginScreen(),
+        '/home': (context) => const HomeScreen(),
+        '/databank': (context) => const DataBankScreen(),
+        '/more': (context) => const MoreScreen(),
+      },
     );
   }
 }
