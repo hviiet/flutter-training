@@ -13,9 +13,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
   int _index = 0;
 
   final List<String> images = [
-    'assets/images/OBleft.png',
-    'assets/images/OBmid.png',
-    'assets/images/OBright.png',
+    'assets/images/onboarding/OBleft.png',
+    'assets/images/onboarding/OBmid.png',
+    'assets/images/onboarding/OBright.png',
   ];
   final List<String> title = [
     'Breath Better',

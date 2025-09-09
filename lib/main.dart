@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_training/views/homepage.dart';
 import 'package:flutter_training/views/onboarding_page.dart';
+import 'package:flutter_training/views/databank_page.dart' as databank;
+import 'package:flutter_training/views/more.dart' as more;
+import 'package:flutter_training/provider/tab_provider.dart';
+import 'package:flutter_training/provider/blur_provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,9 +16,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: OnboardingPage(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => TabProvider()),
+        ChangeNotifierProvider(create: (_) => BlurProvider()),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: const HomeScreen(),
+        routes: {
+          '/home': (context) => const HomeScreen(),
+          '/databank': (context) => const databank.DataBankScreen(),
+          '/more': (context) => const more.MoreScreen(),
+        },
+      ),
     );
   }
 }

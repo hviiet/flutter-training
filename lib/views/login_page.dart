@@ -8,7 +8,7 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  String image = 'assets/images/login.png';
+  String image = 'assets/images/login/login.png';
 
   OutlineInputBorder _outline(Color color) => OutlineInputBorder(
     borderRadius: BorderRadius.circular(8),
