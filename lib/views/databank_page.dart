@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter_training/components/navigate_under.dart';
-import 'package:flutter_training/provider/tab_provider.dart';
 
 class DataBankScreen extends StatefulWidget {
   const DataBankScreen({super.key});
@@ -52,12 +49,6 @@ class _DataBankScreenState extends State<DataBankScreen> {
         title: const Text('Data Bank'),
         backgroundColor: Colors.white,
         elevation: 0,
-      ),
-      bottomNavigationBar: Consumer<TabProvider>(
-        builder: (context, tabProvider, _) => UnderNavigate(
-          currentIndex: tabProvider.currentIndex,
-          onTap: (index) => tabProvider.setTab(index, context),
-        ),
       ),
       body: Stack(
         children: [

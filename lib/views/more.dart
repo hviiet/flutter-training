@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_training/components/navigate_under.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter_training/provider/tab_provider.dart';
 
 class MoreScreen extends StatelessWidget {
   const MoreScreen({super.key});
@@ -11,12 +8,6 @@ class MoreScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFF7F8FA),
       appBar: AppBar(backgroundColor: Colors.transparent, elevation: 0),
-      bottomNavigationBar: Consumer<TabProvider>(
-        builder: (context, tabProvider, _) => UnderNavigate(
-          currentIndex: tabProvider.currentIndex,
-          onTap: (index) => tabProvider.setTab(index, context),
-        ),
-      ),
       body: Stack(
         children: [
           // Background image

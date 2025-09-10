@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter_training/provider/tab_provider.dart';
 import 'package:flutter_training/components/current_state.dart';
-import 'package:flutter_training/components/navigate_under.dart';
 import 'package:flutter_training/components/location.dart';
 import 'package:flutter_training/components/place_add.dart';
 
@@ -155,12 +152,6 @@ class HomeScreen extends StatelessWidget {
             ),
             const SizedBox(height: 24),
           ],
-        ),
-      ),
-      bottomNavigationBar: Consumer<TabProvider>(
-        builder: (context, tabProvider, _) => UnderNavigate(
-          currentIndex: tabProvider.currentIndex,
-          onTap: (index) => tabProvider.setTab(index, context),
         ),
       ),
     );

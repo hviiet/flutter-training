@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_training/views/homepage.dart';
-import 'package:flutter_training/views/onboarding_page.dart';
-import 'package:flutter_training/views/databank_page.dart' as databank;
-import 'package:flutter_training/views/more.dart' as more;
+import 'package:flutter_training/views/main_screen.dart';
 import 'package:flutter_training/provider/tab_provider.dart';
 import 'package:flutter_training/provider/blur_provider.dart';
 
@@ -23,12 +20,7 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: const HomeScreen(),
-        routes: {
-          '/home': (context) => const HomeScreen(),
-          '/databank': (context) => const databank.DataBankScreen(),
-          '/more': (context) => const more.MoreScreen(),
-        },
+        home: const MainScreen(),
       ),
     );
   }
