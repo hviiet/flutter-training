@@ -45,7 +45,7 @@ class ForecastItem extends StatelessWidget {
               width: 32,
               height: 0,
               decoration: BoxDecoration(
-                border: BoxBorder.all(width: 1,color: Color(0x14000000))
+                border: Border.all(width: 1, color: Color(0x14000000))
               ),
             ),
             Icon(weatherIcon, color: Color(0xFF5D5FEF),),

@@ -15,7 +15,7 @@ class Aqi extends StatelessWidget {
               children: [
                 WidgetSpan(
                   child: Transform.translate(
-                    offset: Offset(0, 0),
+                    offset: Offset.zero,
                     child: Text(aqiNumber.toString(),
                       style: TextStyle(
                         fontFamily: "SF Pro Display",
