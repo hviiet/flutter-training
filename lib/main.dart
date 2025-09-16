@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_training/views/onboarding_page.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_training/views/main_screen.dart';
 import 'package:flutter_training/provider/tab_provider.dart';
 import 'package:flutter_training/provider/blur_provider.dart';
 
@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: const MainScreen(),
+        home: const OnboardingPage(),
       ),
     );
   }

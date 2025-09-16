@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_training/components/current_state.dart';
-import 'package:flutter_training/components/location.dart';
+import 'package:flutter_training/components/location_slider.dart';
 import 'package:flutter_training/components/place_add.dart';
+import 'package:flutter_training/models/place_info.dart';
+import 'package:flutter_training/models/location.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});

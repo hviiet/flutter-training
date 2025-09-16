@@ -174,6 +174,7 @@ class CurrentState extends StatelessWidget {
   }
 }
 
+//tách ra file mới
 class ForecastDay {
   final String day;
   final int aqi;
