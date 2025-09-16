@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:weather_app/rootpage.dart';
+import 'package:weather_app/api/auth.dart';
+import 'package:weather_app/page/rootpage.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -9,13 +10,49 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  late AnimationController _controller;
+  final TextEditingController emailCtrl = TextEditingController();
+  final TextEditingController passwordCtrl = TextEditingController();
 
-  String image = 'assets/images/login/login.png';
+  final auth = Auth();
+
+  Future<void> _handleLogin() async {
+    final emailError = auth.validateEmail(emailCtrl.text);
+    final passError = auth.validatePassword(passwordCtrl.text);
+
+    if (emailError != null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(emailError)));
+      return;
+    }
+    if (passError != null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(passError)));
+      return;
+    }
+
+    final ok = await auth.login(emailCtrl.text, passwordCtrl.text);
+    if (!mounted) return;
+
+    if (ok) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const RootPage()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Login failed: wrong email/password or no permission"),
+        ),
+      );
+    }
+  }
 
   @override
   void dispose() {
-    _controller.dispose();
+    emailCtrl.dispose();
+    passwordCtrl.dispose();
     super.dispose();
   }
 
@@ -41,7 +78,10 @@ class _LoginState extends State<Login> {
                 SizedBox(
                   height: 260,
                   width: 260,
-                  child: Image.asset(image, fit: BoxFit.contain),
+                  child: Image.asset(
+                    'assets/images/login/login.png',
+                    fit: BoxFit.contain,
+                  ),
                 ),
 
                 const SizedBox(height: 16),
@@ -89,6 +129,7 @@ class _LoginState extends State<Login> {
                       SizedBox(
                         height: 56,
                         child: TextField(
+                          controller: emailCtrl,
                           decoration: InputDecoration(
                             hintText: 'Your email',
                             filled: true,
@@ -106,6 +147,7 @@ class _LoginState extends State<Login> {
                         height: 56,
                         child: TextField(
                           obscureText: true,
+                          controller: passwordCtrl,
                           decoration: InputDecoration(
                             hintText: 'Your password',
                             filled: true,
@@ -202,14 +244,7 @@ class _LoginState extends State<Login> {
                         letterSpacing: 0.5,
                       ),
                     ),
-                    onPressed: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const RootPage(),
-                        ),
-                      );
-                    },
+                    onPressed: _handleLogin,
                     child: const Text('Login'),
                   ),
                 ),

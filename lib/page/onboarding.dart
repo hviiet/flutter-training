@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:weather_app/login.dart';
+import 'package:weather_app/page/login.dart';
 
 class Onboarding extends StatefulWidget {
   const Onboarding({super.key});
