@@ -1,7 +1,29 @@
 import 'package:flutter/material.dart';
 
-class MoreScreen extends StatelessWidget {
-  const MoreScreen({Key? key}) : super(key: key);
+import 'package:air_quality/screens/storage_service.dart';
+import 'package:air_quality/screens/login_screen.dart';
+
+class MoreScreen extends StatefulWidget {
+  const MoreScreen({super.key});
+
+  @override
+  State<MoreScreen> createState() => _MoreScreenState();
+}
+
+class _MoreScreenState extends State<MoreScreen> {
+  final StorageService _storageService = StorageService();
+
+  /// Hàm xử lý logic đăng xuất
+  Future<void> _logout() async {
+    await _storageService.clearTokens();
+
+    if (mounted) {
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+        (Route<dynamic> route) => false,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,53 +41,54 @@ class MoreScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader() { 
-  return Container(
-    color: Colors.grey[100],
-    child: Stack(
-      children: [
-        Image.asset(
+  Widget _buildHeader() {
+    return Container(
+      color: Colors.grey[100],
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Image.asset(
             'assets/images/profile_background.png',
             fit: BoxFit.cover,
             width: double.infinity,
+            height: 250,
           ),
-        
-        Padding(
-          padding: const EdgeInsets.only(top: 120, bottom: 20, left: 100, right: 16),
-          child: Column(
-            children: const [
-              CircleAvatar(
-                radius: 50,
-                backgroundColor: Colors.white,
-                child: CircleAvatar(
-                  radius: 48,
-                  backgroundImage: AssetImage('assets/images/profile_avatar.png'),
+          Positioned(
+            top: 100,
+            child: Column(
+              children: const [
+                CircleAvatar(
+                  radius: 50,
+                  backgroundColor: Colors.white,
+                  child: CircleAvatar(
+                    radius: 48,
+                    backgroundImage: AssetImage('assets/images/profile_avatar.png'),
+                  ),
                 ),
-              ),
-              SizedBox(height: 12),
-              Text(
-                'Anamoul Rouf',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+                SizedBox(height: 12),
+                Text(
+                  'Anamoul Rouf',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
                 ),
-              ),
-              SizedBox(height: 4),
-              Text(
-                'anamoulrouf.bd@gmail.com',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey,
+                SizedBox(height: 4),
+                Text(
+                  'anamoulrouf.bd@gmail.com',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ],
-    ),
-  );
-}
+        ],
+      ),
+    );
+  }
 
   /// Widget xây dựng danh sách các mục menu
   Widget _buildBody() {
@@ -73,50 +96,42 @@ class MoreScreen extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Column(
         children: [
-
-           Divider(
-              color: Colors.grey[300],
-              thickness: 1,          
-              height: 20,
-            ),
-
-          _item(icon: Icons.person_outline, title: 'Profile'),
-          _item(icon: Icons.bookmark_border, title: 'Saved Locaiton'),
-          _item(icon: Icons.help_outline, title: 'FAQ'),
+          Divider(color: const Color.fromARGB(255, 241, 240, 240), thickness: 1, height: 20),
+          // Các mục này chưa có chức năng, nên onTap là một hàm rỗng
+          _item(icon: Icons.person_outline, title: 'Profile', onTap: () {}),
+          _item(icon: Icons.bookmark_border, title: 'Saved Location', onTap: () {}),
+          _item(icon: Icons.help_outline, title: 'FAQ', onTap: () {}),
 
           const SizedBox(height: 10),
-           Divider(
-              color: Colors.grey[300],
-              thickness: 1,          
-              height: 20,
-            ),
-            const SizedBox(height: 10),
+          Divider(color:const Color.fromARGB(255, 241, 240, 240), thickness: 1, height: 20),
+          const SizedBox(height: 10),
 
-          _item(icon: Icons.settings_outlined, title: 'Settings'),
-          _item(icon: Icons.info_outline, title: 'About Us'),
-          _item(icon: Icons.phone_outlined, title: 'Contact Us'),
-          _item(icon: Icons.logout, title: 'Logout'),
+          _item(icon: Icons.settings_outlined, title: 'Settings', onTap: () {}),
+          _item(icon: Icons.info_outline, title: 'About Us', onTap: () {}),
+          _item(icon: Icons.phone_outlined, title: 'Contact Us', onTap: () {}),
+          // Gắn hàm _logout vào sự kiện onTap của mục 'Logout'
+          _item(icon: Icons.logout, title: 'Logout', onTap: _logout),
         ],
       ),
     );
   }
 
-  /// Widget xây dựng phần Footer với logo và phiên bản ứng dụng
   Widget _buildFooter() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
       child: Row(
-        spacing: 12,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Image.asset( 
+          Image.asset(
             'assets/images/logo_air_quality.png',
             width: 50,
             height: 50,
           ),
+          const SizedBox(width: 12),
           Column(
-             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: const [
+              Text(
                 'Air AQ',
                 style: TextStyle(
                   fontSize: 18,
@@ -124,13 +139,13 @@ class MoreScreen extends StatelessWidget {
                   color: Colors.black,
                 ),
               ),
-              const Text(
-            'Version: V 1.1',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.black,
-            ),
-          ),
+              Text(
+                'Version: V 1.1',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.black,
+                ),
+              ),
             ],
           ),
         ],
@@ -139,15 +154,17 @@ class MoreScreen extends StatelessWidget {
   }
 }
 
+/// Widget tùy chỉnh cho mỗi mục trong danh sách menu
 class _item extends StatelessWidget {
   final IconData icon;
   final String title;
+  final VoidCallback? onTap;
 
   const _item({
-    Key? key,
     required this.icon,
     required this.title,
-  }) : super(key: key);
+    this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -157,17 +174,15 @@ class _item extends StatelessWidget {
       child: Card(
         color: Colors.white,
         elevation: 1.5,
-        shadowColor: Colors.white,
+        shadowColor: Colors.grey[50],
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
         child: ListTile(
-          onTap: () {
-            // Coding blabla
-          },
+          onTap: onTap, // Gán hàm onTap vào đây
           // Icon bên trái
           leading: CircleAvatar(
-             backgroundColor: Colors.white,
+            backgroundColor: Colors.white,
             child: Icon(icon, color: Colors.blue),
           ),
           // Tiêu đề

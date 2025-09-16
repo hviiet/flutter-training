@@ -1,6 +1,4 @@
-import 'package:air_quality/screens/data_bank_screen.dart';
-import 'package:air_quality/screens/home_screen.dart';
-import 'package:air_quality/screens/more_screen.dart';
+import 'package:air_quality/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:air_quality/providers/navigation_provider.dart';
@@ -15,8 +13,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // ChangeNotifierProvider cung cấp một instance của NavigationProvider
-    // cho tất cả các widget con trong cây widget.
     return ChangeNotifierProvider(
       create: (context) => NavigationProvider(),
       child: MaterialApp(
@@ -27,7 +23,7 @@ class MyApp extends StatelessWidget {
           fontFamily: 'SF-Pro-Display',
         ),
         debugShowCheckedModeBanner: false,
-        home: const MainScreen(),
+        home: const LoginScreen(),
       ),
     );
   }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-// Dữ liệu cứng để hiển thị
 final List<Map<String, dynamic>> forecastData = [
   {'day': 'MON', 'aqi': 1, 'temp': 20, 'icon': Icons.cloud_outlined},
   {'day': 'TUE', 'aqi': 2, 'temp': 21, 'icon': Icons.cloud_queue_outlined},
@@ -8,7 +7,28 @@ final List<Map<String, dynamic>> forecastData = [
   {'day': 'THU', 'aqi': 2, 'temp': 21, 'icon': Icons.wb_sunny_outlined},
   {'day': 'FRI', 'aqi': 1, 'temp': 20, 'icon': Icons.cloud_outlined},
   {'day': 'SAT', 'aqi': 2, 'temp': 20, 'icon': Icons.wb_sunny_outlined},
+  {'day': 'SUN', 'aqi': 3, 'temp': 23, 'icon': Icons.cloudy_snowing},
 ];
+
+final List<Map<String, dynamic>> otherLocationsData = [
+  {
+    'title': 'Edmund Street', 'address': 'Birmingham', 'aqi': 3, 'temp': 25,
+    'rightIcon': Icon(Icons.bookmark, color: Colors.blueAccent, size: 20),
+  },
+  {
+    'title': 'Berkley Street', 'address': 'Birmingham', 'aqi': 4, 'temp': 30,
+    'rightIcon': Icon(Icons.bookmark, color: Colors.blueAccent, size: 20),
+  },
+  {
+    'title': 'Hehe Street', 'address': 'Birmingham', 'aqi': 5, 'temp': 33,
+    'rightIcon': Icon(Icons.bookmark, color: Colors.blueAccent, size: 20),
+  },
+  {
+    'title': 'Haha Street', 'address': 'Birmingham', 'aqi': 4, 'temp': 30,
+    'rightIcon': Icon(Icons.bookmark, color: Colors.blueAccent, size: 20),
+  },
+];
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -20,26 +40,40 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final PageController _mainPageController = PageController();
   int _mainCurrentPage = 0;
+  
   final PageController _locationsPageController = PageController();
   int _locationsCurrentPage = 0;
-   final PageController _locationsPageController1 = PageController();
+
+  late final PageController _otherLocationsPageController;
+  int _otherLocationsCurrentPage = 0;
+
   @override
   void initState() {
     super.initState();
+    _otherLocationsPageController = PageController(viewportFraction: 0.85);
     _mainPageController.addListener(() {
-      setState(() {
-        _mainCurrentPage = _mainPageController.page!.round();
-      });
+      int nextPage = _mainPageController.page!.round();
+      if (_mainCurrentPage != nextPage) {
+        setState(() {
+          _mainCurrentPage = nextPage;
+        });
+      }
     });
+
     _locationsPageController.addListener(() {
-      setState(() {
-        _locationsCurrentPage = _locationsPageController.page!.round();
-      });
+      if (_locationsPageController.page?.round() != _locationsCurrentPage) {
+        setState(() {
+          _locationsCurrentPage = _locationsPageController.page!.round();
+        });
+      }
     });
-    _locationsPageController1.addListener(() {
-      setState(() {
-        _locationsCurrentPage = _locationsPageController1.page!.round();
-      });
+
+    _otherLocationsPageController.addListener(() {
+      if (_otherLocationsPageController.page?.round() != _otherLocationsCurrentPage) {
+        setState(() {
+          _otherLocationsCurrentPage = _otherLocationsPageController.page!.round();
+        });
+      }
     });
   }
 
@@ -47,13 +81,14 @@ class _HomeScreenState extends State<HomeScreen> {
   void dispose() {
     _mainPageController.dispose();
     _locationsPageController.dispose();
+    _otherLocationsPageController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF9F9F9), // Màu nền chính xác hơn
+      backgroundColor: const Color(0xFFF9F9F9),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -61,7 +96,6 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 1. Lời chào
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: Column(
@@ -77,7 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         style: TextStyle(
                           fontSize: 40,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF0A1F44), // Màu chữ đậm hơn
+                          color: Color(0xFF0A1F44),
                         ),
                       ),
                     ],
@@ -85,9 +119,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 24),
 
-                // 2. PageView chính cho thời tiết
                 SizedBox(
-                  height: 310,
+                  height: 350,
                   child: PageView.builder(
                     controller: _mainPageController,
                     itemCount: 3,
@@ -100,29 +133,21 @@ class _HomeScreenState extends State<HomeScreen> {
                 _buildPageIndicator(_mainCurrentPage, 3),
                 const SizedBox(height: 24),
 
-                // 3. PageView cho các địa điểm
                 SizedBox(
                   height: 110,
                   child: PageView(
                     controller: _locationsPageController,
                     children: [
-                      // Trang 1
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20.0),
                         child: Row(
-                          children: [
+                          children: const [
                             Expanded(child: _LocationCard.workHome(
-                              title: 'Work',
-                              address: 'Coventry ST, Birmingham',
-                              aqi: 3,
-                              temp: 25,
+                              title: 'Work', address: 'Coventry ST, Birmingham', aqi: 3, temp: 25,
                             )),
-                            const SizedBox(width: 16),
+                            SizedBox(width: 16),
                             Expanded(child: _LocationCard.workHome(
-                              title: 'Home',
-                              address: 'Coventry ST, Birmingham',
-                              aqi: 2,
-                              temp: 22,
+                              title: 'Home', address: 'Coventry ST, Birmingham', aqi: 2, temp: 22,
                             )),
                           ],
                         ),
@@ -130,82 +155,33 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                 ),
-              
                 const SizedBox(height: 24),
 
-              SizedBox(
+                SizedBox(
                   height: 110,
-                  width: 500,
-                  child: PageView(
-                    controller: _locationsPageController1,
-                    children: [
-                      // Trang 1
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                        child: Row(
-                          children: [
-                            Expanded(child: _LocationCard.otherLocation(
-                              title: 'Edmund Street',
-                              address: 'Birmingham',
-                              aqi: 3,
-                              temp: 25,
-                              rightIcon: Icon( Icons.bookmark_add, color: Colors.blueAccent, size: 20),
-                            )),
-                            const SizedBox(width: 16),
-                          ],
+                  child: PageView.builder(
+                    controller: _otherLocationsPageController,
+                    clipBehavior: Clip.none,
+                    itemCount: otherLocationsData.length,
+                    itemBuilder: (context, index) {
+                      final location = otherLocationsData[index];
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: _LocationCard.otherLocation(
+                          title: location['title'],
+                          address: location['address'],
+                          aqi: location['aqi'],
+                          temp: location['temp'],
+                          rightIcon: location['rightIcon'],
                         ),
-                      ),
-                      // Trang 2
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                        child: Row(
-                          children: [
-                            Expanded(child: _LocationCard.otherLocation(
-                              title: 'Berkley Street',
-                              address: 'Birmingham',
-                              aqi: 4,
-                              temp: 30,
-                              rightIcon: Icon( Icons.bookmark_add, color: Colors.blueAccent, size: 20),
-                            )),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                        child: Row(
-                          children: [
-                            Expanded(child: _LocationCard.otherLocation(
-                              title: 'Hehe Street',
-                              address: 'Birmingham',
-                              aqi: 5,
-                              temp: 33,
-                              rightIcon: Icon( Icons.bookmark_add, color: Colors.blueAccent, size: 20),
-                            )),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                        child: Row(
-                          children: [
-                            Expanded(child: _LocationCard.otherLocation(
-                              title: 'Haha Street',
-                              address: 'Birmingham',
-                              aqi: 4,
-                              temp: 30,
-                              rightIcon: Icon( Icons.bookmark_add, color: Colors.blueAccent, size: 20),
-                            )),
-                          ],
-                        ),
-                      ),
-                    ],
+                      );
+                    },
                   ),
                 ),
                 const SizedBox(height: 16),
-                _buildPageIndicator(_locationsCurrentPage, 4),
+                _buildPageIndicator(_otherLocationsCurrentPage, otherLocationsData.length),
                 const SizedBox(height: 24),
 
-                // 4. Nút "Detail Air Quality"
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: InkWell(
@@ -317,7 +293,7 @@ class _MainWeatherCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Icon(Icons.cloudy_snowing, color: Colors.blueAccent, size: 40),
+                  const Icon(Icons.cloudy_snowing, color: Colors.blueAccent, size: 40),
                   const SizedBox(width: 8),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -339,31 +315,37 @@ class _MainWeatherCard extends StatelessWidget {
                       ),
                       Row(
                         children: [
-                          Text('Rain Shower', style: TextStyle(color: Colors.black, fontSize: 14)),
+                          const Text('Rain Shower', style: TextStyle(color: Colors.black, fontSize: 14)),
                           Text(' Feels like 11°C', style: TextStyle(color: Colors.grey.shade600, fontSize: 14)),
                         ],
                       ),
                     ],
                   ),
                 ]),
-                Row(children: [
-                  const Text('3', style: TextStyle(fontSize: 27, fontWeight: FontWeight.bold)),
-                  const SizedBox(width: 4),
-                  const Text('AQI', style: TextStyle(color: Colors.grey, fontSize: 16)),
-                  const SizedBox(width: 8),
-                  const _AqiIcon(aqi: 2)
+                const Row(children: [
+                  Text('3', style: TextStyle(fontSize: 27, fontWeight: FontWeight.bold)),
+                  SizedBox(width: 4),
+                  Text('AQI', style: TextStyle(color: Colors.grey, fontSize: 16)),
+                  SizedBox(width: 8),
+                  _AqiIcon(aqi: 2)
                 ])
               ],
             ),
           ),
           Text('Forcast', style: TextStyle(color: Colors.grey.shade600, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
+
           Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: forecastData.map((data) => _ForecastDay(
-                day: data['day'], aqi: data['aqi'], temp: data['temp'], icon: data['icon'],
-              )).toList(),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: forecastData.map((data) => Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: _ForecastDay(
+                    day: data['day'], aqi: data['aqi'], temp: data['temp'], icon: data['icon'],
+                  ),
+                )).toList(),
+              ),
             ),
           )
         ],
@@ -379,6 +361,7 @@ class _ForecastDay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: 60,
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
       decoration: BoxDecoration(
         color: const Color(0xFFF9F9F9),
@@ -391,15 +374,11 @@ class _ForecastDay extends StatelessWidget {
           Text(day, style: TextStyle(color: Colors.grey.shade600, fontSize: 13, fontWeight: FontWeight.bold)),
           _AqiIcon(aqi: aqi, size: 24, showArrow: true),
           Text('${aqi}AQI', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-          SizedBox(height: 2),
-          Container(
-            height: 1,
-            width: 30,
-            color: const Color.fromARGB(255, 210, 209, 209),
-          ),
-          SizedBox(height: 2),
+          const SizedBox(height: 2),
+          Container(height: 1, width: 30, color: const Color.fromARGB(255, 233, 232, 232)),
+          const SizedBox(height: 2),
           Icon(icon, color: Colors.blue.shade300, size: 28),
-          Text('${temp}°C', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+          Text('$temp°C', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
         ],
       ),
     );
@@ -410,12 +389,10 @@ class _LocationCard extends StatelessWidget {
   final String title; final String address; final int aqi;
   final int? temp; final Widget? rightIcon;
 
-  // Constructor cho thẻ Work/Home
   const _LocationCard.workHome({
     required this.title, required this.address, required this.aqi, required this.temp,
   }) : rightIcon = null;
 
-  // Constructor cho thẻ địa điểm khác
   const _LocationCard.otherLocation({
     required this.title, required this.address, required this.aqi, this.temp, this.rightIcon,
   });
@@ -425,21 +402,26 @@ class _LocationCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.1), blurRadius: 10)]
-      ),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.1), blurRadius: 10)]),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Flexible(child: Column(
+              Flexible(
+                  child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16), overflow: TextOverflow.ellipsis),
-                  Text(address, style: TextStyle(color: Colors.grey.shade500, fontSize: 12), overflow: TextOverflow.ellipsis),
+                  Text(title,
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      overflow: TextOverflow.ellipsis),
+                  Text(address,
+                      style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
+                      overflow: TextOverflow.ellipsis),
                 ],
               )),
               if (rightIcon != null) rightIcon!,
@@ -457,13 +439,28 @@ class _LocationCard extends StatelessWidget {
                 ],
               ),
               if (temp != null)
-                Row(
-                  children: [
-                    Icon(Icons.cloud_queue_outlined, color: Colors.blue.shade300, size: 20),
-                    const SizedBox(width: 4),
-                    Text('$temp°C', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                  ],
-                ),
+                // SỬA ĐỔI Ở ĐÂY: Dùng điều kiện để quyết định layout
+                // Nếu là thẻ otherLocation (có rightIcon), thì hiển thị Text -> Icon
+                if (rightIcon != null)
+                  Row(
+                    children: [
+                      Text('$temp°C',
+                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                      const SizedBox(width: 4),
+                      Icon(Icons.cloud_queue_outlined,
+                          color: Colors.blue.shade300, size: 20),
+                    ],
+                  )
+                else
+                  Row(
+                    children: [
+                      Icon(Icons.cloud_queue_outlined,
+                          color: Colors.blue.shade300, size: 20),
+                      const SizedBox(width: 4),
+                      Text('$temp°C',
+                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                    ],
+                  ),
             ],
           )
         ],
@@ -478,15 +475,17 @@ class _AqiIcon extends StatelessWidget {
   
   Color _getAqiColor() {
     if (aqi == 4) return Colors.yellow;
-    if (aqi == 3) return const Color.fromARGB(255, 26, 232, 33);
-    if (aqi == 2) return const Color.fromARGB(255, 71, 185, 75);
-    if (aqi == 1) return const Color.fromARGB(255, 129, 194, 131);
+    if (aqi == 3) return const Color.fromARGB(255, 3, 143, 8);
+    if (aqi == 2) return const Color.fromARGB(255, 44, 188, 49);
+    if (aqi == 1) return const Color.fromARGB(255, 100, 245, 107);
     return Colors.red;
   }
   
   IconData _getAqiFaceIcon() {
+    if (aqi <= 2) return Icons.sentiment_very_satisfied;
     if (aqi <= 3) return Icons.sentiment_satisfied;
-    return Icons.sentiment_neutral;
+    if (aqi <= 4) return Icons.sentiment_neutral;
+    return Icons.sentiment_dissatisfied;
   }
 
   @override

@@ -1,4 +1,8 @@
+import 'package:air_quality/screens/main_screen.dart';
 import 'package:flutter/material.dart';
+
+import 'package:air_quality/screens/api_service.dart';
+import 'package:air_quality/screens/storage_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -8,34 +12,85 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  // Biến để quản lý trạng thái của checkbox và ẩn/hiện mật khẩu
+
+  final _emailController = TextEditingController(text: 'john@mail.com');
+  final _passwordController = TextEditingController(text: 'changeme');
+
+  final ApiService _apiService = ApiService();
+  final StorageService _storageService = StorageService();
+
+  bool _isLoading = false;
+  String? _errorMessage;
+
   bool _isPasswordVisible = false;
   bool _rememberMe = false;
 
+  // HÀM XỬ LÝ ĐĂNG NHẬP
+  Future<void> _login() async {
+    FocusScope.of(context).unfocus();
+
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final result = await _apiService.login(
+        _emailController.text.trim(),
+        _passwordController.text.trim(),
+      );
+
+      final accessToken = result['access_token'];
+      final refreshToken = result['refresh_token'];
+
+      await _storageService.saveTokens(
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+      );
+
+       if (mounted) {
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => const MainScreen()),
+          (Route<dynamic> route) => false, // Xóa tất cả các route trước đó
+        );
+      }
+    } catch (e) {
+      setState(() {
+        _errorMessage = e.toString().replaceFirst('Exception: ', '');
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+
   @override
   Widget build(BuildContext context) {
-    // Sử dụng Scaffold để có cấu trúc màn hình cơ bản (app bar, body, v.v.)
     return Scaffold(
-      backgroundColor: Colors.white, // Đặt màu nền là màu trắng
-      // Body được bọc trong SafeArea để UI không bị che bởi tai thỏ hay thanh trạng thái
+      backgroundColor: Colors.white,
       body: SafeArea(
-        // SingleChildScrollView cho phép màn hình cuộn khi bàn phím hiện lên
         child: SingleChildScrollView(
-          // Padding để tạo khoảng cách giữa nội dung và các cạnh màn hình
           padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
           child: Column(
-            // Căn chỉnh các thành phần con về phía bên trái
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // 1. HÌNH ẢNH
-              // Bọc trong Center để hình ảnh nằm giữa theo chiều ngang
               Center(
                 child: Image.asset(
                   'assets/images/login.png',
-                  height: 250, // Chiều cao của ảnh
+                  height: 250,
                 ),
               ),
-              const SizedBox(height: 40), // Khoảng cách
+              const SizedBox(height: 40),
               // 2. TIÊU ĐỀ "Login"
               const Text(
                 'Login',
@@ -45,41 +100,40 @@ class _LoginScreenState extends State<LoginScreen> {
                   color: Colors.black,
                 ),
               ),
-              const SizedBox(height: 8), // Khoảng cách
+              const SizedBox(height: 8),
               // 3. PHỤ ĐỀ
               Text(
                 'Please login to get your local AQI data.',
                 style: TextStyle(
                   fontSize: 16,
-                  color: Colors.grey[700], // Màu xám đậm
+                  color: Colors.grey[700],
                 ),
               ),
-              const SizedBox(height: 30), // Khoảng cách
+              const SizedBox(height: 30),
               // 4. TRƯỜNG NHẬP LIỆU EMAIL
               TextFormField(
+                controller: _emailController,
                 decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.email_outlined), // Icon đầu dòng
-                  hintText: 'user@email.com', // Chữ gợi ý
+                  prefixIcon: const Icon(Icons.email_outlined),
+                  hintText: 'user@email.com',
                   border: OutlineInputBorder(
-                    // Viền bo tròn
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(color: Colors.grey.shade300),
                   ),
                   enabledBorder: OutlineInputBorder(
-                    // Viền khi không được chọn
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(color: Colors.grey.shade300),
                   ),
                 ),
-                keyboardType: TextInputType.emailAddress, // Bàn phím dạng email
+                keyboardType: TextInputType.emailAddress,
               ),
-              const SizedBox(height: 16), // Khoảng cách
+              const SizedBox(height: 16),
               // 5. TRƯỜNG NHẬP LIỆU MẬT KHẨU
               TextFormField(
-                obscureText:
-                    !_isPasswordVisible, // Ẩn/hiện mật khẩu dựa vào biến state
+                controller: _passwordController,
+                obscureText: !_isPasswordVisible,
                 decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.lock_outline),
+                  prefixIcon: const Icon(Icons.lock_outline),
                   hintText: 'Your password',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -89,7 +143,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(color: Colors.grey.shade300),
                   ),
-                  // Nút con mắt để ẩn/hiện mật khẩu
                   suffixIcon: IconButton(
                     icon: Icon(
                       _isPasswordVisible
@@ -97,7 +150,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           : Icons.visibility,
                     ),
                     onPressed: () {
-                      // Cập nhật trạng thái để vẽ lại UI
                       setState(() {
                         _isPasswordVisible = !_isPasswordVisible;
                       });
@@ -105,13 +157,24 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 20), // Khoảng cách
+              
+              if (_errorMessage != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 16.0),
+                  child: Center(
+                    child: Text(
+                      _errorMessage!,
+                      style: const TextStyle(color: Colors.red, fontSize: 14),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+
+              const SizedBox(height: 20),
               // 6. "REMEMBER ME" & "FORGOT PASSWORD"
               Row(
-                // Căn chỉnh 2 cụm con ra 2 phía
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Cụm Checkbox và Text
                   Row(
                     children: [
                       Checkbox(
@@ -125,35 +188,32 @@ class _LoginScreenState extends State<LoginScreen> {
                       const Text('Remember me'),
                     ],
                   ),
-                  // Nút "Quên mật khẩu"
                   TextButton(
                     onPressed: () {},
                     child: const Text('Forgot password?'),
                   ),
                 ],
               ),
-              const SizedBox(height: 20), // Khoảng cách
+              const SizedBox(height: 20),
               // 7. NÚT ĐĂNG NHẬP
               SizedBox(
-                width: double.infinity, // Nút chiếm hết chiều ngang
-                child: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueAccent, // Màu nền của nút
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 16,
-                    ), // Độ cao của nút
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(
-                        12,
-                      ), // Bo tròn góc nút
-                    ),
-                  ),
-                  child: const Text(
-                    'Login',
-                    style: TextStyle(fontSize: 18, color: Colors.white),
-                  ),
-                ),
+                width: double.infinity,
+                child: _isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : ElevatedButton(
+                        onPressed: _login,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blueAccent,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Text(
+                          'Login',
+                          style: TextStyle(fontSize: 18, color: Colors.white),
+                        ),
+                      ),
               ),
             ],
           ),
