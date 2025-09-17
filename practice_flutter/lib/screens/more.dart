@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:practice_flutter/component/bottom_navigation_bar.dart';
-import 'package:provider/provider.dart';
-import 'package:practice_flutter/provider/tab_index_provider.dart';
 
 class MoreScreen extends StatelessWidget {
   const MoreScreen({super.key});
@@ -11,12 +8,7 @@ class MoreScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFF7F8FA),
       appBar: AppBar(backgroundColor: Colors.transparent, elevation: 0),
-      bottomNavigationBar: Consumer<TabIndexProvider>(
-        builder: (context, tabProvider, _) => BottomTabBar(
-          currentIndex: tabProvider.tabIndex,
-          onTap: (index) => tabProvider.setTab(index, context),
-        ),
-      ),
+      // ❌ KHÔNG đặt bottomNavigationBar ở đây
       body: Stack(
         children: [
           // Background image
@@ -35,7 +27,7 @@ class MoreScreen extends StatelessWidget {
               children: [
                 const SizedBox(height: 48),
                 // Avatar
-                CircleAvatar(
+                const CircleAvatar(
                   radius: 40,
                   backgroundImage: AssetImage('assets/avatar.png'),
                 ),
@@ -49,22 +41,27 @@ class MoreScreen extends StatelessWidget {
                   style: TextStyle(color: Colors.grey),
                 ),
                 const SizedBox(height: 24),
+
                 // Menu
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Column(
-                    children: [
-                      _menuItem(Icons.person, 'Profile'),
-                      _menuItem(Icons.location_on, 'Saved Location'),
-                      _menuItem(Icons.help_outline, 'FAQ'),
-                      _menuItem(Icons.settings, 'Settings'),
-                      _menuItem(Icons.info_outline, 'About Us'),
-                      _menuItem(Icons.phone, 'Contact Us'),
-                      _menuItem(Icons.logout, 'Logout'),
+                    children: const [
+                      _MenuItem(icon: Icons.person, title: 'Profile'),
+                      _MenuItem(
+                        icon: Icons.location_on,
+                        title: 'Saved Location',
+                      ),
+                      _MenuItem(icon: Icons.help_outline, title: 'FAQ'),
+                      _MenuItem(icon: Icons.settings, title: 'Settings'),
+                      _MenuItem(icon: Icons.info_outline, title: 'About Us'),
+                      _MenuItem(icon: Icons.phone, title: 'Contact Us'),
+                      _MenuItem(icon: Icons.logout, title: 'Logout'),
                     ],
                   ),
                 ),
                 const SizedBox(height: 32),
+
                 // Logo + version
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -97,8 +94,16 @@ class MoreScreen extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _menuItem(IconData icon, String title) {
+class _MenuItem extends StatelessWidget {
+  final IconData icon;
+  final String title;
+
+  const _MenuItem({required this.icon, required this.title});
+
+  @override
+  Widget build(BuildContext context) {
     return Card(
       elevation: 0,
       margin: const EdgeInsets.symmetric(vertical: 6),

@@ -18,9 +18,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   ];
 
   final List<String> titles = [
-    'Breath Better',
+    'Breathe Better',
     'Track Pollution',
-    'Controll Exposure',
+    'Control Exposure',
   ];
 
   final List<String> subtitles = [

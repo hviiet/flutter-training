@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:practice_flutter/component/bottom_navigation_bar.dart';
-import 'package:practice_flutter/provider/tab_index_provider.dart';
+import 'package:practice_flutter/provider/bottom_navigation_bar.dart';
 
 class DataBankScreen extends StatefulWidget {
   const DataBankScreen({super.key});
@@ -16,48 +15,35 @@ class _DataBankScreenState extends State<DataBankScreen> {
   DateTime? selectedDate;
   bool requestSent = false;
 
-  
   void _pickDate(BuildContext context) {
-  showDatePicker(
-    context: context,
-    initialDate: DateTime.now(),             
-    firstDate: DateTime(2024, 1, 1),        
-    lastDate: DateTime(2026, 12, 31),       
-  ).then((value) {
-    if (value != null) {
-      setState(() {
-        selectedDate = value;
-      });
-    }
-  });
-}
+    showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2024, 1, 1),
+      lastDate: DateTime(2026, 12, 31),
+    ).then((value) {
+      if (value != null) {
+        setState(() => selectedDate = value);
+      }
+    });
+  }
 
   void _makeRequest() {
-    setState(() {
-      requestSent = true;
-    });
+    setState(() => requestSent = true);
     Future.delayed(const Duration(seconds: 2), () {
-      if (mounted) {
-        setState(() {
-          requestSent = false;
-        });
-      }
+      if (!mounted) return;
+      setState(() => requestSent = false);
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      
       appBar: AppBar(
         title: const Text('Data Bank'),
         backgroundColor: Colors.white,
         elevation: 0,
-      ),
-      bottomNavigationBar: Consumer<TabIndexProvider>(
-        builder: (context, tabProvider, _) => BottomTabBar(
-          currentIndex: tabProvider.tabIndex,
-          onTap: (index) => tabProvider.setTab(index, context),
-        ),
       ),
       body: Stack(
         children: [
@@ -149,9 +135,9 @@ class _DataBankScreenState extends State<DataBankScreen> {
                       color: Colors.green,
                       borderRadius: BorderRadius.circular(24),
                     ),
-                    child: Row(
+                    child: const Row(
                       mainAxisSize: MainAxisSize.min,
-                      children: const [
+                      children: [
                         Icon(Icons.check_circle, color: Colors.white),
                         SizedBox(width: 8),
                         Text(

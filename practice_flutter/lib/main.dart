@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'provider/tab_index_provider.dart';
+import 'provider/auth_provider.dart';
 import 'screens/onboarding.dart';
 import 'screens/login.dart';
 import 'screens/home.dart';
 import 'screens/databank.dart';
 import 'screens/more.dart';
+import 'provider/bottom_navigation_bar.dart';
 
 void main() => runApp(
   MultiProvider(
-    providers: [ChangeNotifierProvider(create: (_) => TabIndexProvider())],
+    providers: [
+      ChangeNotifierProvider(create: (_) => AuthProvider()..restoreSession()),
+    ],
     child: const MyApp(),
   ),
 );
@@ -30,9 +33,9 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const OnboardingScreen(),
         '/login': (context) => const LoginScreen(),
-        '/home': (context) => const HomeScreen(),
-        '/databank': (context) => const DataBankScreen(),
-        '/more': (context) => const MoreScreen(),
+        '/app': (context) => BottomTabScaffold(
+          pages: const [HomeScreen(), DataBankScreen(), MoreScreen()],
+        ),
       },
     );
   }

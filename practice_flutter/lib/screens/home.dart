@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:practice_flutter/component/current_state_card.dart';
-import 'package:practice_flutter/component/bottom_navigation_bar.dart';
 import 'package:practice_flutter/component/locations.dart';
 import 'package:practice_flutter/component/add_places.dart';
-import 'package:practice_flutter/provider/tab_index_provider.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -158,12 +155,7 @@ class HomeScreen extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: Consumer<TabIndexProvider>(
-        builder: (context, tabProvider, _) => BottomTabBar(
-          currentIndex: tabProvider.tabIndex,
-          onTap: (index) => tabProvider.setTab(index, context),
-        ),
-      ),
+      // ❌ KHÔNG đặt bottomNavigationBar ở đây
     );
   }
 }
