@@ -4,6 +4,7 @@ import 'package:flutter_training/components/location_slider.dart';
 import 'package:flutter_training/components/place_add.dart';
 import 'package:flutter_training/models/place_info.dart';
 import 'package:flutter_training/models/location.dart';
+import 'package:flutter_training/models/forecast_day.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});

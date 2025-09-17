@@ -63,8 +63,12 @@ class _LoginState extends State<Login> {
             backgroundColor: Colors.green,
           ),
         );
-        // TODO: Navigate to main screen
-        // Navigator.pushReplacementNamed(context, '/main');
+        
+        Navigator.pushNamedAndRemoveUntil(
+          context, 
+          '/main', 
+          (route) => false,
+        );
       } else {
         setState(() {
           _error = "Sai email hoặc mật khẩu";
@@ -94,7 +98,6 @@ class _LoginState extends State<Login> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Hình login
                 SizedBox(
                   height: 260,
                   width: 260,
@@ -102,7 +105,6 @@ class _LoginState extends State<Login> {
                 ),
                 const SizedBox(height: 16),
 
-                // Tiêu đề
                 SizedBox(
                   width: 327,
                   child: Column(
@@ -129,7 +131,6 @@ class _LoginState extends State<Login> {
                 ),
                 const SizedBox(height: 16),
 
-                // Input
                 SizedBox(
                   width: 327,
                   child: Column(
@@ -181,7 +182,6 @@ class _LoginState extends State<Login> {
                 ),
                 const SizedBox(height: 12),
 
-                // Nút Login
                 SizedBox(
                   width: 327,
                   height: 56,

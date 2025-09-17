@@ -91,7 +91,7 @@ class CurrentState extends StatelessWidget {
             const SizedBox(height: 16),
             // Forecast
             const Text(
-              'Forcast',
+              'Forecast',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),

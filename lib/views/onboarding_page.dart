@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_training/views/login_page.dart';
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
@@ -18,9 +17,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
     'assets/images/onboarding/OBright.png',
   ];
   final List<String> title = [
-    'Breath Better',
+    'Breathe Better',
     'Track Pollution',
-    'Controll Exposure',
+    'Control Exposure',
   ];
   final List<String> content = [
     'Understand the air around you, wherever you go with the largest coverage of trusted data.',
@@ -42,9 +41,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (_) => const Login()),
-              );
+              Navigator.pushNamed(context, '/login');
             },
             style: TextButton.styleFrom(
               foregroundColor: const Color.fromRGBO(28, 28, 30, 0.72),
@@ -183,11 +180,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                           ),
                         ),
                         onPressed: () {
-                          Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(
-                              builder: (_) => const Login(),
-                            ),
-                          );
+                          Navigator.pushNamed(context, '/login');
                         },
                         child: const Text('Get Started'),
                       ),

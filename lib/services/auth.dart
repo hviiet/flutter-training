@@ -49,7 +49,6 @@ class Auth {
       }
       return false;
     } catch (e) {
-      // Handle any network or parsing errors
       return false;
     }
   }
@@ -81,6 +80,85 @@ class Auth {
       return prefs.getString("access_token");
     } catch (_) {
       return null;
+    }
+  }
+
+  Future<String?> getRefreshToken() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getString("refresh_token");
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<bool> refreshToken() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final refreshTokenValue = prefs.getString("refresh_token");
+      
+      if (refreshTokenValue == null) return false;
+
+      final url = Uri.parse("https://api.escuelajs.co/api/v1/auth/refresh-token");
+      final res = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"refreshToken": refreshTokenValue}),
+      );
+
+      if (res.statusCode == 200 || res.statusCode == 201) {
+        final data = jsonDecode(res.body);
+        final newAccessToken = data["access_token"];
+        final newRefreshToken = data["refresh_token"];
+
+        if (newAccessToken != null) {
+          await prefs.setString("access_token", newAccessToken);
+          if (newRefreshToken != null) {
+            await prefs.setString("refresh_token", newRefreshToken);
+          }
+          return true;
+        }
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> isTokenExpired() async {
+    try {
+      final accessToken = await getAccessToken();
+      if (accessToken == null) return true;
+
+      final parts = accessToken.split('.');
+      if (parts.length != 3) return true;
+
+      final payload = parts[1];
+      final normalized = base64Url.normalize(payload);
+      final resp = utf8.decode(base64Url.decode(normalized));
+      final payloadMap = jsonDecode(resp);
+      
+      if (payloadMap['exp'] != null) {
+        final exp = payloadMap['exp'] as int;
+        final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+        return exp < now;
+      }
+      
+      return false;
+    } catch (e) {
+      return true;
+    }
+  }
+
+  Future<bool> ensureValidToken() async {
+    try {
+      final isExpired = await isTokenExpired();
+      if (isExpired) {
+        return await refreshToken();
+      }
+      return true;
+    } catch (e) {
+      return false;
     }
   }
 }
