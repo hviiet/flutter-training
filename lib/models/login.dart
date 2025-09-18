@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'home.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -10,6 +11,43 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   bool rememberMe = false;
   bool hidePassword = true;
+
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  void _login() {
+    String email = _emailController.text.trim();
+    
+    if (email.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Vui lòng nhập email.")),
+      );
+      return;
+    }
+
+    
+    if (email.toLowerCase().endsWith('@gmail.com')) {
+     
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage(
+          name: email.split('@')[0],
+          email: email,
+        )),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Vui lòng nhập địa chỉ Gmail (ví dụ: abc@gmail.com).")),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +61,7 @@ class _LoginState extends State<Login> {
               // Image
               Center(
                 child: Image.asset(
-                  "assets/images/login.png", // đổi sang ảnh bạn có
+                  "assets/images/login.png", // thay ảnh nếu có
                   height: 200,
                 ),
               ),
@@ -40,7 +78,7 @@ class _LoginState extends State<Login> {
               ),
               const SizedBox(height: 8),
               const Text(
-                "Please login to get your local AQI data.",
+                "Please login with a Gmail address (password not required for demo).",
                 style: TextStyle(color: Colors.grey),
               ),
 
@@ -48,6 +86,8 @@ class _LoginState extends State<Login> {
 
               // Email input
               TextField(
+                controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
                   labelText: "Email",
                   border: OutlineInputBorder(
@@ -59,11 +99,12 @@ class _LoginState extends State<Login> {
 
               const SizedBox(height: 20),
 
-              // Password input
+              // Password input (still present, but not validated)
               TextField(
+                controller: _passwordController,
                 obscureText: hidePassword,
                 decoration: InputDecoration(
-                  labelText: "Password",
+                  labelText: "Password (ignored for demo)",
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -103,6 +144,9 @@ class _LoginState extends State<Login> {
                   TextButton(
                     onPressed: () {
                       // TODO: Forgot password
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Forgot password? (demo)")),
+                      );
                     },
                     child: const Text("Forgot password?"),
                   )
@@ -119,15 +163,13 @@ class _LoginState extends State<Login> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
                   ),
-                  onPressed: () {
-                  
-                  },
+                  onPressed: _login,
                   child: const Text(
                     "Login",
-                    style: TextStyle(fontSize: 18),
+                    style: TextStyle(fontSize: 18, color: Colors.white),
                   ),
                 ),
-              )
+              ),
             ],
           ),
         ),
