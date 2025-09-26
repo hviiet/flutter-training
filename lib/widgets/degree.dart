@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Degree extends StatelessWidget {
-  final int degree;
+  final double degree;
   final double? degreeSize;
   final double? textSize;
 

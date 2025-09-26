@@ -1,10 +1,24 @@
 import 'package:flutter/material.dart';
+
 import 'package:flutter_application_1/widgets/aqi.dart';
 import 'package:flutter_application_1/widgets/degree.dart';
 
 class LiveLocation extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final double temp;
+  final int aqi;
+  final String text;
+  final double feelLike;
+
   const LiveLocation({
     super.key,
+    required this.title,
+    required this.subtitle,
+    required this.temp,
+    required this.aqi,
+    required this.text,
+    required this.feelLike,
   });
 
   @override
@@ -24,7 +38,7 @@ class LiveLocation extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Church Street Square",
+                  Text(title,
                     style: TextStyle(
                       fontFamily: "SF Pro Display",
                       fontSize: 14,
@@ -32,7 +46,7 @@ class LiveLocation extends StatelessWidget {
                       letterSpacing: 0
                     ),
                   ),
-                  Text("Birmingham",
+                  Text(subtitle,
                     style: TextStyle(
                       fontFamily: "SF Pro Display",
                       fontSize: 10,
@@ -63,7 +77,7 @@ class LiveLocation extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Degree(degree: 19, degreeSize: 16, textSize: 12),
+                          Degree(degree: temp, degreeSize: 16, textSize: 12),
                           Text("↑",style: TextStyle(color: Color(0xFF56BF30)),)
                         ],
                       ),
@@ -71,7 +85,7 @@ class LiveLocation extends StatelessWidget {
                         TextSpan(
                           children: [
                             TextSpan(
-                              text: "Rain Shower",
+                              text: text,
                               style: TextStyle(
                                 fontWeight: FontWeight.w400,
                                 fontFamily: "Roboto",
@@ -83,7 +97,7 @@ class LiveLocation extends StatelessWidget {
                               child: Transform.translate(
                                 offset: const Offset(3, 2),
                                 child: Text(
-                                  "Feels like 11°C",
+                                  "Feels like $feelLike°C",
                                   style: TextStyle(
                                     fontWeight: FontWeight.w300,
                                     fontFamily: "SF Pro Display",
@@ -102,7 +116,7 @@ class LiveLocation extends StatelessWidget {
               ),
               Row(
                 children: [
-                  Aqi(aqiNumber: 3, aqiSize: 24, textSize: 10, textOffset: -10,),
+                  Aqi(aqiNumber: aqi, aqiSize: 24, textSize: 10, textOffset: -10,),
                   const SizedBox(width: 8),
                   const Icon(Icons.emoji_emotions,color: Color(0xFF30B502),),
                 ],

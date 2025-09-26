@@ -1,10 +1,10 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class ChartItem extends StatelessWidget {
   final int number;
   final int maxNumber;
-  final String label;
+  final DateTime label;
 
   const ChartItem({
     super.key,
@@ -15,10 +15,15 @@ class ChartItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String formatLabel(DateTime date){
+      DateFormat formatter = DateFormat('EEE');
+      return formatter.format(date).toUpperCase();
+    }
+
     return Padding(
       padding: const EdgeInsets.only(top: 24),
       child: SizedBox(
-        height: maxNumber*10 + 20,
+        height: 121,
         child: Column(
           spacing: 4,
           mainAxisAlignment: MainAxisAlignment.end,
@@ -28,11 +33,11 @@ class ChartItem extends StatelessWidget {
               children: [
                 Container(
                   width: 32,
-                  height: number * 10,
+                  height: number * 16,
                   decoration: BoxDecoration(
-                    color: Color((number>3*maxNumber/4)?0x3DFF6C3E:
-                                (number>2*maxNumber/4)?0x3DFEB156:
-                                (number>1*maxNumber/4)?0x3DFFDE30:0x3D02DB5C),
+                    color: Color((number>5)?0x3DFF6C3E:
+                                (number>4)?0x3DFEB156:
+                                (number>2)?0x3DFFDE30:0x3D02DB5C),
                   ),
                 ),
                 Positioned(
@@ -42,16 +47,16 @@ class ChartItem extends StatelessWidget {
                     height: 32,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Color((number>3*maxNumber/4)?0xFFFF6C3E:
-                                (number>2*maxNumber/4)?0xFFFEB156:
-                                (number>1*maxNumber/4)?0xFFFFDE30:0xFF02DB5C),
+                      color: Color((number>5)?0xFFFF6C3E:
+                                (number>4)?0xFFFEB156:
+                                (number>2)?0xFFFFDE30:0xFF02DB5C),
                     ),
                     child: Center(child: Text(number.toString(),style: TextStyle(color: Colors.white),)),
                   ),
                 ),
               ],
             ),
-            Text(label,
+            Text(formatLabel(label),
               style: TextStyle(
                 fontFamily: "SF Pro Display",
                 fontSize: 10,

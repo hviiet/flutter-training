@@ -1,25 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/models/forecast_day.dart';
 import 'package:flutter_application_1/pages/location_detail/weather_forecast_item.dart';
 
 class WeatherForecast extends StatefulWidget {
-  const WeatherForecast({super.key});
+  final List<ForecastDay> weatherData;
+  const WeatherForecast({super.key, required this.weatherData});
 
   @override
   State<WeatherForecast> createState() => _WeatherForecastState();
 }
 
 class _WeatherForecastState extends State<WeatherForecast> {
-
-  final List<Map<String,dynamic>> weatherData = [
-    {"date": "THU 11 NOV 21", "isToday": true, "isTomorrow": false, "maxTemp": 25, "minTemp": 20, "icon": Icons.cloud},
-    {"date": "FRI 12 NOV 21", "isToday": false, "isTomorrow": true, "maxTemp": 25, "minTemp": 20, "icon": Icons.cloud},
-    {"date": "SAT 13 NOV 21", "isToday": false, "isTomorrow": false, "maxTemp": 25, "minTemp": 20, "icon": Icons.cloud},
-    {"date": "SAT 14 NOV 21", "isToday": false, "isTomorrow": false, "maxTemp": 25, "minTemp": 20, "icon": Icons.cloud},
-    {"date": "SAT 15 NOV 21", "isToday": false, "isTomorrow": false, "maxTemp": 25, "minTemp": 20, "icon": Icons.cloud},
-    {"date": "SAT 16 NOV 21", "isToday": false, "isTomorrow": false, "maxTemp": 25, "minTemp": 20, "icon": Icons.cloud},
-    {"date": "SAT 17 NOV 21", "isToday": false, "isTomorrow": false, "maxTemp": 25, "minTemp": 20, "icon": Icons.cloud},
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -44,7 +35,7 @@ class _WeatherForecastState extends State<WeatherForecast> {
                     letterSpacing: 0
                   ),
                 ),
-                Text("Next 7 days",
+                Text("Next ${widget.weatherData.length} days",
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
@@ -57,14 +48,14 @@ class _WeatherForecastState extends State<WeatherForecast> {
             ),
             Column(
               spacing: 4,
-              children: weatherData.map((e) {
+              children: widget.weatherData.map((e) {
                 return WeatherForecastItem(
-                  date: e["date"], 
-                  isToday: e["isToday"], 
-                  isTomorrow: e["isTomorrow"], 
-                  maxTemp: e["maxTemp"], 
-                  minTemp: e["minTemp"], 
-                  icon: e["icon"]
+                  date: e.date, 
+                  isToday: e.date == widget.weatherData[0].date, 
+                  isTomorrow: e.date == widget.weatherData[1].date, 
+                  maxTemp: e.maxTemp, 
+                  minTemp: e.minTemp, 
+                  icon: e.icon
                 );
               },).toList(),
             )

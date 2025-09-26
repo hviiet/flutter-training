@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/event/fetch_weather.dart';
 import 'package:flutter_application_1/pages/aqi_scale/aqi_scale_item.dart';
 import 'package:flutter_application_1/pages/home/live_location.dart';
 import 'package:flutter_application_1/pages/location_detail/location_detail.dart';
+import 'package:flutter_application_1/providers_and_state/weather_state.dart';
+import 'package:flutter_application_1/services/weather_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AqiScale extends StatelessWidget {
   const AqiScale({super.key});
@@ -36,34 +40,60 @@ class AqiScale extends StatelessWidget {
           color: Color(0xFF111827)
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Column(
-            spacing: 8,
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(8)),
-                  color: Colors.white
-                ),
-                child: LiveLocation()
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(8)),
-                  color: Colors.white
-                ),
+      body: BlocBuilder<WeatherBloc,WeatherState>(
+        builder: (context, state) {
+          if(state is WeatherInitial){
+            context.read<WeatherBloc>().add(FetchWeatherAndAirQuality());
+            return Center(child: CircularProgressIndicator(),);
+          }
+          else if(state is WeatherLoading){
+            return Center(child: CircularProgressIndicator(),);
+          }
+          else if(state is WeatherLoaded){
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: SingleChildScrollView(
                 child: Column(
-                  spacing: 16,
-                  children: data.map((e) {
-                    return AqiScaleItem(icon: e["icon"], title: e["title"], subTitle: e["subTitle"], text: e["text"]);
-                  },).toList()
+                  spacing: 8,
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                        color: Colors.white
+                      ),
+                      child: LiveLocation(
+                        aqi: state.airQuality.index,
+                        feelLike: state.weather.feelsLike,
+                        title: state.weather.name,
+                        subtitle: state.weather.country,
+                        temp: state.weather.temp,
+                        text: state.weather.description,
+                      ),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                        color: Colors.white
+                      ),
+                      child: Column(
+                        spacing: 16,
+                        children: data.map((e) {
+                          return AqiScaleItem(icon: e["icon"], title: e["title"], subTitle: e["subTitle"], text: e["text"]);
+                        },).toList()
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
-        ),
+            );
+          }
+          else if(state is WeatherError){
+            return Center(child: Text(state.message),);
+          }
+          else{
+            return Container();
+          }
+        },
       ),
     );
   }

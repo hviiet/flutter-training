@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/pages/login/login.dart';
 import 'package:flutter_application_1/pages/more/more_item.dart';
-import 'package:flutter_application_1/providers/user_provider.dart';
-import 'package:flutter_application_1/services/auth/auth.dart';
+import 'package:flutter_application_1/providers_and_state/user_provider.dart';
+import 'package:flutter_application_1/services/auth.dart';
 import 'package:provider/provider.dart';
 
 class More extends StatefulWidget {

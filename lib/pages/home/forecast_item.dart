@@ -6,8 +6,8 @@ class ForecastItem extends StatelessWidget {
   final String day;
   final IconData aqiIcon;
   final int aqi;
-  final IconData weatherIcon;
-  final int degree;
+  final String weatherIcon;
+  final double degree;
 
   const ForecastItem({
     super.key,
@@ -20,9 +20,22 @@ class ForecastItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Card(
-        elevation: 2,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+      child: Container(
+        width: 48,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            color: Colors.white,
+            boxShadow: [
+            BoxShadow(
+                color: Color(0x0A000000),
+                offset: Offset(0, 2),                
+                blurRadius: 8,                       
+                spreadRadius: 0,   
+              )
+          ]
+          ),
         child: Column(
           spacing: 8,
           children: [
@@ -38,7 +51,10 @@ class ForecastItem extends StatelessWidget {
               ),
             ),
             Icon(aqiIcon,
-              color: Color(0xFF02FA83),
+              color: (aqi<3)?Color(0xFF02FA83)
+                    :(aqi<4)?Color(0xFFFFDE30)
+                    :(aqi<6)?Color(0xFFFFB133)
+                    :Color(0xFFFF6C3E),
             ),
             Aqi(aqiNumber: aqi, aqiSize: 14, textSize: 8, textOffset: -3,),
             Container(
@@ -48,7 +64,7 @@ class ForecastItem extends StatelessWidget {
                 border: Border.all(width: 1, color: Color(0x14000000))
               ),
             ),
-            Icon(weatherIcon, color: Color(0xFF5D5FEF),),
+            Image.network("http:$weatherIcon", color: Color(0xFF5D5FEF), width: 20, height: 20,fit: BoxFit.contain,),
             Degree(degree: degree, degreeSize: 14, textSize: 8)
           ],
         ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/pages/login/navigate.dart';
-import 'package:flutter_application_1/providers/user_provider.dart';
-import 'package:flutter_application_1/services/auth/auth.dart';
+import 'package:flutter_application_1/providers_and_state/user_provider.dart';
+import 'package:flutter_application_1/services/auth.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -36,7 +36,7 @@ class _LoginState extends State<Login> {
   void onPressedLogin() async{
     if(formKey.currentState!.validate()){
       final bool isLogin = await Auth().login(emailController.text, passwordController.text);
-      if (!mounted) return;
+
       if(isLogin){
         final prefs = await SharedPreferences.getInstance();
         if(rememberMe){
@@ -48,19 +48,23 @@ class _LoginState extends State<Login> {
         }
         
         final profile = await Auth().getProfile();
-        if(profile != null){
+        if(profile != null && mounted){
           final userProvider = Provider.of<UserProvider>(context, listen: false);
           userProvider.setUser(name: profile["name"], mail: profile["email"], avatarUrl: profile["avatar"]);
         }
 
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => const Navigate())
-        );
+        if(mounted){
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (_) => const Navigate())
+          );
+        }
       }
       else{
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Sai email hoặc mật khẩu"))
-        );
+        if(mounted){
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Sai email hoặc mật khẩu"))
+          );
+        }
       }
     }
   }

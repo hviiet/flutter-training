@@ -1,11 +1,10 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 
 import 'package:flutter_application_1/widgets/degree.dart';
 
 class WeatherItem extends StatelessWidget {
-  final IconData icon;
-  final int degree;
+  final String icon;
+  final double degree;
   final String time;
 
   const WeatherItem({
@@ -39,7 +38,7 @@ class WeatherItem extends StatelessWidget {
           child: Column(
             spacing: 4,
             children: [
-              Icon(icon,color: Color(0xFF5D5FEF),),
+              Image.network("https:$icon", color:Color(0xFF5D5FEF) , height: 20,width: 20,fit: BoxFit.contain,),
               Degree(degree: degree, degreeSize: 16, textSize: 8),
               Text(time,
                 style: TextStyle(

@@ -8,8 +8,8 @@ class Location extends StatelessWidget {
   final IconData cardIcon;
   final int aqi;
   final IconData aqiIcon;
-  final int degree;
-  final IconData weatherIcon; 
+  final double degree;
+  final String weatherIcon; 
 
   const Location({
     super.key,
@@ -60,7 +60,6 @@ class Location extends StatelessWidget {
                           ),),
                       ],
                     ),
-                    Transform.translate(offset: Offset(0, -5),)
                   ],
                 ),
                 Row(
@@ -69,14 +68,17 @@ class Location extends StatelessWidget {
                     Row(
                       spacing: 4,
                       children: [
-                        Icon(aqiIcon,color: Color(0xFF02FA83),size: 20,),
+                        Icon(aqiIcon,color: (aqi<3)?Color(0xFF02FA83)
+                                          :(aqi<4)?Color(0xFFFFDE30)
+                                          :(aqi<6)?Color(0xFFFFB133)
+                                          :Color(0xFFFF6C3E),size: 20,),
                         Aqi(aqiNumber: aqi, aqiSize: 16, textSize: 8, textOffset: -6)
                       ],
                     ),
                     Row(
                       spacing: 4,
                       children: [
-                        Icon(weatherIcon, color: Color(0xFF5D5FEF),size: 20,),
+                        Image.network("http:$weatherIcon", color: Color(0xFF5D5FEF), width: 20, height: 20,fit: BoxFit.contain,),
                         Degree(degree: degree, degreeSize: 16, textSize: 8)
                       ],
                     )

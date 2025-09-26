@@ -4,10 +4,12 @@ import 'package:syncfusion_flutter_gauges/gauges.dart';
 class AirQualityItem extends StatelessWidget {
   final String name;
   final double value;
+  final double maxValue;
   const AirQualityItem({
     super.key,
     required this.name,
     required this.value,
+    required this.maxValue,
   });
 
   @override
@@ -22,13 +24,13 @@ class AirQualityItem extends StatelessWidget {
             children: [
               SfLinearGauge(
                 minimum: 0,
-                maximum: 10,
+                maximum: maxValue,
                 showTicks: false,
                 showLabels: false,
                 orientation: LinearGaugeOrientation.vertical,
                 barPointers: [
                   LinearBarPointer(
-                    value: 5,
+                    value: value,
                     color: Color(0xFF02DB5C),
                     edgeStyle: LinearEdgeStyle.bothCurve,
                     thickness: 8,
@@ -51,7 +53,7 @@ class AirQualityItem extends StatelessWidget {
                       letterSpacing: 0
                     ),
                   ),
-                  Text("$value",
+                  Text((value!=0.0)?"$value":"NA",
                     style: TextStyle(
                       fontFamily: "SF Pro Display",
                       fontSize: 20,

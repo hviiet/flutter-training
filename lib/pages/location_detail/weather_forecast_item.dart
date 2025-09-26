@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/widgets/degree.dart';
+import 'package:intl/intl.dart';
 
 class WeatherForecastItem extends StatelessWidget {
   final String date;
   final bool isToday;
   final bool isTomorrow;
-  final int maxTemp;
-  final int minTemp;
-  final IconData icon;
+  final double maxTemp;
+  final double minTemp;
+  final String icon;
 
   const WeatherForecastItem({
     super.key,
@@ -21,6 +22,11 @@ class WeatherForecastItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String formatDate(String dateString) {
+      DateTime dt = DateTime.parse(dateString);
+      DateFormat formatter = DateFormat('EEE dd MMM yy');
+      return formatter.format(dt).toUpperCase(); 
+    }
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -42,7 +48,7 @@ class WeatherForecastItem extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(date,
+                Text(formatDate(date),
                   style: TextStyle(
                     fontFamily: "SF Pro Display",
                     fontSize: 12,
@@ -76,7 +82,7 @@ class WeatherForecastItem extends StatelessWidget {
                 Degree(degree: minTemp, degreeSize: 16, textSize: 8),
                 Icon(Icons.arrow_downward,color: Color(0xFFFF3A2C),size: 6,),
                 SizedBox(width: 8,),
-                Icon(icon,color: Color(0xFF5D5FEF),)
+                Image.network("https:$icon", color:Color(0xFF5D5FEF) , height: 20,width: 20,fit: BoxFit.contain,),
               ],
             )
           ],

@@ -1,30 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/models/air_quality_day.dart';
 import 'package:flutter_application_1/pages/location_detail/chart_background.dart';
 import 'package:flutter_application_1/pages/location_detail/chart_item.dart';
 
 class AqForecast extends StatefulWidget {
-  const AqForecast({super.key});
+  final List<AirQualityDay> chartData;
+  const AqForecast({super.key,required this.chartData});
 
   @override
   State<AqForecast> createState() => _AqForecastState();
 }
 
 class _AqForecastState extends State<AqForecast> {
-  final chartData = [
-    {'label': 'SAT', 'value': 2},
-    {'label': 'SUN', 'value': 5},
-    {'label': 'MON', 'value': 7},
-    {'label': 'TUE', 'value': 4},
-    {'label': 'WED', 'value': 3},
-    {'label': 'THU', 'value': 8},
-    {'label': 'FRI', 'value': 2},
-  ];
-
-
   @override
   Widget build(BuildContext context) {
-    final maxValue = chartData
-      .map((e) => e['value'] as int)
+    final maxValue = widget.chartData
+      .map((e) => e.aqi)
       .reduce((a, b) => a > b ? a : b);
     
     return Container(
@@ -32,7 +23,7 @@ class _AqForecastState extends State<AqForecast> {
         borderRadius: BorderRadius.all(Radius.circular(8)),
         color: Colors.white
       ),
-      height: 230,
+      height: 250,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -91,10 +82,10 @@ class _AqForecastState extends State<AqForecast> {
                 children: [
                   ChartBackground(),
                   Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: chartData.map((e) {
-                    return ChartItem(number: e["value"] as int,label: e["label"] as String, maxNumber: maxValue);
-                  },).toList(),
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: widget.chartData.take(7).map((e) {
+                      return ChartItem(number: e.aqi,label: e.date, maxNumber: maxValue);
+                    },).toList(),
                 ),
                 ]
               ),

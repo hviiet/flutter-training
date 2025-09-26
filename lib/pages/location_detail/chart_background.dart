@@ -6,7 +6,7 @@ class ChartBackground extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      spacing: 26.5,
+      spacing: 32,
       children: [
         Container(
           width: double.infinity,

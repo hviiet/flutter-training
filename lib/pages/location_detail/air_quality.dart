@@ -1,14 +1,36 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+import 'package:syncfusion_flutter_gauges/gauges.dart';
+
 import 'package:flutter_application_1/pages/aqi_scale/aqi_scale.dart';
 import 'package:flutter_application_1/pages/location_detail/air_quality_item.dart';
 import 'package:flutter_application_1/widgets/aqi.dart';
-import 'package:syncfusion_flutter_gauges/gauges.dart';
+import 'dart:math';
 
 class AirQuality extends StatelessWidget {
-  const AirQuality({super.key});
+  final int aqi;
+  final double o3;
+  final double pm10;  
+  final double co;
+  final double no2;
+  final double so2;
+  final double pm2_5;
+
+  const AirQuality({
+    super.key,
+    required this.aqi,
+    required this.o3,
+    required this.pm10,
+    required this.co,
+    required this.no2,
+    required this.so2,
+    required this.pm2_5,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final double maxValue = max(max(max(max(max(o3, pm10), co), no2), so2), pm2_5);
+
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(8)),
@@ -50,7 +72,7 @@ class AirQuality extends StatelessWidget {
                     axes: [
                       RadialAxis(
                         minimum: 0,
-                        maximum: 500,
+                        maximum: 7,
                         showLabels: false,
                         showTicks: false,
                         startAngle: 180,
@@ -64,7 +86,7 @@ class AirQuality extends StatelessWidget {
                         pointers: [
                           RangePointer(
                             color: Color(0xFF02DB5C),
-                            value: 200,
+                            value: double.parse(aqi.toString()),
                             cornerStyle: CornerStyle.bothCurve,
                             width: 9,
                           ),
@@ -76,7 +98,7 @@ class AirQuality extends StatelessWidget {
                             widget: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Aqi(aqiNumber: 3, aqiSize: 24, textSize: 10, textOffset: -9),
+                                Aqi(aqiNumber: aqi, aqiSize: 24, textSize: 10, textOffset: -9),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
@@ -108,17 +130,17 @@ class AirQuality extends StatelessWidget {
             Row(
               spacing: 8,
               children: [
-                AirQualityItem(name: "O3 (ug/m3)",value: 52,),
-                AirQualityItem(name: "PM10 (ug/m3)",value: 25,),
-                AirQualityItem(name: "NO (ug/m3)",value: 22,),
+                AirQualityItem(name: "O3 (ug/m3)",value: o3,maxValue: maxValue,),
+                AirQualityItem(name: "PM10 (ug/m3)",value: pm10,maxValue: maxValue,),
+                AirQualityItem(name: "CO (ug/m3)",value: co,maxValue: maxValue,),
               ],
             ),
             Row(
               spacing: 8,
               children: [
-                AirQualityItem(name: "NO2 (ug/m3)",value: 12,),
-                AirQualityItem(name: "PM1 (ug/m3)",value: 16,),
-                AirQualityItem(name: "PM2.5 (ug/m3)",value: 2.2,),
+                AirQualityItem(name: "NO2 (ug/m3)",value: no2,maxValue: maxValue,),
+                AirQualityItem(name: "SO2 (ug/m3)",value: so2,maxValue: maxValue,),
+                AirQualityItem(name: "PM2.5 (ug/m3)",value: pm2_5,maxValue: maxValue,),
               ],
             )
           ],
