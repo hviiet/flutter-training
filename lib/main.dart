@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:weather_app/page/aqiscale/aqiscale.dart';
+import 'package:weather_app/page/locationdetails/locationdetails.dart';
 import 'package:weather_app/page/onboarding.dart';
 import 'providers/tab_provider.dart';
 import 'providers/ui_overlay_provider.dart';
@@ -23,7 +25,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Onboarding(),
+      home: LocationDetails(),
     );
   }
 }
