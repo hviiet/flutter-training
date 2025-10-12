@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/ui_overlay_provider.dart';
+import 'package:weather_app/page/locationdetails/locationdetails.dart';
+import '../../providers/ui_overlay_provider.dart';
 
 class DataBank extends StatelessWidget {
   const DataBank({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final locationCtrl = TextEditingController();
     return Scaffold(
       backgroundColor: const Color.fromRGBO(250, 250, 250, 1),
       body: Stack(
@@ -85,6 +87,7 @@ class DataBank extends StatelessWidget {
                         SizedBox(
                           height: 56,
                           child: TextField(
+                            controller: locationCtrl,
                             decoration: InputDecoration(
                               hintText: 'Your location',
                               border: OutlineInputBorder(
@@ -133,7 +136,18 @@ class DataBank extends StatelessWidget {
 
                         GestureDetector(
                           onTap: () {
+                            final city = locationCtrl.text.trim().isEmpty
+                                ? 'Da Nang'
+                                : locationCtrl.text.trim();
+
                             context.read<UiOverlayProvider>().showBlur();
+
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    LocationDetails(city: city), // +++
+                              ),
+                            );
                           },
                           child: Container(
                             height: 56,

@@ -8,7 +8,8 @@ import 'package:weather_app/page/locationdetails/weathercard.dart';
 import 'package:weather_app/page/locationdetails/weatherforcastcard.dart';
 
 class LocationDetails extends StatefulWidget {
-  const LocationDetails({super.key});
+  final String city;
+  const LocationDetails({super.key, required this.city});
 
   @override
   State<LocationDetails> createState() => _LocationDetailsState();
@@ -47,7 +48,7 @@ class _LocationDetailsState extends State<LocationDetails> {
     super.initState();
     _weatherDataFuture = () async {
       final weather = await _api.fetchForecastWeather(
-        city: 'Da Nang',
+        city: widget.city,
         days: '7',
         aqi: 'yes',
         alerts: 'no',

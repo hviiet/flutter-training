@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import '../../providers/tab_provider.dart';
 import '../providers/ui_overlay_provider.dart';
 import 'home.dart';
-import 'databank.dart';
+import 'databank/databank.dart';
 import 'more.dart';
 
 class RootPage extends StatelessWidget {
