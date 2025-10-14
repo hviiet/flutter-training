@@ -147,10 +147,15 @@ class _LocationDetailsState extends State<LocationDetails> {
   }
 
   List<int> _level10_7Days(Map<String, dynamic> weather) {
-    final List days = (weather['forecast']['forecastday'] as List);
+    final List days =
+        (weather['forecast']?['forecastday'] as List?) ?? const [];
     return days.map<int>((d) {
-      final day = d as Map<String, dynamic>;
-      final aq = (day['day']?['air_quality'] ?? {}) as Map<String, dynamic>;
+      final day = Map<String, dynamic>.from(d as Map);
+      final dayInfo = Map<String, dynamic>.from((day['day'] ?? {}) as Map);
+      final aq = Map<String, dynamic>.from(
+        (dayInfo['air_quality'] ?? {}) as Map,
+      );
+
       final gb = (aq['gb-defra-index'] as num?)?.toInt();
       final us = (aq['us-epa-index'] as num?)?.toInt();
       if (gb != null) return gb.clamp(1, 10);
@@ -217,10 +222,16 @@ class _LocationDetailsState extends State<LocationDetails> {
           final weather = rec.weather;
           final street = rec.street;
 
-          final location = weather['location'] as Map<String, dynamic>;
-          final current = weather['current'] as Map<String, dynamic>;
-          final forecastDays = (weather['forecast']['forecastday'] as List)
-              .cast<Map<String, dynamic>>();
+          final location = Map<String, dynamic>.from(
+            weather['location'] as Map,
+          );
+          final current = Map<String, dynamic>.from(weather['current'] as Map);
+          final forecastDays =
+              (weather['forecast']?['forecastday'] as List? ?? [])
+                  .map<Map<String, dynamic>>(
+                    (e) => Map<String, dynamic>.from(e as Map),
+                  )
+                  .toList();
 
           final cityName = location['name'] as String? ?? '';
           final region = location['region'] as String? ?? '';
