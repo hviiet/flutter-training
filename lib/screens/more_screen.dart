@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:air_quality/screens/storage_service.dart';
+import 'package:air_quality/services/storage_service.dart';
 import 'package:air_quality/screens/login_screen.dart';
 
 class MoreScreen extends StatefulWidget {
