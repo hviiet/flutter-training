@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:practice_flutter/component/current_state_card.dart';
 import 'package:practice_flutter/component/locations.dart';
 import 'package:practice_flutter/component/add_places.dart';
+import 'package:practice_flutter/screens/location_details.dart';
+import 'package:practice_flutter/provider/bottom_navigation_bar.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Mock data
+    // Mock data cho ví dụ
     final currentStateForecast = [
       ForecastDay(
         day: 'MON',
@@ -123,6 +125,8 @@ class HomeScreen extends StatelessWidget {
               style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
+
+            // Thẻ trạng thái hiện tại
             CurrentStateCard(
               location: 'Church Street Square',
               city: 'Birmingham',
@@ -135,27 +139,44 @@ class HomeScreen extends StatelessWidget {
               forecast: currentStateForecast,
             ),
             const SizedBox(height: 16),
+
+            // Các địa điểm đã thêm
             AddPlacesCard(places: addPlaces),
             const SizedBox(height: 16),
+
+            // Thanh cuộn địa điểm
             LocationsSlider(locations: locations),
             const SizedBox(height: 16),
-            Card(
-              elevation: 1,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: ListTile(
-                leading: const Icon(Icons.info_outline, color: Colors.blue),
-                title: const Text('Detail Air Quality'),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () {},
+
+            // Nút điều hướng sang màn AQI
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: ElevatedButton.icon(
+                icon: const Icon(Icons.info_outline, color: Colors.white),
+                label: const Text(
+                  'Detail Air Quality',
+                  style: TextStyle(fontSize: 16, color: Colors.white),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.of(context, rootNavigator: true).push(
+                    MaterialPageRoute(
+                      builder: (context) => const AqiScaleScreen(),
+                    ),
+                  );
+                },
               ),
             ),
             const SizedBox(height: 24),
           ],
         ),
       ),
-      // ❌ KHÔNG đặt bottomNavigationBar ở đây
     );
   }
 }

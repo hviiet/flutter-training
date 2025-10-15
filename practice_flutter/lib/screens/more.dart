@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:practice_flutter/screens/location_details.dart';
 
 class MoreScreen extends StatelessWidget {
   const MoreScreen({super.key});
@@ -7,8 +8,12 @@ class MoreScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF7F8FA),
-      appBar: AppBar(backgroundColor: Colors.transparent, elevation: 0),
-      // ❌ KHÔNG đặt bottomNavigationBar ở đây
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: const Text('More', style: TextStyle(color: Colors.black)),
+        centerTitle: true,
+      ),
       body: Stack(
         children: [
           // Background image
@@ -46,17 +51,31 @@ class MoreScreen extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Column(
-                    children: const [
-                      _MenuItem(icon: Icons.person, title: 'Profile'),
+                    children: [
+                      const _MenuItem(icon: Icons.person, title: 'Profile'),
+
+                      // ✅ Nút chuyển sang AQI Scale
                       _MenuItem(
                         icon: Icons.location_on,
                         title: 'Saved Location',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const AqiScaleScreen(),
+                            ),
+                          );
+                        },
                       ),
-                      _MenuItem(icon: Icons.help_outline, title: 'FAQ'),
-                      _MenuItem(icon: Icons.settings, title: 'Settings'),
-                      _MenuItem(icon: Icons.info_outline, title: 'About Us'),
-                      _MenuItem(icon: Icons.phone, title: 'Contact Us'),
-                      _MenuItem(icon: Icons.logout, title: 'Logout'),
+
+                      const _MenuItem(icon: Icons.help_outline, title: 'FAQ'),
+                      const _MenuItem(icon: Icons.settings, title: 'Settings'),
+                      const _MenuItem(
+                        icon: Icons.info_outline,
+                        title: 'About Us',
+                      ),
+                      const _MenuItem(icon: Icons.phone, title: 'Contact Us'),
+                      const _MenuItem(icon: Icons.logout, title: 'Logout'),
                     ],
                   ),
                 ),
@@ -96,11 +115,13 @@ class MoreScreen extends StatelessWidget {
   }
 }
 
+
 class _MenuItem extends StatelessWidget {
   final IconData icon;
   final String title;
+  final VoidCallback? onTap; // thêm onTap để truyền hành động
 
-  const _MenuItem({required this.icon, required this.title});
+  const _MenuItem({required this.icon, required this.title, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -112,7 +133,7 @@ class _MenuItem extends StatelessWidget {
         leading: Icon(icon, color: Colors.blue),
         title: Text(title),
         trailing: const Icon(Icons.chevron_right),
-        onTap: () {},
+        onTap: onTap, // kích hoạt hành động nếu có
       ),
     );
   }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../provider/auth_provider.dart';
-import 'home.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -32,11 +31,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (mounted) {
       if (auth.profile != null) {
-        // Đăng nhập thành công => chuyển sang Home
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const HomeScreen()),
-        );
+        // Đăng nhập thành công => chuyển sang route /app
+        Navigator.pushReplacementNamed(context, '/app');
       } else if (auth.error != null) {
         // Hiển thị lỗi
         ScaffoldMessenger.of(
@@ -61,7 +57,6 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 Image.asset('assets/login.png', height: 200, fit: BoxFit.cover),
                 const SizedBox(height: 20),
-
                 const Text(
                   'Login',
                   style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
@@ -72,7 +67,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   style: TextStyle(color: Colors.black54),
                 ),
                 const SizedBox(height: 20),
-
                 // Email
                 TextFormField(
                   controller: _email,
@@ -85,7 +79,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       v == null || v.isEmpty ? 'Please enter email' : null,
                 ),
                 const SizedBox(height: 14),
-
                 // Password
                 TextFormField(
                   controller: _password,
@@ -105,7 +98,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       v == null || v.isEmpty ? 'Please enter password' : null,
                 ),
                 const SizedBox(height: 10),
-
                 // Remember me + forgot password
                 Row(
                   children: [
@@ -126,7 +118,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   ],
                 ),
                 const SizedBox(height: 10),
-
                 // Login button
                 SizedBox(
                   width: double.infinity,
