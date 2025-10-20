@@ -16,7 +16,7 @@ class _AqForecastState extends State<AqForecast> {
   Widget build(BuildContext context) {
     final maxValue = widget.chartData
       .map((e) => e.aqi)
-      .reduce((a, b) => a > b ? a : b);
+      .reduce((a, b) => a! > b! ? a : b);
     
     return Container(
       decoration: BoxDecoration(
@@ -84,7 +84,7 @@ class _AqForecastState extends State<AqForecast> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: widget.chartData.take(7).map((e) {
-                      return ChartItem(number: e.aqi,label: e.date, maxNumber: maxValue);
+                      return ChartItem(number: e.aqi!,label: e.date!, maxNumber: maxValue!);
                     },).toList(),
                 ),
                 ]

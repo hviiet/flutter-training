@@ -96,21 +96,21 @@ class LocationDetail extends StatelessWidget {
                       ),
                     ),
                     AirQuality(
-                      aqi: state.airQuality.index, 
-                      o3: state.airQuality.o3, 
-                      pm10: state.airQuality.pm10, 
-                      co: state.airQuality.co, 
-                      no2: state.airQuality.no2, 
-                      so2: state.airQuality.so2, 
-                      pm2_5: state.airQuality.pm2_5
+                      aqi: state.airQuality.index ?? 0, 
+                      o3: state.airQuality.o3?? 0, 
+                      pm10: state.airQuality.pm10?? 0, 
+                      co: state.airQuality.co?? 0, 
+                      no2: state.airQuality.no2?? 0, 
+                      so2: state.airQuality.so2?? 0, 
+                      pm2_5: state.airQuality.pm25?? 0
                     ),
                     Weather(
-                      weatherData: state.weather.forecastHours,
-                      description: state.weather.description,
-                      feelsLike: state.weather.feelsLike,
+                      weatherData: state.weather.forecastHours!,
+                      description: state.weather.description!,
+                      feelsLike: state.weather.feelsLike!,
                     ),
                     AqForecast(chartData: state.airQuality.aqiDays!,),
-                    WeatherForecast(weatherData: state.weather.forecast,),
+                    WeatherForecast(weatherData: state.weather.forecast!,),
                     Recommendations(),
                     SizedBox(height: 34,)
                   ],

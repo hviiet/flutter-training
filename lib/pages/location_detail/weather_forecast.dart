@@ -50,12 +50,12 @@ class _WeatherForecastState extends State<WeatherForecast> {
               spacing: 4,
               children: widget.weatherData.map((e) {
                 return WeatherForecastItem(
-                  date: e.date, 
+                  date: e.date!, 
                   isToday: e.date == widget.weatherData[0].date, 
                   isTomorrow: e.date == widget.weatherData[1].date, 
-                  maxTemp: e.maxTemp, 
-                  minTemp: e.minTemp, 
-                  icon: e.icon
+                  maxTemp: e.maxTemp!, 
+                  minTemp: e.minTemp!, 
+                  icon: e.icon!
                 );
               },).toList(),
             )

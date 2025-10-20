@@ -38,11 +38,11 @@ class _HomeState extends State<Home> {
           final days = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
 
           final List<ForecastItemData> data = List.generate(
-            (state.weather.forecast.length>state.airQuality.aqiDays!.length) ?  state.airQuality.aqiDays!.length:state.weather.forecast.length ,
+            (state.weather.forecast!.length>state.airQuality.aqiDays!.length) ?  state.airQuality.aqiDays!.length:state.weather.forecast!.length ,
             (index) => ForecastItemData(
-              aqi: state.airQuality.aqiDays![index].aqi, 
+              aqi: state.airQuality.aqiDays![index].aqi!, 
               day: days[index%7],
-              forecast: state.weather.forecast[index],
+              forecast: state.weather.forecast![index],
             ),
           );
 
@@ -95,12 +95,12 @@ class _HomeState extends State<Home> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             LiveLocation(
-                              aqi: state.airQuality.index,
-                              feelLike: state.weather.feelsLike,
-                              title: state.weather.name,
-                              subtitle: state.weather.country,
-                              temp: state.weather.temp,
-                              text: state.weather.description,
+                              aqi: state.airQuality.index!,
+                              feelLike: state.weather.feelsLike ?? 0.0,
+                              title: state.weather.name!,
+                              subtitle: state.weather.country!,
+                              temp: state.weather.temp!,
+                              text: state.weather.description!,
                             ),
                             Padding(
                               padding: const EdgeInsets.all(8.0),
@@ -129,8 +129,8 @@ class _HomeState extends State<Home> {
                                                 day: item.day, 
                                                 aqiIcon: Icons.emoji_emotions, 
                                                 aqi: item.aqi,
-                                                weatherIcon: item.forecast.icon, 
-                                                degree: item.forecast.avgTemp,),
+                                                weatherIcon: item.forecast.icon!, 
+                                                degree: item.forecast.avgTemp!,),
                                             ).toList()
                                           );
                                         },
@@ -163,8 +163,8 @@ class _HomeState extends State<Home> {
                       Row(
                         spacing: 16,
                         children: [
-                          AddPlace(title: "Work",location: state.weather.name, aqi: state.airQuality.index, aqiIcon: Icons.emoji_emotions, degree: state.weather.temp, weatherIcon: state.weather.icon),
-                          AddPlace(title: "Home",location: state.weather.name, aqi: state.airQuality.index, aqiIcon: Icons.emoji_emotions, degree: state.weather.temp, weatherIcon: state.weather.icon),
+                          AddPlace(title: "Work",location: state.weather.name!, aqi: state.airQuality.index!, aqiIcon: Icons.emoji_emotions, degree: state.weather.temp!, weatherIcon: state.weather.icon!),
+                          AddPlace(title: "Home",location: state.weather.name!, aqi: state.airQuality.index!, aqiIcon: Icons.emoji_emotions, degree: state.weather.temp!, weatherIcon: state.weather.icon!),
                         ],
                       ),
                       SizedBox(
@@ -173,10 +173,10 @@ class _HomeState extends State<Home> {
                           padEnds: false,
                           controller: controller2,
                           children: [
-                            Location(street: state.weather.name, location: state.weather.country, cardIcon: Icons.save, aqi: state.airQuality.index, aqiIcon: Icons.emoji_emotions, degree: state.weather.temp, weatherIcon: state.weather.icon),
-                            Location(street: state.weather.name, location: state.weather.country, cardIcon: Icons.save, aqi: state.airQuality.index, aqiIcon: Icons.emoji_emotions, degree: state.weather.temp, weatherIcon: state.weather.icon),
-                            Location(street: state.weather.name, location: state.weather.country, cardIcon: Icons.save, aqi: state.airQuality.index, aqiIcon: Icons.emoji_emotions, degree: state.weather.temp, weatherIcon: state.weather.icon),
-                            Location(street: state.weather.name, location: state.weather.country, cardIcon: Icons.save, aqi: state.airQuality.index, aqiIcon: Icons.emoji_emotions, degree: state.weather.temp, weatherIcon: state.weather.icon),
+                            Location(street: state.weather.name!, location: state.weather.country!, cardIcon: Icons.save, aqi: state.airQuality.index!, aqiIcon: Icons.emoji_emotions, degree: state.weather.temp!, weatherIcon: state.weather.icon!),
+                            Location(street: state.weather.name!, location: state.weather.country!, cardIcon: Icons.save, aqi: state.airQuality.index!, aqiIcon: Icons.emoji_emotions, degree: state.weather.temp!, weatherIcon: state.weather.icon!),
+                            Location(street: state.weather.name!, location: state.weather.country!, cardIcon: Icons.save, aqi: state.airQuality.index!, aqiIcon: Icons.emoji_emotions, degree: state.weather.temp!, weatherIcon: state.weather.icon!),
+                            Location(street: state.weather.name!, location: state.weather.country!, cardIcon: Icons.save, aqi: state.airQuality.index!, aqiIcon: Icons.emoji_emotions, degree: state.weather.temp!, weatherIcon: state.weather.icon!),
                           ]
                         ),
                       ),

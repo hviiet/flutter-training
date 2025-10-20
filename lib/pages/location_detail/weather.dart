@@ -94,7 +94,7 @@ class _WeatherState extends State<Weather> {
                 Row(
                   spacing: 4,
                   children: [
-                    Degree(degree: widget.weatherData[0].temp, degreeSize: 24, textSize: 10),
+                    Degree(degree: widget.weatherData[0].temp!, degreeSize: 24, textSize: 10),
                     Icon(Icons.cloud,color: Color(0xFF5D5FEF),)
                   ],
                 )
@@ -105,7 +105,7 @@ class _WeatherState extends State<Weather> {
                 padEnds: false,
                 controller: pg,
                 children: widget.weatherData.map((e) {
-                  return WeatherItem(icon: e.icon,degree: e.temp,time: (e.time.hour <10)?"0${e.time.hour}:00":"${e.time.hour}:00",);
+                  return WeatherItem(icon: e.icon!,degree: e.temp!,time: (e.time!.hour<10)?"0${e.time!.hour}:00":"${e.time!.hour}:00",);
                 },).toList()
               ),
             ),

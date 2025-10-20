@@ -62,12 +62,12 @@ class AqiScale extends StatelessWidget {
                         color: Colors.white
                       ),
                       child: LiveLocation(
-                        aqi: state.airQuality.index,
-                        feelLike: state.weather.feelsLike,
-                        title: state.weather.name,
-                        subtitle: state.weather.country,
-                        temp: state.weather.temp,
-                        text: state.weather.description,
+                        aqi: state.airQuality.index!,
+                        feelLike: state.weather.feelsLike!,
+                        title: state.weather.name!,
+                        subtitle: state.weather.country!,
+                        temp: state.weather.temp!,
+                        text: state.weather.description!,
                       ),
                     ),
                     Container(
