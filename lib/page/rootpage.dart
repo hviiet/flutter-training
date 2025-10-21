@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/tab_provider.dart';
 import '../providers/ui_overlay_provider.dart';
-import 'home.dart';
+import 'home/home.dart';
 import 'databank/databank.dart';
 import 'more.dart';
 
