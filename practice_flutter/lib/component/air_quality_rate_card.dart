@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:practice_flutter/models/air_quality_model.dart';
+import 'package:practice_flutter/screens/aqi_scale.dart';
+import 'package:practice_flutter/business_logic/weather_aqi/weather_aqi_bloc.dart';
 
 class AirQualityRateCard extends StatelessWidget {
   final AirQualityModel? aqiData;
+  final String city;
 
-  const AirQualityRateCard({Key? key, this.aqiData}) : super(key: key);
+  const AirQualityRateCard({Key? key, this.aqiData, required this.city})
+    : super(key: key);
 
-  // --- Màu AQI (thang 1–10) ---
+  // --- Màu AQI ---
   Color _getAqiColor(int aqi) {
     if (aqi <= 3) return const Color(0xFF4CAF50); // Xanh lá - Low
     if (aqi <= 6) return const Color(0xFFFFC107); // Vàng cam - Moderate
@@ -15,7 +20,7 @@ class AirQualityRateCard extends StatelessWidget {
     return const Color(0xFF9C27B0); // Tím - Very High
   }
 
-  // --- Trạng thái AQI (1–10) ---
+  // --- Trạng thái AQI ---
   String _getAqiStatus(int aqi) {
     if (aqi <= 3) return 'Low';
     if (aqi <= 6) return 'Moderate';
@@ -23,7 +28,7 @@ class AirQualityRateCard extends StatelessWidget {
     return 'Very High';
   }
 
-  // --- Icon tương ứng mức AQI ---
+  // --- Icon theo mức AQI ---
   IconData _getAqiIcon(int aqi) {
     if (aqi <= 3) return Icons.sentiment_satisfied_alt; // Good
     if (aqi <= 6) return Icons.sentiment_neutral; // Moderate
@@ -50,7 +55,7 @@ class AirQualityRateCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // --- Tiêu đề ---
+            // --- Tiêu đề + nút Info ---
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -58,9 +63,24 @@ class AirQualityRateCard extends StatelessWidget {
                   'Air Quality',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
                 ),
-                Icon(Icons.info_outline, color: Colors.grey[600]),
+                IconButton(
+                  icon: const Icon(Icons.info_outline, color: Colors.blue),
+                  tooltip: 'View AQI Scale',
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => BlocProvider.value(
+                          value: BlocProvider.of<WeatherAqiBloc>(context),
+                          child: AqiScaleScreen(city: city),
+                        ),
+                      ),
+                    );
+                  },
+                ),
               ],
             ),
+
             const SizedBox(height: 20),
 
             // --- Vòng tròn AQI ---
@@ -68,7 +88,7 @@ class AirQualityRateCard extends StatelessWidget {
               child: CircularPercentIndicator(
                 radius: 65.0,
                 lineWidth: 10.0,
-                percent: (aqi / 10).clamp(0.0, 1.0), // <-- đổi từ /500 sang /10
+                percent: (aqi / 10).clamp(0.0, 1.0),
                 circularStrokeCap: CircularStrokeCap.round,
                 backgroundColor: Colors.grey.shade200,
                 linearGradient: LinearGradient(
@@ -106,6 +126,7 @@ class AirQualityRateCard extends StatelessWidget {
                 ),
               ),
             ),
+
             const SizedBox(height: 20),
 
             // --- Các thông số ---

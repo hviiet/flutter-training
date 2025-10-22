@@ -3,8 +3,6 @@ import 'weather_aqi_event.dart';
 import 'weather_aqi_state.dart';
 import '../../services/weather_service.dart';
 import '../../services/air_service.dart';
-import '../../models/weather_model.dart';
-import '../../models/air_quality_model.dart';
 
 class WeatherAqiBloc extends Bloc<WeatherAqiEvent, WeatherAqiState> {
   final WeatherService weatherService;

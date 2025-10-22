@@ -5,17 +5,15 @@ import 'package:practice_flutter/business_logic/weather_aqi/weather_aqi_event.da
 import 'package:practice_flutter/business_logic/weather_aqi/weather_aqi_state.dart';
 import 'package:practice_flutter/component/air_quality_rate_card.dart';
 import 'package:practice_flutter/component/aqi_forecast_card.dart';
-import 'package:practice_flutter/services/weather_service.dart';
-import 'package:practice_flutter/services/air_service.dart';
 
-class AqiScaleScreen extends StatefulWidget {
-  final String city; 
-  const AqiScaleScreen({Key? key, this.city = "Birmingham"}) : super(key: key);
+class LocationDetails extends StatefulWidget {
+  final String city;
+  const LocationDetails({Key? key, this.city = "Birmingham"}) : super(key: key);
   @override
-  State<AqiScaleScreen> createState() => _AqiScaleScreenState();
+  State<LocationDetails> createState() => _LocationDetailsState();
 }
 
-class _AqiScaleScreenState extends State<AqiScaleScreen> {
+class _LocationDetailsState extends State<LocationDetails> {
   @override
   void initState() {
     super.initState();
@@ -27,7 +25,7 @@ class _AqiScaleScreenState extends State<AqiScaleScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF7F8FA),
       appBar: AppBar(
-        title: Text("Chỉ số AQI hôm nay (${widget.city})"),
+        title: Text("Current Location (${widget.city})"),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
@@ -71,18 +69,18 @@ class _AqiScaleScreenState extends State<AqiScaleScreen> {
                   ),
 
                   // 🌫 Chỉ số AQI hiện tại
-                  AirQualityRateCard(aqiData: air),
+                  AirQualityRateCard(aqiData: air, city: widget.city),
 
                   const SizedBox(height: 10),
 
-                  // 📊 Biểu đồ AQI dự báo thật 
+                  // 📊 Biểu đồ AQI dự báo thật
                   if (air.forecast != null && air.forecast!.isNotEmpty)
                     AqiForecastCard(forecastData: air.forecast!)
                   else
                     const Padding(
                       padding: EdgeInsets.all(16),
                       child: Text(
-                        'Không có dữ liệu dự báo AQI',
+                        'No AQI forecast data available.',
                         style: TextStyle(color: Colors.grey),
                       ),
                     ),
@@ -92,12 +90,12 @@ class _AqiScaleScreenState extends State<AqiScaleScreen> {
           } else if (state is WeatherAqiError) {
             return Center(
               child: Text(
-                'Lỗi: ${state.message}',
+                'Error: ${state.message}',
                 style: const TextStyle(color: Colors.red),
               ),
             );
           }
-          return const Center(child: Text('Chưa có dữ liệu.'));
+          return const Center(child: Text('No data.'));
         },
       ),
     );

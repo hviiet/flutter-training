@@ -3,7 +3,6 @@ import 'package:practice_flutter/component/current_state_card.dart';
 import 'package:practice_flutter/component/locations.dart';
 import 'package:practice_flutter/component/add_places.dart';
 import 'package:practice_flutter/screens/location_details.dart';
-import 'package:practice_flutter/provider/bottom_navigation_bar.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -167,7 +166,7 @@ class HomeScreen extends StatelessWidget {
                 onPressed: () {
                   Navigator.of(context, rootNavigator: true).push(
                     MaterialPageRoute(
-                      builder: (context) => const AqiScaleScreen(),
+                      builder: (context) => const LocationDetails(),
                     ),
                   );
                 },

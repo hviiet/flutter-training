@@ -62,7 +62,7 @@ class MoreScreen extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => const AqiScaleScreen(),
+                              builder: (_) => const LocationDetails(),
                             ),
                           );
                         },
@@ -114,7 +114,6 @@ class MoreScreen extends StatelessWidget {
     );
   }
 }
-
 
 class _MenuItem extends StatelessWidget {
   final IconData icon;

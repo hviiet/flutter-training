@@ -50,7 +50,7 @@ class MyApp extends StatelessWidget {
         '/app': (context) => BottomTabScaffold(
           pages: const [HomeScreen(), DataBankScreen(), MoreScreen()],
         ),
-        '/aqi_scale': (context) => const AqiScaleScreen(),
+        '/aqi_scale': (context) => const LocationDetails(),
       },
     );
   }

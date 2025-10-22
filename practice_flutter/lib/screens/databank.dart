@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:practice_flutter/provider/bottom_navigation_bar.dart';
 
 class DataBankScreen extends StatefulWidget {
   const DataBankScreen({super.key});
