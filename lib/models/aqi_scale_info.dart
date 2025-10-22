@@ -1,0 +1,55 @@
+import 'package:flutter/material.dart';
+
+class AQIScaleInfo {
+  final String level;
+  final String range;
+  final String description;
+  final Color color;
+  final IconData icon;
+
+  const AQIScaleInfo({
+    required this.level,
+    required this.range,
+    required this.description,
+    required this.color,
+    required this.icon,
+  });
+
+  static List<AQIScaleInfo> get allLevels => [
+    const AQIScaleInfo(
+      level: 'Low',
+      range: 'Air Quality Index: 1 to 3',
+      description: 'Air quality can change quickly due to weather and human activity. Air quality forecasts are often published based on whether current conditions are more or less favorable to pollution from human activity can dramatically...',
+      color: Color(0xFF4CAF50),
+      icon: Icons.sentiment_satisfied,
+    ),
+    const AQIScaleInfo(
+      level: 'Moderate',
+      range: 'Air Quality Index: 4 to 6',
+      description: 'Air quality can change quickly due to weather and human activity. Air quality forecasts are often published based on whether current conditions are more or less favorable to pollution from human activity can dramatically...',
+      color: Color(0xFFFFA726),
+      icon: Icons.sentiment_neutral,
+    ),
+    const AQIScaleInfo(
+      level: 'High',
+      range: 'Air Quality Index: 7 to 8',
+      description: 'Air quality can change quickly due to weather and human activity. Air quality forecasts are often published based on whether current conditions are more or less favorable to pollution from human activity can dramatically...',
+      color: Color(0xFFFF5252),
+      icon: Icons.sentiment_dissatisfied,
+    ),
+    const AQIScaleInfo(
+      level: 'Very High',
+      range: 'Air Quality Index: 9 to 10',
+      description: 'Air quality can change quickly due to weather and human activity. Air quality forecasts are often published based on whether current conditions are more or less favorable to pollution from human activity can dramatically...',
+      color: Color(0xFF9C27B0),
+      icon: Icons.sentiment_very_dissatisfied,
+    ),
+  ];
+
+  static AQIScaleInfo fromAQI(int aqi) {
+    if (aqi <= 50) return allLevels[0];
+    if (aqi <= 100) return allLevels[1];
+    if (aqi <= 150) return allLevels[2];
+    return allLevels[3];
+  }
+}

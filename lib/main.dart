@@ -6,6 +6,9 @@ import 'package:flutter_training/services/auth.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_training/provider/tab_provider.dart';
 import 'package:flutter_training/provider/blur_provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_training/bloc/location_details/location_details_bloc.dart';
+import 'package:flutter_training/services/weather.dart';
 
 void main() {
   runApp(const MyApp());
@@ -20,15 +23,43 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => TabProvider()),
         ChangeNotifierProvider(create: (_) => BlurProvider()),
+        BlocProvider(
+          create: (_) => LocationDetailsBloc(
+            weatherService: WeatherApiService(),
+          ),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         initialRoute: '/',
-        routes: {
-          '/': (context) => const AuthChecker(),
-          '/onboarding': (context) => const OnboardingPage(),
-          '/login': (context) => const Login(),
-          '/main': (context) => const MainScreen(),
+        onGenerateRoute: (settings) {
+          // Handle route with arguments
+          if (settings.name == '/') {
+            final city = settings.arguments as String?;
+            return MaterialPageRoute(
+              builder: (context) => const AuthChecker(),
+              settings: RouteSettings(arguments: city),
+            );
+          } else if (settings.name == '/main') {
+            final city = settings.arguments as String?;
+            return MaterialPageRoute(
+              builder: (context) => MainScreen(selectedCity: city),
+            );
+          }
+          
+          // Default routes
+          return MaterialPageRoute(
+            builder: (context) {
+              switch (settings.name) {
+                case '/onboarding':
+                  return const OnboardingPage();
+                case '/login':
+                  return const Login();
+                default:
+                  return const AuthChecker();
+              }
+            },
+          );
         },
       ),
     );

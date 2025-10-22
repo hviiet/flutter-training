@@ -1,61 +1,60 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_training/bloc/location_details/location_details_bloc.dart';
+import 'package:flutter_training/bloc/location_details/location_details_event.dart';
 import 'package:flutter_training/components/current_state.dart';
 import 'package:flutter_training/components/location_slider.dart';
 import 'package:flutter_training/components/place_add.dart';
 import 'package:flutter_training/models/place_info.dart';
 import 'package:flutter_training/models/location.dart';
-import 'package:flutter_training/models/forecast_day.dart';
+import 'package:flutter_training/utils/navigation_helper.dart';
+import 'package:intl/intl.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+class HomeScreen extends StatefulWidget {
+  final String? selectedCity;
+  
+  const HomeScreen({super.key, this.selectedCity});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  late LocationDetailsBloc _locationBloc;
+  String _currentCity = 'Birmingham'; // Default city
+
+  @override
+  void initState() {
+    super.initState();
+    _locationBloc = context.read<LocationDetailsBloc>();
+    
+    // Use selected city from databank or default
+    if (widget.selectedCity != null && widget.selectedCity!.isNotEmpty) {
+      _currentCity = widget.selectedCity!;
+      debugPrint('🌍 HomeScreen: Loading city from databank: $_currentCity');
+    } else {
+      debugPrint('🌍 HomeScreen: Using default city: $_currentCity');
+    }
+    
+    // Load weather data for current city
+    _locationBloc.add(LoadLocationDetails(location: _currentCity));
+  }
+
+  @override
+  void didUpdateWidget(HomeScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // If city changed, reload data
+    if (widget.selectedCity != null && 
+        widget.selectedCity != oldWidget.selectedCity &&
+        widget.selectedCity != _currentCity) {
+      _currentCity = widget.selectedCity!;
+      debugPrint('🌍 HomeScreen: City updated to: $_currentCity');
+      _locationBloc.add(LoadLocationDetails(location: _currentCity));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final currentStateForecast = [
-      ForecastDay(
-        day: 'MON',
-        aqi: 1,
-        aqiIcon: Icons.sentiment_satisfied,
-        weatherIcon: Icons.cloud,
-        temp: 20,
-      ),
-      ForecastDay(
-        day: 'TUE',
-        aqi: 2,
-        aqiIcon: Icons.sentiment_satisfied,
-        weatherIcon: Icons.cloud,
-        temp: 21,
-      ),
-      ForecastDay(
-        day: 'WED',
-        aqi: 3,
-        aqiIcon: Icons.sentiment_satisfied,
-        weatherIcon: Icons.cloud,
-        temp: 22,
-      ),
-      ForecastDay(
-        day: 'THU',
-        aqi: 2,
-        aqiIcon: Icons.sentiment_satisfied,
-        weatherIcon: Icons.wb_sunny,
-        temp: 21,
-      ),
-      ForecastDay(
-        day: 'FRI',
-        aqi: 2,
-        aqiIcon: Icons.sentiment_satisfied,
-        weatherIcon: Icons.wb_sunny,
-        temp: 20,
-      ),
-      ForecastDay(
-        day: 'SAT',
-        aqi: 2,
-        aqiIcon: Icons.sentiment_satisfied,
-        weatherIcon: Icons.cloud,
-        temp: 20,
-      ),
-    ];
-
     final addPlaces = [
       PlaceInfo(
         title: 'Work',
@@ -114,49 +113,151 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 8),
-            const Text(
-              'Anamoul',
-              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+      body: BlocBuilder<LocationDetailsBloc, LocationDetailsState>(
+        bloc: _locationBloc,
+        builder: (context, state) {
+          return SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 8),
+                const Text(
+                  'Anamoul',
+                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 16),
+                
+                // Current State with real API data
+                _buildCurrentState(state),
+                
+                const SizedBox(height: 16),
+                AddPlaces(places: addPlaces),
+                const SizedBox(height: 16),
+                LocationsSlider(locations: locations),
+                const SizedBox(height: 16),
+                
+                // Detail button - navigate to location detail page
+                Card(
+                  elevation: 1,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: ListTile(
+                    leading: const Icon(Icons.info_outline, color: Colors.blue),
+                    title: const Text('Detail Air Quality'),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () {
+                      NavigateToLocationDetail.navigate(context, _currentCity);
+                    },
+                  ),
+                ),
+                const SizedBox(height: 24),
+              ],
             ),
-            const SizedBox(height: 16),
-            CurrentState(
-              location: 'Church Street Square',
-              city: 'Birmingham',
-              temperature: '19°C',
-              weather: 'Rain Shower',
-              feelsLike: '11°C',
-              aqi: 3,
-              weatherIcon: Icons.cloud,
-              aqiIcon: Icons.sentiment_satisfied,
-              forecast: currentStateForecast,
-            ),
-            const SizedBox(height: 16),
-            AddPlaces(places: addPlaces),
-            const SizedBox(height: 16),
-            LocationsSlider(locations: locations),
-            const SizedBox(height: 16),
-            Card(
-              elevation: 1,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: ListTile(
-                leading: const Icon(Icons.info_outline, color: Colors.blue),
-                title: const Text('Detail Air Quality'),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () {},
-              ),
-            ),
-            const SizedBox(height: 24),
-          ],
-        ),
+          );
+        },
       ),
     );
+  }
+
+  Widget _buildCurrentState(LocationDetailsState state) {
+    if (state is LocationDetailsLoading) {
+      return const Card(
+        elevation: 2,
+        child: Padding(
+          padding: EdgeInsets.all(24.0),
+          child: Center(
+            child: CircularProgressIndicator(),
+          ),
+        ),
+      );
+    }
+
+    if (state is LocationDetailsError) {
+      return Card(
+        elevation: 2,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              const Icon(Icons.error_outline, color: Colors.red, size: 48),
+              const SizedBox(height: 8),
+              Text(
+                'Error: ${state.message}',
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              ElevatedButton(
+                onPressed: () {
+                  _locationBloc.add(LoadLocationDetails(location: _currentCity));
+                },
+                child: const Text('Retry'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    if (state is LocationDetailsLoaded) {
+      final weather = state.weatherData;
+      final current = weather.current;
+      final airQuality = current.airQuality;
+      final aqi = airQuality?.usEpaIndex ?? 3;
+      
+      // Convert forecast data
+      final forecastDays = weather.forecast.take(6).map((day) {
+        // Mock AQI for forecast (API doesn't provide forecast AQI)
+        final dayAqi = aqi; // Use current AQI as fallback
+        final avgTemp = ((day.maxTempC + day.minTempC) / 2).toInt();
+        
+        return ForecastDay(
+          day: DateFormat('EEE').format(day.date).toUpperCase(),
+          aqi: dayAqi,
+          aqiIcon: _getAqiIcon(dayAqi),
+          weatherIcon: _getWeatherIcon(day.condition),
+          temp: avgTemp,
+        );
+      }).toList();
+
+      return CurrentState(
+        location: weather.location,
+        city: weather.region,
+        temperature: '${current.tempC.toInt()}°C',
+        weather: current.condition,
+        feelsLike: '${current.feelsLikeC.toInt()}°C',
+        aqi: aqi,
+        weatherIcon: _getWeatherIcon(current.condition),
+        aqiIcon: _getAqiIcon(aqi),
+        forecast: forecastDays,
+      );
+    }
+
+    // Default fallback (shouldn't reach here)
+    return const SizedBox.shrink();
+  }
+
+  IconData _getAqiIcon(int aqi) {
+    if (aqi <= 50) return Icons.sentiment_very_satisfied;
+    if (aqi <= 100) return Icons.sentiment_satisfied;
+    if (aqi <= 150) return Icons.sentiment_neutral;
+    if (aqi <= 200) return Icons.sentiment_dissatisfied;
+    return Icons.sentiment_very_dissatisfied;
+  }
+
+  IconData _getWeatherIcon(String condition) {
+    final lowerCondition = condition.toLowerCase();
+    if (lowerCondition.contains('rain') || lowerCondition.contains('shower')) {
+      return Icons.water_drop;
+    } else if (lowerCondition.contains('cloud')) {
+      return Icons.cloud;
+    } else if (lowerCondition.contains('sun') || lowerCondition.contains('clear')) {
+      return Icons.wb_sunny;
+    } else if (lowerCondition.contains('snow')) {
+      return Icons.ac_unit;
+    } else {
+      return Icons.wb_cloudy;
+    }
   }
 }

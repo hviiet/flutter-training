@@ -7,7 +7,9 @@ import 'package:flutter_training/views/more.dart';
 import 'package:flutter_training/components/navigate_under.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+  final String? selectedCity;
+  
+  const MainScreen({super.key, this.selectedCity});
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -42,10 +44,10 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       body: PageView(
         controller: _pageController,
-        children: const [
-          HomeScreen(),
-          DataBankScreen(),
-          MoreScreen(),
+        children: [
+          HomeScreen(selectedCity: widget.selectedCity),
+          const DataBankScreen(),
+          const MoreScreen(),
         ],
       ),
       bottomNavigationBar: Consumer<TabProvider>(
