@@ -1,7 +1,7 @@
 import 'package:air_quality/screens/main_screen.dart';
 import 'package:flutter/material.dart';
 
-import 'package:air_quality/services/api_service.dart';
+import 'package:air_quality/services/auth_service.dart';
 import 'package:air_quality/services/storage_service.dart';
 
 class LoginScreen extends StatefulWidget {
