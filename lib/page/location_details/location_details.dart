@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:weather_app/api/airquality.dart';
-import 'package:weather_app/api/geocoding.dart';
+import 'package:weather_app/api/air_quality.dart';
+import 'package:weather_app/api/geo_coding.dart';
 import 'package:weather_app/api/weather.dart';
-import 'package:weather_app/page/locationdetails/airqualitycard.dart';
-import 'package:weather_app/page/locationdetails/chart.dart';
-import 'package:weather_app/page/locationdetails/healthdatacard.dart';
-import 'package:weather_app/page/locationdetails/weathercard.dart';
-import 'package:weather_app/page/locationdetails/weatherforcastcard.dart';
+import 'package:weather_app/page/aqi_scale/aqi_scale.dart';
+import 'package:weather_app/page/location_details/air_quality_card.dart';
+import 'package:weather_app/page/location_details/chart.dart';
+import 'package:weather_app/page/location_details/health_data_card.dart';
+import 'package:weather_app/page/location_details/weather_card.dart';
+import 'package:weather_app/page/location_details/weather_forcast_card.dart';
 
 class LocationDetails extends StatefulWidget {
   final String city;
@@ -178,13 +179,14 @@ class _LocationDetailsState extends State<LocationDetails> {
       backgroundColor: const Color.fromRGBO(250, 250, 250, 1),
       appBar: AppBar(
         centerTitle: false,
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Image.asset(
-            'assets/images/aqiscale/Arrow-Left.png',
+        leading: IconButton(
+          padding: const EdgeInsets.all(8),
+          icon: Image.asset(
+            "assets/images/aqiscale/Arrow-Left.png",
             width: 24,
             height: 24,
           ),
+          onPressed: () => Navigator.of(context).pop(),
         ),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.end,
@@ -254,8 +256,8 @@ class _LocationDetailsState extends State<LocationDetails> {
 
               final cityName = location['name'] as String? ?? '';
               final region = location['region'] as String? ?? '';
-              final tempC = (current['temp_c'] as num?)?.toDouble();
-              final feelsLikeC = (current['feelslike_c'] as num?)?.toDouble();
+              final tempC = (current['temp_c'] as num?)?.toInt();
+              final feelsLikeC = (current['feelslike_c'] as num?)?.toInt();
               final conditionText =
                   (current['condition']?['text'] as String?) ?? '';
               final isDayNow = (current['is_day'] as num?) == 1;
@@ -369,10 +371,26 @@ class _LocationDetailsState extends State<LocationDetails> {
                                         ),
                                       ),
                                       const Spacer(),
-                                      Image.asset(
-                                        'assets/images/home/Trailing Icon.png',
-                                        height: 24,
-                                        width: 24,
+                                      IconButton(
+                                        icon: Image.asset(
+                                          'assets/images/home/Trailing Icon.png',
+                                          height: 24,
+                                          width: 24,
+                                        ),
+                                        onPressed: () {
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (_) => AQIScale(
+                                                city: cityName,
+                                                street: street,
+                                                temp: tempC ?? 0,
+                                                aqi: level10,
+                                                conditionText: conditionText,
+                                                feelsLikeC: feelsLikeC ?? 0,
+                                              ),
+                                            ),
+                                          );
+                                        },
                                       ),
                                     ],
                                   ),

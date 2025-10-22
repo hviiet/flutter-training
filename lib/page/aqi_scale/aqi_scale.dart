@@ -1,8 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:weather_app/page/aqiscale/aqi.dart';
+import 'package:weather_app/page/aqi_scale/aqi.dart';
 
 class AQIScale extends StatefulWidget {
-  const AQIScale({super.key});
+  final String city;
+  final String street;
+  final int temp;
+  final int feelsLikeC;
+  final int aqi;
+  final String conditionText;
+  const AQIScale({
+    super.key,
+    required this.city,
+    required this.street,
+    required this.temp,
+    required this.aqi,
+    required this.conditionText,
+    required this.feelsLikeC,
+  });
 
   @override
   State<AQIScale> createState() => _AQIScaleState();
@@ -15,13 +29,14 @@ class _AQIScaleState extends State<AQIScale> {
       backgroundColor: Color.fromRGBO(250, 250, 250, 1),
       appBar: AppBar(
         centerTitle: true,
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Image.asset(
+        leading: IconButton(
+          padding: const EdgeInsets.all(8),
+          icon: Image.asset(
             "assets/images/aqiscale/Arrow-Left.png",
             width: 24,
             height: 24,
           ),
+          onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           "AQI Scale",
@@ -69,9 +84,9 @@ class _AQIScaleState extends State<AQIScale> {
                       const SizedBox(width: 8),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
+                        children: [
                           Text(
-                            'Church Street Square',
+                            widget.street,
                             style: TextStyle(
                               fontFamily: 'SF Pro Display',
                               fontWeight: FontWeight.w500,
@@ -82,7 +97,7 @@ class _AQIScaleState extends State<AQIScale> {
                           ),
                           SizedBox(height: 2),
                           Text(
-                            'Birmingham',
+                            widget.city,
                             style: TextStyle(
                               fontFamily: 'SF Pro Display',
                               fontWeight: FontWeight.w300,
@@ -115,9 +130,9 @@ class _AQIScaleState extends State<AQIScale> {
                               // Hàng hiển thị 19°C + mũi tên bé
                               Row(
                                 children: [
-                                  const Text(
-                                    '19',
-                                    style: TextStyle(
+                                  Text(
+                                    '${widget.temp}',
+                                    style: const TextStyle(
                                       fontFamily: 'Roboto',
                                       fontWeight: FontWeight.w500,
                                       fontSize: 16,
@@ -146,9 +161,9 @@ class _AQIScaleState extends State<AQIScale> {
                               ),
                               const SizedBox(height: 4),
                               Row(
-                                children: const [
+                                children: [
                                   Text(
-                                    'Rain Shower · ',
+                                    widget.conditionText,
                                     style: TextStyle(
                                       fontFamily: 'ABeeZee',
                                       fontWeight: FontWeight.w400,
@@ -157,8 +172,9 @@ class _AQIScaleState extends State<AQIScale> {
                                       color: Color.fromRGBO(0, 0, 0, 0.96),
                                     ),
                                   ),
+                                  SizedBox(width: 4),
                                   Text(
-                                    'Feels like 11°C',
+                                    'Feels like ${widget.feelsLikeC}°C',
                                     style: TextStyle(
                                       fontFamily: 'SF Pro Display',
                                       fontWeight: FontWeight.w300,
@@ -176,9 +192,9 @@ class _AQIScaleState extends State<AQIScale> {
                       const Spacer(),
                       Row(
                         children: [
-                          const Text(
-                            '3',
-                            style: TextStyle(
+                          Text(
+                            '${widget.aqi}',
+                            style: const TextStyle(
                               fontFamily: 'SF Pro Display',
                               fontWeight: FontWeight.w500,
                               fontSize: 24,

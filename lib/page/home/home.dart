@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:weather_app/api/airquality.dart';
-import 'package:weather_app/api/geocoding.dart';
+import 'package:weather_app/api/air_quality.dart';
+import 'package:weather_app/api/geo_coding.dart';
 import 'package:weather_app/api/weather.dart';
 import 'package:weather_app/page/home/forecast_item.dart';
 import 'package:weather_app/page/home/location_card_data.dart';
 
 class Home extends StatefulWidget {
-  const Home({super.key});
+  final String username;
+  const Home({super.key, required this.username});
 
   @override
   State<Home> createState() => _HomeState();
@@ -219,7 +220,7 @@ class _HomeState extends State<Home> {
               final int aqiNow =
                   ((airQuality?['data']?['aqi']) as num?)?.round() ?? 0;
               final int tempNow = (current['temp_c'] as num?)?.round() ?? 0;
-
+              final String username = widget.username;
               return SafeArea(
                 child: Padding(
                   padding: const EdgeInsets.only(
@@ -249,7 +250,7 @@ class _HomeState extends State<Home> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            cityName,
+                            username,
                             textAlign: TextAlign.left,
                             style: const TextStyle(
                               fontFamily: 'SF Pro Display',

@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../api/geocoding.dart';
+import '../../../api/geo_coding.dart';
 import '../../../api/weather.dart';
-import 'locationdetails_event.dart';
-import 'locationdetails_state.dart';
+import 'location_details_event.dart';
+import 'location_details_state.dart';
 
 class LocationDetailsBloc
     extends Bloc<LocationDetailsEvent, LocationDetailsState> {

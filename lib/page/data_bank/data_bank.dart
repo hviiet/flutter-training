@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:weather_app/page/locationdetails/locationdetails.dart';
+import 'package:weather_app/page/location_details/location_details.dart';
 import '../../providers/ui_overlay_provider.dart';
 
 class DataBank extends StatelessWidget {

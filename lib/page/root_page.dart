@@ -1,27 +1,30 @@
-// lib/pages/root_page.dart
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/tab_provider.dart';
 import '../providers/ui_overlay_provider.dart';
 import 'home/home.dart';
-import 'databank/databank.dart';
+import 'data_bank/data_bank.dart';
 import 'more.dart';
 
 class RootPage extends StatelessWidget {
-  const RootPage({super.key});
-
-  final List<Widget> _pages = const [Home(), DataBank(), More()];
+  final String username;
+  const RootPage({super.key, required this.username});
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> pages = [
+      Home(username: username),
+      const DataBank(),
+      const More(),
+    ];
     final tabProvider = Provider.of<TabProvider>(context);
     final uiOverlayProvider = Provider.of<UiOverlayProvider>(context);
 
     return Stack(
       children: [
         Scaffold(
-          body: _pages[tabProvider.currentIndex],
+          body: pages[tabProvider.currentIndex],
 
           // Thanh điều hướng giữa các trang Home, Data Bank và More
           bottomNavigationBar: Container(

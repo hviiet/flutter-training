@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../api/airquality.dart';
+import '../../../api/air_quality.dart';
 import 'aqiscale_event.dart';
 import 'aqiscale_state.dart';
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:weather_app/api/auth.dart';
-import 'package:weather_app/page/rootpage.dart';
+import 'package:weather_app/page/root_page.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -36,9 +36,18 @@ class _LoginState extends State<Login> {
     if (!mounted) return;
 
     if (ok) {
+      final email = emailCtrl.text;
+      String username;
+      final atIndex = email.indexOf('@');
+      if (atIndex != -1) {
+        username = email.substring(0, atIndex);
+      } else {
+        username = email;
+      }
+
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const RootPage()),
+        MaterialPageRoute(builder: (_) => RootPage(username: username)),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
