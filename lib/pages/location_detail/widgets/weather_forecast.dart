@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/models/forecast_day.dart';
-import 'package:flutter_application_1/pages/location_detail/weather_forecast_item.dart';
+import 'package:flutter_application_1/pages/location_detail/widgets/weather_forecast_item.dart';
 
 class WeatherForecast extends StatefulWidget {
   final List<ForecastDay> weatherData;

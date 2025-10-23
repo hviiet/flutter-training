@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/event/fetch_weather.dart';
-import 'package:flutter_application_1/pages/location_detail/air_quality.dart';
-import 'package:flutter_application_1/pages/location_detail/aq_forecast.dart';
-import 'package:flutter_application_1/pages/location_detail/recommendations.dart';
-import 'package:flutter_application_1/pages/location_detail/weather.dart';
-import 'package:flutter_application_1/pages/location_detail/weather_forecast.dart';
+import 'package:flutter_application_1/pages/location_detail/widgets/air_quality.dart';
+import 'package:flutter_application_1/pages/location_detail/widgets/aq_forecast.dart';
+import 'package:flutter_application_1/pages/location_detail/widgets/recommendations.dart';
+import 'package:flutter_application_1/pages/location_detail/widgets/weather.dart';
+import 'package:flutter_application_1/pages/location_detail/widgets/weather_forecast.dart';
 import 'package:flutter_application_1/pages/login/navigate.dart';
 import 'package:flutter_application_1/providers_and_state/weather_state.dart';
 import 'package:flutter_application_1/services/weather_bloc.dart';

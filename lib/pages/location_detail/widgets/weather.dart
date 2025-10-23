@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/models/forecast_hour.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-import 'package:flutter_application_1/pages/location_detail/weather_item.dart';
+import 'package:flutter_application_1/pages/location_detail/widgets/weather_item.dart';
 import 'package:flutter_application_1/widgets/degree.dart';
 
 class Weather extends StatefulWidget {

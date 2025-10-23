@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 import 'package:flutter_application_1/pages/aqi_scale/aqi_scale.dart';
-import 'package:flutter_application_1/pages/location_detail/air_quality_item.dart';
+import 'package:flutter_application_1/pages/location_detail/widgets/air_quality_item.dart';
 import 'package:flutter_application_1/widgets/aqi.dart';
 import 'dart:math';
 

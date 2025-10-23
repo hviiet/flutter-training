@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/event/fetch_weather.dart';
 import 'package:flutter_application_1/models/forecast_item_data.dart';
-import 'package:flutter_application_1/pages/home/add_place.dart';
-import 'package:flutter_application_1/pages/home/forecast_item.dart';
-import 'package:flutter_application_1/pages/home/live_location.dart';
-import 'package:flutter_application_1/pages/home/location.dart';
+import 'package:flutter_application_1/pages/home/widgets/add_place.dart';
+import 'package:flutter_application_1/pages/home/widgets/forecast_item.dart';
+import 'package:flutter_application_1/pages/home/widgets/live_location.dart';
+import 'package:flutter_application_1/pages/home/widgets/location.dart';
 import 'package:flutter_application_1/pages/location_detail/location_detail.dart';
 import 'package:flutter_application_1/providers_and_state/weather_state.dart';
 import 'package:flutter_application_1/services/weather_bloc.dart';

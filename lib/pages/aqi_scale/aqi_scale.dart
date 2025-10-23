@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/event/fetch_weather.dart';
 import 'package:flutter_application_1/pages/aqi_scale/aqi_scale_item.dart';
-import 'package:flutter_application_1/pages/home/live_location.dart';
+import 'package:flutter_application_1/pages/home/widgets/live_location.dart';
 import 'package:flutter_application_1/pages/location_detail/location_detail.dart';
 import 'package:flutter_application_1/providers_and_state/weather_state.dart';
 import 'package:flutter_application_1/services/weather_bloc.dart';

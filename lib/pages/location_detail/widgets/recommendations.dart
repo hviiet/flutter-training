@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/pages/location_detail/recommendations_item.dart';
+import 'package:flutter_application_1/pages/location_detail/widgets/recommendations_item.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class Recommendations extends StatelessWidget {
