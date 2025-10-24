@@ -5,10 +5,13 @@ import 'package:practice_flutter/business_logic/weather_aqi/weather_aqi_event.da
 import 'package:practice_flutter/business_logic/weather_aqi/weather_aqi_state.dart';
 import 'package:practice_flutter/component/air_quality_rate_card.dart';
 import 'package:practice_flutter/component/aqi_forecast_card.dart';
+import 'package:practice_flutter/component/weather.dart';
+import 'package:practice_flutter/component/weather_forecast_card.dart';
 
 class LocationDetails extends StatefulWidget {
   final String city;
   const LocationDetails({Key? key, this.city = "Birmingham"}) : super(key: key);
+
   @override
   State<LocationDetails> createState() => _LocationDetailsState();
 }
@@ -42,38 +45,27 @@ class _LocationDetailsState extends State<LocationDetails> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // 🌤 Thông tin thời tiết
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    child: Column(
-                      children: [
-                        Text(
-                          weather.location,
-                          style: const TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          "${weather.tempC.toStringAsFixed(1)}°C • ${weather.conditionText}",
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Image.network(weather.iconUrl, width: 64, height: 64),
-                      ],
-                    ),
-                  ),
-
-                  // 🌫 Chỉ số AQI hiện tại
+                  // 🌫 1️⃣ Chỉ số AQI hiện tại
                   AirQualityRateCard(aqiData: air, city: widget.city),
-
                   const SizedBox(height: 10),
 
-                  // 📊 Biểu đồ AQI dự báo thật
+                  // 🌤 2️⃣ Thời tiết từng giờ
+                  if (weather.hourly != null && weather.hourly!.isNotEmpty)
+                    WeatherCard(
+                      currentWeather: weather,
+                      hourlyData: weather.hourly!,
+                    )
+                  else
+                    const Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Text(
+                        'No hourly weather data available.',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    ),
+                  const SizedBox(height: 10),
+
+                  // 📊 3️⃣ Dự báo AQI 7 ngày
                   if (air.forecast != null && air.forecast!.isNotEmpty)
                     AqiForecastCard(forecastData: air.forecast!)
                   else
@@ -84,6 +76,10 @@ class _LocationDetailsState extends State<LocationDetails> {
                         style: TextStyle(color: Colors.grey),
                       ),
                     ),
+                  const SizedBox(height: 10),
+
+                  // 🌦️ 4️⃣ Dự báo thời tiết 7 ngày
+                  WeatherForecastCard(forecastDays: weather.forecastDays ?? []),
                 ],
               ),
             );
@@ -95,6 +91,7 @@ class _LocationDetailsState extends State<LocationDetails> {
               ),
             );
           }
+
           return const Center(child: Text('No data.'));
         },
       ),
