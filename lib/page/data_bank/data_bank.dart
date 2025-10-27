@@ -144,8 +144,7 @@ class DataBank extends StatelessWidget {
 
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (_) =>
-                                    LocationDetails(city: city), // +++
+                                builder: (_) => LocationDetails(city: city),
                               ),
                             );
                           },
