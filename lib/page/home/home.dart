@@ -6,6 +6,7 @@ import 'package:weather_app/page/home/forecast_item.dart';
 import 'package:weather_app/page/home/location_card_data.dart';
 import 'package:weather_app/page/location_details/location_details.dart';
 import 'package:weather_app/storage/storage.dart';
+import 'package:weather_app/models/weather_model.dart';
 
 typedef CachedWeatherData = ({
   Map<String, dynamic> weather,
@@ -132,6 +133,20 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
     'assets/images/home/smile_dark.png',
   ];
 
+  Map<String, int> buildAqiByDate(Map<String, dynamic>? airQuality) {
+    final Map<String, int> aqiByDate = {};
+    final airData = (airQuality?['data'] as Map?)?.cast<String, dynamic>();
+    final pm25Daily = (airData?['forecast']?['daily']?['pm25'] as List?) ?? [];
+    for (final item in pm25Daily) {
+      final dayStr = item['day']?.toString();
+      final avg = (item['avg'] as num?)?.round();
+      if (dayStr != null && avg != null) {
+        aqiByDate[dayStr] = avg;
+      }
+    }
+    return aqiByDate;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -166,75 +181,49 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
           final weather = rec.weather;
           final street = rec.street;
           final airQuality = rec.airQuality;
+          final weatherModel = WeatherResponse.fromJson(weather);
+          final cityName = weatherModel.location.name;
+          final tempC = weatherModel.current.tempC.round();
+          final feelsLikeC = weatherModel.current.feelsLikeC.round();
+          final conditionText = weatherModel.current.condition.text;
 
-          final location = Map<String, dynamic>.from(
-            weather['location'] as Map,
-          );
-          final current = Map<String, dynamic>.from(weather['current'] as Map);
-          final forecastDays =
-              (weather['forecast']?['forecastday'] as List? ?? [])
-                  .map<Map<String, dynamic>>(
-                    (e) => Map<String, dynamic>.from(e as Map),
-                  )
-                  .toList();
-
-          final cityName = location['name'] as String? ?? '';
-          final tempC = (current['temp_c'] as num?)?.toInt();
-          final feelsLikeC = (current['feelslike_c'] as num?)?.toInt();
-          final conditionText =
-              (current['condition']?['text'] as String?) ?? '';
-
-          final airData = (airQuality?['data'] as Map?)
-              ?.cast<String, dynamic>();
-          final int? currentAQI = (airData?['aqi'] as num?)?.round();
-
-          final List<Map<String, dynamic>> forecast7 = forecastDays
-              .take(7)
-              .toList();
-
-          final Map<String, int> aqiByDate = {};
-          final pm25Daily =
-              (airData?['forecast']?['daily']?['pm25'] as List?) ?? [];
-          for (final item in pm25Daily) {
-            final dayStr = item['day']?.toString();
-            final avg = (item['avg'] as num?)?.round();
-            if (dayStr != null && avg != null) {
-              aqiByDate[dayStr] = avg;
-            }
-          }
-
+          // 7 ngày
+          final forecastDays = weatherModel.forecast.forecastday;
+          final forecast7 = forecastDays.take(7).toList();
+          final Map<String, int> aqiByDate = buildAqiByDate(airQuality);
           final List<String> daysUI = [];
           final List<int> tempsUI = [];
           final List<int> aqisUI = [];
           final List<String> aqiImgsUI = [];
           final List<String> weatherImgsUI = [];
 
+          final int aqiNow =
+              ((airQuality?['data']?['aqi']) as num?)?.round() ?? 0;
           for (final f in forecast7) {
-            final dateStr = f['date']?.toString();
-            final date = dateStr != null ? DateTime.tryParse(dateStr) : null;
+            final dateStr = f.date; // "YYYY-MM-DD"
+            final date = DateTime.tryParse(dateStr);
 
-            // day label
+            // label thứ trong tuần
             daysUI.add(date != null ? _weekdayLabel(date) : '');
 
-            final dayObj = (f['day'] as Map?) ?? {};
-            final tempAvg = (dayObj['avgtemp_c'] as num?)?.round();
-            final tempMax = (dayObj['maxtemp_c'] as num?)?.round();
+            // nhiệt độ ngày
+            final tempAvg = f.day.avgTempC?.round();
+            final tempMax = f.day.maxTempC?.round();
             tempsUI.add(tempAvg ?? tempMax ?? 0);
 
-            final condition = (dayObj['condition'] as Map?)
-                ?.cast<String, dynamic>();
-            weatherImgsUI.add(_weatherIconFor(condition));
+            // icon thời tiết
+            weatherImgsUI.add(_weatherIconFor({'text': f.day.condition.text}));
 
-            int aqiValue = (dateStr != null && aqiByDate.containsKey(dateStr))
+            int aqiValue = aqiByDate.containsKey(dateStr)
                 ? aqiByDate[dateStr]!
-                : ((airQuality?['aqi'] as num?)?.round() ?? 0);
+                : aqiNow;
 
             aqisUI.add(aqiValue);
             aqiImgsUI.add(_aqiIconFor(aqiValue));
           }
-          final int aqiNow =
-              ((airQuality?['data']?['aqi']) as num?)?.round() ?? 0;
-          final int tempNow = (current['temp_c'] as num?)?.round() ?? 0;
+
+          final int tempNow = weatherModel.current.tempC.round();
+
           final String username = widget.username;
           return SafeArea(
             child: Padding(
@@ -343,7 +332,9 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Image.asset(
-                                  _weatherIconFor(current['condition']),
+                                  _weatherIconFor({
+                                    'text': weatherModel.current.condition.text,
+                                  }),
                                   width: 32,
                                   height: 32,
                                 ),
@@ -438,7 +429,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                             Row(
                               children: [
                                 Text(
-                                  '$currentAQI',
+                                  '$aqiNow',
                                   style: TextStyle(
                                     fontFamily: 'SF Pro Display',
                                     fontWeight: FontWeight.w500,
