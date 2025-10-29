@@ -1,5 +1,10 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'weather_hour_model.g.dart';
+
+@JsonSerializable()
 class WeatherHourModel {
-  final String time; // "2025-10-24 09:00"
+  final String time;
   final double tempC;
   final String iconUrl;
 
@@ -10,10 +15,13 @@ class WeatherHourModel {
   });
 
   factory WeatherHourModel.fromJson(Map<String, dynamic> json) {
+    final cond = json['condition'] ?? {};
     return WeatherHourModel(
       time: json['time'] ?? '',
       tempC: (json['temp_c'] ?? 0).toDouble(),
-      iconUrl: "https:${json['condition']['icon']}",
+      iconUrl: cond['icon'] ?? '',
     );
   }
+
+  Map<String, dynamic> toJson() => _$WeatherHourModelToJson(this);
 }

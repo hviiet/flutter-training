@@ -12,7 +12,18 @@ class AirQualityRateCard extends StatelessWidget {
   const AirQualityRateCard({Key? key, this.aqiData, required this.city})
     : super(key: key);
 
-  // --- Màu AQI ---
+  // PHỤC HỒI HÀM SCALE AQI
+  double _scaleAqi(double originalAqi) {
+    if (originalAqi.isNaN || originalAqi <= 0) return 1;
+    double scaled = (originalAqi / 500) * 10;
+
+    // Làm tròn giá trị và đảm bảo nó nằm trong khoảng [1, 10]
+    int roundedScaled = scaled.round().clamp(1, 10);
+
+    return roundedScaled.toDouble();
+  }
+
+  // --- Màu AQI (Dựa trên thang 1-10) ---
   Color _getAqiColor(int aqi) {
     if (aqi <= 3) return const Color(0xFF4CAF50); // Xanh lá - Low
     if (aqi <= 6) return const Color(0xFFFFC107); // Vàng cam - Moderate
@@ -30,10 +41,10 @@ class AirQualityRateCard extends StatelessWidget {
 
   // --- Icon theo mức AQI ---
   IconData _getAqiIcon(int aqi) {
-    if (aqi <= 3) return Icons.sentiment_satisfied_alt; // Good
-    if (aqi <= 6) return Icons.sentiment_neutral; // Moderate
-    if (aqi <= 8) return Icons.sentiment_dissatisfied; // High
-    return Icons.sentiment_very_dissatisfied; // Very High
+    if (aqi <= 3) return Icons.sentiment_satisfied_alt;
+    if (aqi <= 6) return Icons.sentiment_neutral;
+    if (aqi <= 8) return Icons.sentiment_dissatisfied;
+    return Icons.sentiment_very_dissatisfied;
   }
 
   @override
@@ -42,8 +53,11 @@ class AirQualityRateCard extends StatelessWidget {
       return const Center(child: CircularProgressIndicator());
     }
 
-    final aqi = aqiData!.aqi ?? 0;
-    final color = _getAqiColor(aqi);
+    // SỬ DỤNG HÀM SCALE AQI
+    final originalAqiValue = aqiData!.aqi?.toDouble() ?? 0.0;
+    final scaledAqi = _scaleAqi(originalAqiValue).toInt();
+    final color = _getAqiColor(scaledAqi);
+    final percentValue = (scaledAqi / 10).clamp(0.0, 1.0);
 
     return Card(
       color: Colors.white,
@@ -55,7 +69,7 @@ class AirQualityRateCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // --- Tiêu đề + nút Info ---
+            // --- Tiêu đề + nút Info (Dấu chấm than) ---
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -64,14 +78,18 @@ class AirQualityRateCard extends StatelessWidget {
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.info_outline, color: Colors.blue),
+                  // Dấu chấm than và màu đỏ
+                  icon: Icon(Icons.error_outline, color: Colors.red.shade400),
                   tooltip: 'View AQI Scale',
                   onPressed: () {
+                    // SỬA CHỮA CHÍNH: Sử dụng context.read<T>() an toàn hơn để lấy Bloc
+                    final weatherAqiBloc = context.read<WeatherAqiBloc>();
+
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (_) => BlocProvider.value(
-                          value: BlocProvider.of<WeatherAqiBloc>(context),
+                          value: weatherAqiBloc,
                           child: AqiScaleScreen(city: city),
                         ),
                       ),
@@ -83,66 +101,98 @@ class AirQualityRateCard extends StatelessWidget {
 
             const SizedBox(height: 20),
 
-            // --- Vòng tròn AQI ---
+            // --- Biểu đồ Bán nguyệt AQI ---
             Center(
-              child: CircularPercentIndicator(
-                radius: 65.0,
-                lineWidth: 10.0,
-                percent: (aqi / 10).clamp(0.0, 1.0),
-                circularStrokeCap: CircularStrokeCap.round,
-                backgroundColor: Colors.grey.shade200,
-                linearGradient: LinearGradient(
-                  colors: [color.withOpacity(0.7), color],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                ),
-                center: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      '$aqi',
-                      style: TextStyle(
-                        fontSize: 36,
-                        fontWeight: FontWeight.bold,
-                        color: color,
-                      ),
-                    ),
-                    Row(
+              child: Stack(
+                alignment: Alignment.topCenter,
+                children: [
+                  CircularPercentIndicator(
+                    radius: 100.0,
+                    lineWidth: 8.0,
+                    percent: percentValue,
+                    // Cấu hình cho nửa vòng tròn
+                    arcType: ArcType.HALF,
+                    // Đặt màu nền của phần chưa lấp đầy của CUNG tròn
+                    arcBackgroundColor: Colors.grey.shade200,
+                    progressColor: color,
+                    startAngle: 0.0,
+                    circularStrokeCap: CircularStrokeCap.round,
+                    center:
+                        const SizedBox.shrink(), // Nội dung được đặt trong Stack
+                  ),
+
+                  // Nội dung Text/Icon
+                  Padding(
+                    // Căn chỉnh tương ứng với biểu đồ bán nguyệt
+                    padding: const EdgeInsets.only(top: 60.0),
+                    child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(_getAqiIcon(aqi), color: color, size: 18),
-                        const SizedBox(width: 4),
-                        Text(
-                          _getAqiStatus(aqi),
-                          style: TextStyle(
-                            color: color,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.baseline,
+                          textBaseline: TextBaseline.alphabetic,
+                          children: [
+                            Text(
+                              '$scaledAqi', // Hiển thị giá trị AQI đã được scale (1-10)
+                              style: const TextStyle(
+                                fontSize: 36,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            const Text(
+                              'AQI',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              _getAqiIcon(scaledAqi),
+                              color: color,
+                              size: 18,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              _getAqiStatus(scaledAqi),
+                              style: TextStyle(
+                                color: color,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 30),
 
-            // --- Các thông số ---
+            // --- Các thông số (Đã sửa lỗi Null Safety) ---
             GridView.count(
               crossAxisCount: 3,
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              mainAxisSpacing: 16,
+              mainAxisSpacing: 24,
               crossAxisSpacing: 8,
               children: [
-                _buildMiniBar('O₃', aqiData!.o3),
-                _buildMiniBar('PM₁₀', aqiData!.pm10),
-                _buildMiniBar('NO₂', aqiData!.no2),
-                _buildMiniBar('NO', aqiData!.no),
-                _buildMiniBar('SO₂', aqiData!.so2),
-                _buildMiniBar('PM₂.₅', aqiData!.pm25),
+                _buildMiniBar('O₃ (μg/m³)', aqiData?.o3, color),
+                _buildMiniBar('PM₁₀ (μg/m³)', aqiData?.pm10, color),
+                _buildMiniBar('NO (μg/m³)', aqiData?.no, color),
+                _buildMiniBar('NO₂ (μg/m³)', aqiData?.no2, color),
+                _buildMiniBar('PM₂.₅ (μg/m³)', aqiData?.pm25, color),
               ],
             ),
           ],
@@ -150,51 +200,50 @@ class AirQualityRateCard extends StatelessWidget {
       ),
     );
   }
-
-  // --- Thanh nhỏ từng thông số ---
-  Widget _buildMiniBar(String title, double? value) {
+  Widget _buildMiniBar(String title, double? value, Color aqiColor) {
     final val = (value ?? 0).clamp(0, 100);
-    final barColor = Colors.greenAccent.shade400;
+    final barPercent = val / 100.0;
 
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
-          ),
-        ),
-        const SizedBox(height: 6),
-        Stack(
-          alignment: Alignment.bottomCenter,
+        Text(title, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+        const SizedBox(height: 4),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Container(
-              width: 8,
-              height: 30,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade200,
-                borderRadius: BorderRadius.circular(20),
-              ),
+            Stack(
+              alignment: Alignment.bottomCenter,
+              children: [
+                Container(
+                  width: 8,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade200,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                Container(
+                  width: 8,
+                  height: 40 * barPercent,
+                  decoration: BoxDecoration(
+                    color: aqiColor,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+              ],
             ),
-            Container(
-              width: 8,
-              height: 30 * (val / 100),
-              decoration: BoxDecoration(
-                color: barColor,
-                borderRadius: BorderRadius.circular(20),
+            const SizedBox(width: 8),
+            Text(
+              value != null ? value.toStringAsFixed(1) : 'N/A',
+              style: const TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 4),
-        Text(
-          value != null ? value.toStringAsFixed(1) : 'N/A',
-          style: const TextStyle(fontSize: 12, color: Colors.black87),
-        ),
-        const Text('μg/m³', style: TextStyle(fontSize: 10, color: Colors.grey)),
       ],
     );
   }

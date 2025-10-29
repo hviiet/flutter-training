@@ -5,7 +5,6 @@ import '../../services/weather_service.dart';
 import '../../services/air_service.dart';
 import '../../models/weather_hour_model.dart';
 import '../../models/weather_model.dart';
-import '../../models/air_quality_model.dart';
 import '../../models/weather_forecast_model.dart'; // <--- thêm dòng này
 
 class WeatherAqiBloc extends Bloc<WeatherAqiEvent, WeatherAqiState> {

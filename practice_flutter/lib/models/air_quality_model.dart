@@ -1,3 +1,8 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'air_quality_model.g.dart';
+
+@JsonSerializable(explicitToJson: true)
 class AirQualityModel {
   final int? aqi;
   final double? o3;
@@ -7,8 +12,6 @@ class AirQualityModel {
   final double? so2;
   final double? co;
   final double? pm25;
-
-  
   final List<AqiForecast>? forecast;
 
   AirQualityModel({
@@ -23,24 +26,13 @@ class AirQualityModel {
     this.forecast,
   });
 
-  
-  static double? _toDouble(dynamic v) {
-    if (v == null) return null;
-    if (v is num) return v.toDouble();
-    if (v is String) return double.tryParse(v);
-    return null;
-  }
-
+  /// ✅ Factory tự động convert JSON từ WAQI (custom flatten trước khi build)
   factory AirQualityModel.fromJson(Map<String, dynamic> json) {
     final data = json['data'] ?? json;
     final iaqi = data['iaqi'] ?? {};
 
-    //  Parse 
+    // Parse forecast: chỉ lấy pm25 vì bạn đang hiển thị nó
     final forecastDaily = data['forecast']?['daily']?['pm25'] as List<dynamic>?;
-
-    final List<AqiForecast> forecastList = forecastDaily != null
-        ? forecastDaily.map((e) => AqiForecast.fromJson(e)).toList()
-        : [];
 
     return AirQualityModel(
       aqi: data['aqi'] is int ? data['aqi'] : int.tryParse('${data['aqi']}'),
@@ -51,22 +43,35 @@ class AirQualityModel {
       so2: _toDouble(iaqi['so2']?['v']),
       co: _toDouble(iaqi['co']?['v']),
       pm25: _toDouble(iaqi['pm25']?['v']),
-      forecast: forecastList,
+      forecast: forecastDaily
+          ?.map((e) => AqiForecast.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
+  }
+
+  /// ✅ toJson để build_runner vẫn hoạt động
+  Map<String, dynamic> toJson() => _$AirQualityModelToJson(this);
+
+  /// Helper để ép kiểu
+  static double? _toDouble(dynamic v) {
+    if (v == null) return null;
+    if (v is num) return v.toDouble();
+    if (v is String) return double.tryParse(v);
+    return null;
   }
 }
 
-
+@JsonSerializable()
 class AqiForecast {
   final String day;
   final double avg;
+  final double? max;
+  final double? min;
 
-  AqiForecast({required this.day, required this.avg});
+  AqiForecast({required this.day, required this.avg, this.max, this.min});
 
-  factory AqiForecast.fromJson(Map<String, dynamic> json) {
-    return AqiForecast(
-      day: json['day'] ?? '',
-      avg: (json['avg'] ?? 0).toDouble(),
-    );
-  }
+  factory AqiForecast.fromJson(Map<String, dynamic> json) =>
+      _$AqiForecastFromJson(json);
+
+  Map<String, dynamic> toJson() => _$AqiForecastToJson(this);
 }

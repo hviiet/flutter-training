@@ -7,6 +7,7 @@ import 'package:practice_flutter/component/air_quality_rate_card.dart';
 import 'package:practice_flutter/component/aqi_forecast_card.dart';
 import 'package:practice_flutter/component/weather.dart';
 import 'package:practice_flutter/component/weather_forecast_card.dart';
+import 'package:practice_flutter/component/recommendation.dart'; 
 
 class LocationDetails extends StatefulWidget {
   final String city;
@@ -45,11 +46,11 @@ class _LocationDetailsState extends State<LocationDetails> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // 🌫 1️⃣ Chỉ số AQI hiện tại
+                  // 1. Chỉ số AQI hiện tại
                   AirQualityRateCard(aqiData: air, city: widget.city),
                   const SizedBox(height: 10),
 
-                  // 🌤 2️⃣ Thời tiết từng giờ
+                  // 2. Thời tiết từng giờ
                   if (weather.hourly != null && weather.hourly!.isNotEmpty)
                     WeatherCard(
                       currentWeather: weather,
@@ -65,7 +66,7 @@ class _LocationDetailsState extends State<LocationDetails> {
                     ),
                   const SizedBox(height: 10),
 
-                  // 📊 3️⃣ Dự báo AQI 7 ngày
+                  // 3. Dự báo AQI 7 ngày
                   if (air.forecast != null && air.forecast!.isNotEmpty)
                     AqiForecastCard(forecastData: air.forecast!)
                   else
@@ -78,8 +79,16 @@ class _LocationDetailsState extends State<LocationDetails> {
                     ),
                   const SizedBox(height: 10),
 
-                  // 🌦️ 4️⃣ Dự báo thời tiết 7 ngày
+                  // 4. Dự báo thời tiết 7 ngày
                   WeatherForecastCard(forecastDays: weather.forecastDays ?? []),
+
+                  const SizedBox(
+                    height: 16,
+                  ), // Khoảng cách trước component cuối
+                  // 5. RECOMMENDATION CARD – ĐƯỢC ĐẶT CUỐI CÙNG
+                  const RecommendationCard(),
+
+                  const SizedBox(height: 16), // Padding dưới cùng
                 ],
               ),
             );

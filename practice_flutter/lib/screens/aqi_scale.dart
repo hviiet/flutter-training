@@ -14,10 +14,28 @@ class AqiScaleScreen extends StatefulWidget {
 }
 
 class _AqiScaleScreenState extends State<AqiScaleScreen> {
+  // Cờ để đảm bảo event chỉ được gửi một lần
+  bool _isDataFetched = false;
+
+  // --- HÀM SCALE AQI (MỚI) ---
+  /// Chuyển đổi chỉ số AQI thô (thường là 0-500) sang thang điểm 1-10.
+  int _scaleAqi(double originalAqi) {
+    if (originalAqi.isNaN || originalAqi <= 0) return 1;
+    double scaled = (originalAqi / 500) * 10;
+
+    // Làm tròn giá trị và đảm bảo nó nằm trong khoảng [1, 10]
+    return scaled.round().clamp(1, 10);
+  }
+  // -------------------------
+
   @override
-  void initState() {
-    super.initState();
-    context.read<WeatherAqiBloc>().add(FetchWeatherAqi(widget.city));
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (!_isDataFetched) {
+      context.read<WeatherAqiBloc>().add(FetchWeatherAqi(widget.city));
+      _isDataFetched = true;
+    }
   }
 
   @override
@@ -40,6 +58,10 @@ class _AqiScaleScreenState extends State<AqiScaleScreen> {
             final weather = state.weather;
             final air = state.airQuality;
 
+            // --- TÍNH TOÁN GIÁ TRỊ AQI ĐÃ SCALE ---
+            final originalAqi = air.aqi?.toDouble() ?? 0.0;
+            final scaledAqi = _scaleAqi(originalAqi);
+
             return SingleChildScrollView(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -56,11 +78,25 @@ class _AqiScaleScreenState extends State<AqiScaleScreen> {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Image.network(
-                            weather.iconUrl,
-                            width: 48,
-                            height: 48,
-                          ),
+                          // Xử lý iconUrl an toàn
+                          (weather.iconUrl != null &&
+                                  weather.iconUrl.isNotEmpty)
+                              ? Image.network(
+                                  weather.iconUrl,
+                                  width: 48,
+                                  height: 48,
+                                  errorBuilder: (context, error, stackTrace) =>
+                                      const Icon(
+                                        Icons.cloud_queue,
+                                        size: 48,
+                                        color: Colors.grey,
+                                      ),
+                                )
+                              : const Icon(
+                                  Icons.cloud_queue,
+                                  size: 48,
+                                  color: Colors.grey,
+                                ),
                           const SizedBox(width: 16),
                           Expanded(
                             child: Column(
@@ -91,13 +127,13 @@ class _AqiScaleScreenState extends State<AqiScaleScreen> {
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Text(
-                                air.aqi?.toString() ?? "-",
+                                scaledAqi.toString(),
                                 style: const TextStyle(
                                   fontSize: 32,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              const Text("AQI"),
+                              const Text("AQI (1-10)"),
                             ],
                           ),
                         ],
@@ -106,31 +142,29 @@ class _AqiScaleScreenState extends State<AqiScaleScreen> {
                   ),
 
                   const SizedBox(height: 20),
-
-                  // AQI levels
                   const AqiLevelCard(
                     title: "Low",
                     indexRange: "1 to 3",
                     color: Colors.green,
-                    emoji: "😊",
+                    icon: Icons.sentiment_satisfied_alt, 
                   ),
                   const AqiLevelCard(
                     title: "Moderate",
                     indexRange: "4 to 6",
                     color: Colors.orange,
-                    emoji: "😐",
+                    icon: Icons.sentiment_neutral, 
                   ),
                   const AqiLevelCard(
                     title: "High",
                     indexRange: "7 to 8",
                     color: Colors.red,
-                    emoji: "😷",
+                    icon: Icons.masks, 
                   ),
                   const AqiLevelCard(
                     title: "Very High",
                     indexRange: "9 to 10",
                     color: Colors.purple,
-                    emoji: "🤒",
+                    icon: Icons.sick, 
                   ),
                 ],
               ),

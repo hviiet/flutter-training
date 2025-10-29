@@ -1,13 +1,18 @@
+import 'package:json_annotation/json_annotation.dart';
 import 'weather_hour_model.dart';
-import 'weather_forecast_model.dart'; // ✅ thêm dòng này
+import 'weather_forecast_model.dart';
+
+part 'weather_model.g.dart';
+
+@JsonSerializable(explicitToJson: true)
 class WeatherModel {
-  final String location;
+  final String location; // vẫn giữ tên cũ
   final double tempC;
   final double feelslikeC;
   final String conditionText;
   final String iconUrl;
   final List<WeatherHourModel> hourly;
-  final List<ForecastDayModel> forecastDays; // ✅ thêm dòng này
+  final List<ForecastDayModel> forecastDays;
 
   WeatherModel({
     required this.location,
@@ -16,33 +21,34 @@ class WeatherModel {
     required this.conditionText,
     required this.iconUrl,
     required this.hourly,
-    required this.forecastDays, // ✅
+    required this.forecastDays,
   });
 
   factory WeatherModel.fromJson(Map<String, dynamic> json) {
-    final forecastDaysJson = json['forecast']?['forecastday'] ?? [];
-    List<WeatherHourModel> hourlyList = [];
-    List<ForecastDayModel> forecastList = [];
+    final loc = json['location']?['name'] ?? '';
+    final current = json['current'] ?? {};
+    final cond = current['condition'] ?? {};
 
-    if (forecastDaysJson.isNotEmpty) {
-      // Lấy dữ liệu theo giờ của ngày đầu tiên
-      final hours = forecastDaysJson[0]['hour'] as List<dynamic>;
-      hourlyList = hours.map((e) => WeatherHourModel.fromJson(e)).toList();
+    final forecastList =
+        (json['forecast']?['forecastday'] as List<dynamic>? ?? [])
+            .map((e) => ForecastDayModel.fromJson(e))
+            .toList();
 
-      // Lấy toàn bộ dự báo theo ngày
-      forecastList = forecastDaysJson
-          .map<ForecastDayModel>((e) => ForecastDayModel.fromJson(e))
-          .toList();
-    }
+    final hourlyList =
+        (json['forecast']?['forecastday']?[0]?['hour'] as List<dynamic>? ?? [])
+            .map((e) => WeatherHourModel.fromJson(e))
+            .toList();
 
     return WeatherModel(
-      location: json['location']['name'] ?? '',
-      tempC: (json['current']['temp_c'] ?? 0).toDouble(),
-      feelslikeC: (json['current']['feelslike_c'] ?? 0).toDouble(),
-      conditionText: json['current']['condition']['text'] ?? '',
-      iconUrl: "https:${json['current']['condition']['icon']}",
+      location: loc,
+      tempC: (current['temp_c'] ?? 0).toDouble(),
+      feelslikeC: (current['feelslike_c'] ?? 0).toDouble(),
+      conditionText: cond['text'] ?? '',
+      iconUrl: cond['icon'] ?? '',
       hourly: hourlyList,
-      forecastDays: forecastList, // ✅ truyền vào constructor
+      forecastDays: forecastList,
     );
   }
+
+  Map<String, dynamic> toJson() => _$WeatherModelToJson(this);
 }

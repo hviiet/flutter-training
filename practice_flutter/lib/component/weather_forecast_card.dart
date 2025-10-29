@@ -19,7 +19,6 @@ class WeatherForecastCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // --- Header ---
             const Text(
               "Weather Forecast",
               style: TextStyle(
@@ -35,7 +34,6 @@ class WeatherForecastCard extends StatelessWidget {
             ),
             const SizedBox(height: 16),
 
-            // --- Forecast List ---
             ListView.separated(
               itemCount: forecastDays.length,
               shrinkWrap: true,
@@ -50,7 +48,6 @@ class WeatherForecastCard extends StatelessWidget {
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // --- Left: date + tag ---
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -81,8 +78,6 @@ class WeatherForecastCard extends StatelessWidget {
                           ),
                       ],
                     ),
-
-                    // --- Middle: temps ---
                     Row(
                       children: [
                         Text(
@@ -105,8 +100,6 @@ class WeatherForecastCard extends StatelessWidget {
                         const Text("↓"),
                       ],
                     ),
-
-                    // --- Right: icon ---
                     Image.network(
                       day.iconUrl,
                       width: 32,

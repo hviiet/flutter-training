@@ -15,7 +15,7 @@ class WeatherCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 3,
+      elevation: 0, // Giao diện phẳng hơn
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       color: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
@@ -26,12 +26,16 @@ class WeatherCard extends StatelessWidget {
           children: [
             const Text(
               "Weather",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
             ),
 
             const SizedBox(height: 10),
 
-            // ☁️ Phần thời tiết hiện tại
+            
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -43,12 +47,16 @@ class WeatherCard extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
+                        color: Colors.black54, 
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       "Feels like ${currentWeather.feelslikeC.toStringAsFixed(1)}°C",
-                      style: const TextStyle(color: Colors.grey),
+                      style: const TextStyle(
+                        color: Colors.black45, 
+                        fontSize: 14,
+                      ),
                     ),
                   ],
                 ),
@@ -59,6 +67,7 @@ class WeatherCard extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
+                        color: Colors.black87, 
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -66,8 +75,14 @@ class WeatherCard extends StatelessWidget {
                       currentWeather.iconUrl,
                       width: 48,
                       height: 48,
-                      errorBuilder: (_, __, ___) =>
-                          const Icon(Icons.cloud, size: 40, color: Colors.grey),
+                      color:
+                          Colors.blueAccent, 
+                      colorBlendMode: BlendMode.srcIn, 
+                      errorBuilder: (_, __, ___) => const Icon(
+                        Icons.cloud,
+                        size: 40,
+                        color: Colors.blueAccent,
+                      ),
                     ),
                   ],
                 ),
@@ -76,7 +91,7 @@ class WeatherCard extends StatelessWidget {
 
             const SizedBox(height: 20),
 
-            // 🌤 List dự báo từng giờ
+            // List dự báo từng giờ
             SizedBox(
               height: 120,
               child: ListView.builder(
@@ -84,14 +99,18 @@ class WeatherCard extends StatelessWidget {
                 itemCount: hourlyData.length,
                 itemBuilder: (context, index) {
                   final hour = hourlyData[index];
-                  final timeString = hour.time.split(' ').last; // lấy "09:00"
+                  final timeString = hour.time.split(' ').last;
 
                   return Container(
                     width: 70,
                     margin: const EdgeInsets.only(right: 10),
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade100,
+                      color: const Color(0xFFF5F7FA), 
                       borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: Colors.grey.shade200,
+                        width: 0.5,
+                      ), 
                     ),
                     padding: const EdgeInsets.symmetric(
                       vertical: 12,
@@ -104,20 +123,26 @@ class WeatherCard extends StatelessWidget {
                           hour.iconUrl,
                           width: 32,
                           height: 32,
-                          errorBuilder: (_, __, ___) =>
-                              const Icon(Icons.cloud, size: 30),
+                          color: Colors.blueAccent, 
+                          colorBlendMode: BlendMode.srcIn,
+                          errorBuilder: (_, __, ___) => const Icon(
+                            Icons.cloud,
+                            size: 30,
+                            color: Colors.blueAccent,
+                          ),
                         ),
                         Text(
                           "${hour.tempC.toStringAsFixed(0)}°C",
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 14,
+                            color: Colors.black87, 
                           ),
                         ),
                         Text(
                           timeString,
                           style: const TextStyle(
-                            color: Colors.grey,
+                            color: Colors.black54, 
                             fontSize: 12,
                           ),
                         ),
