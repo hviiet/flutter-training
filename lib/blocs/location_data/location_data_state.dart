@@ -1,20 +1,25 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:air_quality/models/air_quality_model.dart';
 import 'package:air_quality/models/weather_model.dart';
 
-abstract class LocationDataState {}
+part 'location_data_state.freezed.dart';
 
-class LocationDataInitial extends LocationDataState {}
-
-class LocationDataLoading extends LocationDataState {}
-
-class LocationDataLoaded extends LocationDataState {
-  final AirQualityData airQualityData;
-  final WeatherData weatherData;
-
-  LocationDataLoaded(this.airQualityData, this.weatherData);
-}
-
-class LocationDataError extends LocationDataState {
-  final String message;
-  LocationDataError(this.message);
+@freezed
+class LocationDataState with _$LocationDataState {
+  // 1. Trạng thái ban đầu
+  const factory LocationDataState.initial() = _LocationDataInitial;
+  
+  // 2. Trạng thái đang tải
+  const factory LocationDataState.loading() = _LocationDataLoading;
+  
+  // 3. Trạng thái tải thành công, chứa data
+  const factory LocationDataState.loaded({
+    required AirQualityData airQualityData,
+    required WeatherData weatherData,
+  }) = _LocationDataLoaded;
+  
+  // 4. Trạng thái lỗi
+  const factory LocationDataState.error({
+    required String message,
+  }) = _LocationDataError;
 }

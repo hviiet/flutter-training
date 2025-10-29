@@ -7,10 +7,10 @@ class AqiScaleScreen extends StatelessWidget {
   final WeatherData weatherData;
 
   const AqiScaleScreen({
-    Key? key,
+    super.key,
     required this.aqData,
     required this.weatherData,
-  }) : super(key: key);
+  });
 
   Map<String, dynamic> _getAqiInfo(int aqi) {
     int scaleValue;

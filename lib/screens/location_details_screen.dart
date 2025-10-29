@@ -1,15 +1,18 @@
+// lib/screens/location_details_screen.dart
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart'; // Vẫn cần BlocProvider ở cấp cao hơn
 import 'package:intl/intl.dart';
 
-import 'package:air_quality/blocs/location_data/location_data_cubit.dart';
-import 'package:air_quality/blocs/location_data/location_data_state.dart';
+// Bỏ import Cubit và State của LocationData
+// import 'package:air_quality/blocs/location_data/location_data_cubit.dart';
+// import 'package:air_quality/blocs/location_data/location_data_state.dart';
 import 'package:air_quality/models/air_quality_model.dart';
 import 'package:air_quality/models/weather_model.dart';
-import 'package:air_quality/services/weather_api_service.dart';
+import 'package:air_quality/services/weather_api_service.dart'; // Vẫn cần nếu dùng service ở đâu đó
 import 'aqi_scale_screen.dart';
 
+// AirQualityPainter giữ nguyên
 class AirQualityPainter extends CustomPainter {
   final double progress;
   final Color color;
@@ -19,10 +22,11 @@ class AirQualityPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
-    final rect = Rect.fromCenter(center: center, width: size.width, height: size.height);
+    final rect =
+        Rect.fromCenter(center: center, width: size.width, height: size.height);
 
     final backgroundPaint = Paint()
-      ..color = color.withOpacity(0.2) // Dùng màu động
+      ..color = color.withOpacity(0.2)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 12;
 
@@ -45,48 +49,26 @@ class AirQualityPainter extends CustomPainter {
   }
 }
 
-class LocationDetailsScreen extends StatefulWidget {
-  final String city;
 
-  const LocationDetailsScreen({Key? key, this.city = 'Hanoi'}) : super(key: key);
+// Chuyển thành StatelessWidget và nhận data trực tiếp
+class LocationDetailsScreen extends StatelessWidget {
+  final AirQualityData aqData;
+  final WeatherData weatherData;
 
-  @override
-  State<LocationDetailsScreen> createState() => _LocationDetailsScreenState();
-}
+  const LocationDetailsScreen({
+    super.key,
+    required this.aqData,
+    required this.weatherData,
+  });
 
-class _LocationDetailsScreenState extends State<LocationDetailsScreen> {
+  // --- Các hàm helper giữ nguyên ---
   Map<String, dynamic> _getAqiInfo(int aqi) {
-    int scaleValue;
-    String status;
-    Color color;
-
-    if (aqi <= 50) {
-      scaleValue = (1 + (aqi / 50 * 2)).round().clamp(1, 3);
-      status = 'Low';
-      color = Colors.green;
-    }
-    else if (aqi <= 100) {
-      scaleValue = (4 + ((aqi - 51) / 49 * 2)).round().clamp(4, 6);
-      status = 'Moderate';
-      color = Colors.orange;
-    }
-    else if (aqi <= 150) {
-      scaleValue = (7 + ((aqi - 101) / 49 * 1)).round().clamp(7, 8);
-      status = 'High';
-      color =  Colors.red;
-    }
-    else { 
-      scaleValue = (aqi <= 200) ? 9 : 10;
-      status = 'Very High';
-      color = Colors.purple;
-    }
-
-    return {
-      'status': status,
-      'color': color,
-      'scaleValue': scaleValue, // <-- Số 1-10 mới
-      'progress': (scaleValue / 10.0).clamp(0.1, 1.0)
-    };
+    int scaleValue; String status; Color color;
+    if (aqi <= 50) { scaleValue = (1 + (aqi / 50 * 2)).round().clamp(1, 3); status = 'Low'; color = Colors.green; }
+    else if (aqi <= 100) { scaleValue = (4 + ((aqi - 51) / 49 * 2)).round().clamp(4, 6); status = 'Moderate'; color = Colors.orange; }
+    else if (aqi <= 150) { scaleValue = (7 + ((aqi - 101) / 49 * 1)).round().clamp(7, 8); status = 'High'; color = Colors.red; }
+    else { scaleValue = (aqi <= 200) ? 9 : 10; status = 'Very High'; color = Colors.purple; }
+    return { 'status': status, 'color': color, 'scaleValue': scaleValue, 'progress': (scaleValue / 10.0).clamp(0.1, 1.0) };
   }
 
   double _normalizePollutant(double value) {
@@ -95,25 +77,16 @@ class _LocationDetailsScreenState extends State<LocationDetailsScreen> {
 
   String _mapConditionToIconName(String apiCondition) {
     final condition = apiCondition.toLowerCase();
-    if (condition.contains('sunny') || condition.contains('clear')) {
-      return 'sunny';
-    }
-    if (condition.contains('rain') && condition.contains('shower')) {
-      return 'rain_shower';
-    }
-    if (condition.contains('rain') || condition.contains('drizzle')) {
-      return 'rain_drop';
-    }
-    if (condition.contains('cloudy') || condition.contains('overcast') || condition.contains('mist')) {
-      return 'cloud';
-    }
+    if (condition.contains('sunny') || condition.contains('clear')) return 'sunny';
+    if (condition.contains('rain') && condition.contains('shower')) return 'rain_shower';
+    if (condition.contains('rain') || condition.contains('drizzle')) return 'rain_drop';
+    if (condition.contains('cloudy') || condition.contains('overcast') || condition.contains('mist')) return 'cloud';
     return 'cloud';
   }
 
   String _formatDate(String dateStr) {
     try {
       final DateTime date = DateTime.parse(dateStr);
-      // Định dạng: THU 11 NOV 21
       return DateFormat('E dd MMM yy').format(date).toUpperCase();
     } catch (e) {
       return dateStr;
@@ -128,120 +101,78 @@ class _LocationDetailsScreenState extends State<LocationDetailsScreen> {
 
   String _getWeatherIconPath(String iconName) {
     switch (iconName) {
-      case 'cloud':
-        return 'assets/images/cloud.png';
-      case 'rain_drop':
-        return 'assets/images/rain_drop.png';
-      case 'rain_shower':
-        return 'assets/images/rain_shower.png';
-      case 'sunny':
-        return 'assets/images/sunny.png';
-      default:
-        return 'assets/images/cloud.png';
+      case 'cloud': return 'assets/images/cloud.png';
+      case 'rain_drop': return 'assets/images/rain_drop.png';
+      case 'rain_shower': return 'assets/images/rain_shower.png';
+      case 'sunny': return 'assets/images/sunny.png';
+      default: return 'assets/images/cloud.png';
     }
   }
 
   String _getAqiFaceIconPath(String level) {
     switch (level) {
-      case 'Low':
-        return 'assets/images/low.png';
-      case 'Moderate':
-        return 'assets/images/moderate.png'; 
-      case 'High':
-        return 'assets/images/high.png'; 
-      case 'Very High':
-        return 'assets/images/very_high.png';
-      default:
-        return 'assets/images/low.png';
+      case 'Low': return 'assets/images/low.png';
+      case 'Moderate': return 'assets/images/moderate.png';
+      case 'High': return 'assets/images/high.png';
+      case 'Very High': return 'assets/images/very_high.png';
+      default: return 'assets/images/low.png';
     }
-}
+  }
+ // --- Kết thúc hàm helper ---
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => LocationDataCubit(
-        RepositoryProvider.of<WeatherApiService>(context),
-      )..fetchData(widget.city),
-      child: Scaffold(
+    // Không cần BlocProvider ở đây nữa
+    // Tính toán aqiInfo trực tiếp từ aqData nhận được
+    final aqiInfo = _getAqiInfo(aqData.aqi);
+
+    return Scaffold(
+      backgroundColor: Colors.grey[100],
+      appBar: AppBar(
         backgroundColor: Colors.grey[100],
-        appBar: AppBar(
-          backgroundColor: Colors.grey[100],
-          elevation: 0,
-          leading: IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.arrow_back, color: Colors.black),
-          ),
-          title: const Text('Current Location', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-          centerTitle: true,
-          actions: const [
-            Padding(
-              padding: EdgeInsets.only(right: 16.0),
-              child: Icon(Icons.location_searching_outlined, color: Colors.black),
-            ),
-          ],
+        elevation: 0,
+        leading: IconButton(
+          onPressed: () => Navigator.pop(context),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
         ),
-        // Dùng BlocBuilder để build UI theo state
-        body: BlocBuilder<LocationDataCubit, LocationDataState>(
-          builder: (context, state) {
-            if (state is LocationDataLoading || state is LocationDataInitial) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            if (state is LocationDataError) {
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Text(
-                    'Lỗi: ${state.message}',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(color: Colors.red),
-                  ),
-                ),
-              );
-            }
-
-            if (state is LocationDataLoaded) {
-              final aqData = state.airQualityData;
-              final weatherData = state.weatherData;
-              // Lấy thông tin AQI động
-              final aqiInfo = _getAqiInfo(aqData.aqi);
-
-              return SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 8),
-                      // Truyền dữ liệu động
-                      _buildLocationHeader(aqData),
-                      const SizedBox(height: 20),
-                      // Truyền dữ liệu động
-                      _buildAirQualityCard(context, aqData, aqiInfo, weatherData),
-                      const SizedBox(height: 20),
-                      // Truyền dữ liệu động
-                      _buildWeatherCard(context, weatherData),
-                      const SizedBox(height: 20),
-                      // Giữ nguyên (chưa có data 7 ngày AQI từ API này)
-                      _buildAqForecastCard(context),
-                      const SizedBox(height: 20),
-                      // Truyền dữ liệu động
-                      _buildWeatherForecastCard(context, weatherData.dailyForecast),
-                      const SizedBox(height: 20),
-                      // Giữ nguyên (dữ liệu tĩnh)
-                      _buildRecommendationsCard(context),
-                      const SizedBox(height: 20),
-                    ],
-                  ),
-                ),
-              );
-            }
-            return const Center(child: Text('Đã xảy ra lỗi không xác định.'));
-          },
+        title: const Text('Current Location',
+            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+        centerTitle: true,
+        actions: const [
+          Padding(
+            padding: EdgeInsets.only(right: 16.0),
+            child: Icon(Icons.location_searching_outlined, color: Colors.black),
+          ),
+        ],
+      ),
+      // Bỏ BlocBuilder, dùng trực tiếp aqData và weatherData
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 8),
+              _buildLocationHeader(aqData),
+              const SizedBox(height: 20),
+              _buildAirQualityCard(context, aqData, aqiInfo, weatherData), // Truyền data trực tiếp
+              const SizedBox(height: 20),
+              _buildWeatherCard(context, weatherData), // Truyền data trực tiếp
+              const SizedBox(height: 20),
+              _buildAqForecastCard(context), // Giữ nguyên
+              const SizedBox(height: 20),
+              _buildWeatherForecastCard(context, weatherData.dailyForecast), // Truyền data trực tiếp
+              const SizedBox(height: 20),
+              _buildRecommendationsCard(context), // Giữ nguyên
+              const SizedBox(height: 20),
+            ],
+          ),
         ),
       ),
     );
   }
 
+  // --- Các hàm build Widget con giữ nguyên, chỉ cần đảm bảo chúng nhận data ---
   Widget _buildLocationHeader(AirQualityData aqData) {
     return Card(
       elevation: 1,
@@ -253,8 +184,9 @@ class _LocationDetailsScreenState extends State<LocationDetailsScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                aqData.cityName, // Dùng data từ API
-                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                aqData.cityName,
+                style:
+                    const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -264,7 +196,8 @@ class _LocationDetailsScreenState extends State<LocationDetailsScreen> {
     );
   }
 
-  Widget _buildAirQualityCard(BuildContext context, AirQualityData aqData, Map<String, dynamic> aqiInfo, WeatherData weatherData) {
+  Widget _buildAirQualityCard(BuildContext context, AirQualityData aqData,
+      Map<String, dynamic> aqiInfo, WeatherData weatherData) {
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -284,7 +217,7 @@ class _LocationDetailsScreenState extends State<LocationDetailsScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => AqiScaleScreen(
+                        builder: (_) => AqiScaleScreen( // Truyền data đã có
                           aqData: aqData,
                           weatherData: weatherData,
                         ),
@@ -294,7 +227,8 @@ class _LocationDetailsScreenState extends State<LocationDetailsScreen> {
                   icon: Container(
                     padding: const EdgeInsets.all(2),
                     decoration: const BoxDecoration(shape: BoxShape.circle),
-                    child: const Icon(Icons.info_rounded, color: Colors.blue, size: 20),
+                    child: const Icon(Icons.info_rounded,
+                        color: Colors.blue, size: 20),
                   ),
                 ),
               ],
@@ -310,7 +244,7 @@ class _LocationDetailsScreenState extends State<LocationDetailsScreen> {
                     size: const Size(150, 150),
                     painter: AirQualityPainter(
                       progress: aqiInfo['progress'],
-                      color: aqiInfo['color'], 
+                      color: aqiInfo['color'],
                     ),
                   ),
                   Column(
@@ -322,12 +256,14 @@ class _LocationDetailsScreenState extends State<LocationDetailsScreen> {
                         children: [
                           Text(
                             aqiInfo['scaleValue'].toString(),
-                            style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
+                            style: const TextStyle(
+                                fontSize: 48, fontWeight: FontWeight.bold),
                           ),
-
                           const Padding(
                             padding: EdgeInsets.only(top: 8.0),
-                            child: Text('AQI', style: TextStyle(fontSize: 16, color: Colors.grey)),
+                            child: Text('AQI',
+                                style: TextStyle(
+                                    fontSize: 16, color: Colors.grey)),
                           ),
                         ],
                       ),
@@ -336,15 +272,17 @@ class _LocationDetailsScreenState extends State<LocationDetailsScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Image.asset(
-                            _getAqiFaceIconPath(aqiInfo['status']), 
-                            width: 20, 
-                            height: 20, 
-                            color: aqiInfo['color']
-                          ),
+                              _getAqiFaceIconPath(aqiInfo['status']),
+                              width: 20,
+                              height: 20,
+                              color: aqiInfo['color']),
                           const SizedBox(width: 4),
                           Text(
-                            aqiInfo['status'], 
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: aqiInfo['color']),
+                            aqiInfo['status'],
+                            style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: aqiInfo['color']),
                           ),
                         ],
                       ),
@@ -357,18 +295,30 @@ class _LocationDetailsScreenState extends State<LocationDetailsScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildPollutantItem(context, 'O3', 'ug/m3', aqData.o3.toStringAsFixed(1), _normalizePollutant(aqData.o3), aqiInfo['color']),
-                _buildPollutantItem(context, 'PM10', 'ug/m3', aqData.pm10.toStringAsFixed(1), _normalizePollutant(aqData.pm10), aqiInfo['color']),
-                _buildPollutantItem(context, 'NO', 'ug/m3', aqData.no.toStringAsFixed(1), _normalizePollutant(aqData.no), aqiInfo['color']),
+                _buildPollutantItem(
+                    context, 'O3', 'ug/m3', aqData.o3.toStringAsFixed(1),
+                    _normalizePollutant(aqData.o3), aqiInfo['color']),
+                _buildPollutantItem(
+                    context, 'PM10', 'ug/m3', aqData.pm10.toStringAsFixed(1),
+                    _normalizePollutant(aqData.pm10), aqiInfo['color']),
+                _buildPollutantItem(
+                    context, 'NO', 'ug/m3', aqData.no.toStringAsFixed(1),
+                    _normalizePollutant(aqData.no), aqiInfo['color']),
               ],
             ),
             const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildPollutantItem(context, 'NO2', 'ug/m3', aqData.no2.toStringAsFixed(1), _normalizePollutant(aqData.no2), aqiInfo['color']),
-                _buildPollutantItem(context, 'PM1', 'ug/m3', aqData.pm1.toStringAsFixed(1), _normalizePollutant(aqData.pm1), aqiInfo['color']),
-                _buildPollutantItem(context, 'PM2.5', 'ug/m3', aqData.pm25.toStringAsFixed(1), _normalizePollutant(aqData.pm25), aqiInfo['color']),
+                _buildPollutantItem(
+                    context, 'NO2', 'ug/m3', aqData.no2.toStringAsFixed(1),
+                    _normalizePollutant(aqData.no2), aqiInfo['color']),
+                _buildPollutantItem(
+                    context, 'PM1', 'ug/m3', aqData.pm1.toStringAsFixed(1),
+                    _normalizePollutant(aqData.pm1), aqiInfo['color']),
+                _buildPollutantItem(
+                    context, 'PM2.5', 'ug/m3', aqData.pm25.toStringAsFixed(1),
+                    _normalizePollutant(aqData.pm25), aqiInfo['color']),
               ],
             ),
           ],
@@ -377,7 +327,9 @@ class _LocationDetailsScreenState extends State<LocationDetailsScreen> {
     );
   }
 
-  Widget _buildPollutantItem(BuildContext context, String name, String unit, String value, double level, Color color) {
+  Widget _buildPollutantItem(BuildContext context, String name, String unit,
+      String value, double level, Color color) {
+    final displayValue = (value == '0.0' || value == '0') ? '--' : value;
     return SizedBox(
       width: MediaQuery.of(context).size.width / 4.5,
       child: Row(
@@ -386,7 +338,9 @@ class _LocationDetailsScreenState extends State<LocationDetailsScreen> {
           Container(
             height: 50,
             width: 8,
-            decoration: BoxDecoration(color: Colors.grey[200], borderRadius: BorderRadius.circular(4)),
+            decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(4)),
             alignment: Alignment.bottomCenter,
             child: Container(
               height: 50 * level,
@@ -404,15 +358,21 @@ class _LocationDetailsScreenState extends State<LocationDetailsScreen> {
                 Text.rich(
                   TextSpan(
                     children: [
-                      TextSpan(text: '$name ', style: const TextStyle(color: Colors.grey)),
-                      TextSpan(text: '($unit)', style: const TextStyle(color: Colors.grey, fontSize: 12)),
+                      TextSpan(
+                          text: '$name ',
+                          style: const TextStyle(color: Colors.grey)),
+                      TextSpan(
+                          text: '($unit)',
+                          style: const TextStyle(
+                              color: Colors.grey, fontSize: 12)),
                     ],
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  value,
-                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  displayValue,
+                  style: const TextStyle(
+                      fontSize: 24, fontWeight: FontWeight.bold),
                   overflow: TextOverflow.ellipsis,
                 ),
               ],
@@ -433,7 +393,8 @@ class _LocationDetailsScreenState extends State<LocationDetailsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Weather', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            const Text('Weather',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -444,7 +405,8 @@ class _LocationDetailsScreenState extends State<LocationDetailsScreen> {
                     const Text('NOW', style: TextStyle(color: Colors.grey)),
                     Text(
                       weatherData.condition,
-                      style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontSize: 22, fontWeight: FontWeight.bold),
                     ),
                     Text(
                       'Feels like ${weatherData.feelsLike.round()}°C',
@@ -457,11 +419,16 @@ class _LocationDetailsScreenState extends State<LocationDetailsScreen> {
                   children: [
                     Text(
                       weatherData.currentTemp.round().toString(),
-                      style: const TextStyle(fontSize: 60, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontSize: 60, fontWeight: FontWeight.bold),
                     ),
                     const Padding(
                       padding: EdgeInsets.only(top: 8.0),
-                      child: Text('°C', style: TextStyle(fontSize: 24, color: Colors.grey, fontWeight: FontWeight.bold)),
+                      child: Text('°C',
+                          style: TextStyle(
+                              fontSize: 24,
+                              color: Colors.grey,
+                              fontWeight: FontWeight.bold)),
                     ),
                     const SizedBox(width: 8),
                     Image.asset(
@@ -486,7 +453,8 @@ class _LocationDetailsScreenState extends State<LocationDetailsScreen> {
                       itemCount: weatherData.hourlyForecast.length,
                       itemBuilder: (context, index) {
                         final forecast = weatherData.hourlyForecast[index];
-                        final itemIconName = _mapConditionToIconName(forecast.condition);
+                        final itemIconName =
+                            _mapConditionToIconName(forecast.condition);
                         return _buildHourlyForecastItem(
                           forecast.time,
                           itemIconName,
@@ -528,7 +496,8 @@ class _LocationDetailsScreenState extends State<LocationDetailsScreen> {
     );
   }
 
-  Widget _buildHourlyForecastItem(String time, String iconCondition, String temp, bool isSelected) {
+  Widget _buildHourlyForecastItem(
+      String time, String iconCondition, String temp, bool isSelected) {
     return Container(
       width: 70,
       margin: const EdgeInsets.only(right: 12),
@@ -542,9 +511,18 @@ class _LocationDetailsScreenState extends State<LocationDetailsScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Image.asset(_getWeatherIconPath(iconCondition),
-                width: 32, height: 32, color: isSelected ? Colors.white : Colors.blue[400]),
-            Text(temp, style: TextStyle(color: isSelected ? Colors.white : Colors.black, fontWeight: FontWeight.bold, fontSize: 16)),
-            Text(time, style: TextStyle(color: isSelected ? Colors.white70 : Colors.grey, fontSize: 12)),
+                width: 32,
+                height: 32,
+                color: isSelected ? Colors.white : Colors.blue[400]),
+            Text(temp,
+                style: TextStyle(
+                    color: isSelected ? Colors.white : Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16)),
+            Text(time,
+                style: TextStyle(
+                    color: isSelected ? Colors.white70 : Colors.grey,
+                    fontSize: 12)),
           ],
         ),
       ),
@@ -552,7 +530,8 @@ class _LocationDetailsScreenState extends State<LocationDetailsScreen> {
   }
 
   Widget _buildAqForecastCard(BuildContext context) {
-    return Card(
+    // ... (Giữ nguyên widget này) ...
+     return Card(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         elevation: 2,
         child: Padding(
@@ -590,7 +569,7 @@ class _LocationDetailsScreenState extends State<LocationDetailsScreen> {
         ));
   }
 
-  Widget _buildAqBarItem(String day, int aqi, double heightFactor, Color color) {
+   Widget _buildAqBarItem(String day, int aqi, double heightFactor, Color color) {
     return Column(
       children: [
         Container(
@@ -610,8 +589,10 @@ class _LocationDetailsScreenState extends State<LocationDetailsScreen> {
     );
   }
 
-  Widget _buildWeatherForecastCard(BuildContext context, List<DailyForecast> dailyForecasts) {
-    return Card(
+
+  Widget _buildWeatherForecastCard(
+      BuildContext context, List<DailyForecast> dailyForecasts) {
+     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Padding(
@@ -619,13 +600,13 @@ class _LocationDetailsScreenState extends State<LocationDetailsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Weather Forcast', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            const Text('Weather Forcast',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             const Text('Next 7 days', style: TextStyle(color: Colors.grey)),
             const SizedBox(height: 16),
-            // Dùng ListView.builder thay vì Column cứng
             ListView.builder(
               shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(), // Tắt cuộn của ListView
+              physics: const NeverScrollableScrollPhysics(),
               itemCount: dailyForecasts.length,
               itemBuilder: (context, index) {
                 final forecast = dailyForecasts[index];
@@ -645,8 +626,9 @@ class _LocationDetailsScreenState extends State<LocationDetailsScreen> {
     );
   }
 
-  Widget _buildWeatherForecastItem(String date, String dayLabel, String tempUp, String tempDown, String iconCondition) {
-    return Container(
+  Widget _buildWeatherForecastItem(String date, String dayLabel, String tempUp,
+      String tempDown, String iconCondition) {
+     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -666,32 +648,41 @@ class _LocationDetailsScreenState extends State<LocationDetailsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(date, style: const TextStyle(fontWeight: FontWeight.bold)),
-                if (dayLabel.isNotEmpty) Text(dayLabel, style: const TextStyle(color: Colors.grey)),
+                Text(date,
+                    style: const TextStyle(fontWeight: FontWeight.bold)),
+                if (dayLabel.isNotEmpty)
+                  Text(dayLabel, style: const TextStyle(color: Colors.grey)),
               ],
             ),
           ),
           Row(
             children: [
-              Text('$tempUp°', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              Text('$tempUp°',
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 16)),
               const Icon(Icons.arrow_upward, size: 14, color: Colors.red),
               const SizedBox(width: 8),
-              Text('$tempDown°', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              Text('$tempDown°',
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 16)),
               const Icon(Icons.arrow_downward, size: 14, color: Colors.blue),
             ],
           ),
           const SizedBox(width: 16),
-          Image.asset(_getWeatherIconPath(iconCondition), width: 32, height: 32, color: Colors.blue[400]),
+          Image.asset(_getWeatherIconPath(iconCondition),
+              width: 32, height: 32, color: Colors.blue[400]),
         ],
       ),
     );
   }
 
   Widget _buildRecommendationsCard(BuildContext context) {
-    return Column(
+    // ... (Giữ nguyên widget này) ...
+     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Recommendations', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        const Text('Recommendations',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
         const SizedBox(height: 16),
         SizedBox(
           height: 150,
@@ -701,12 +692,14 @@ class _LocationDetailsScreenState extends State<LocationDetailsScreen> {
               _buildRecommendationItem(
                   iconPath: 'assets/images/low.png',
                   title: 'General',
-                  text: 'With this level of air quality, you have no limitations. Enjoy the ...'),
+                  text:
+                      'With this level of air quality, you have no limitations. Enjoy the ...'),
               const SizedBox(width: 16),
               _buildRecommendationItem(
                   iconPath: 'assets/images/low.png',
                   title: 'Asthma',
-                  text: 'If you start to feel respiratory symptoms such as coughing or ...'),
+                  text:
+                      'If you start to feel respiratory symptoms such as coughing or ...'),
             ],
           ),
         )
@@ -714,14 +707,22 @@ class _LocationDetailsScreenState extends State<LocationDetailsScreen> {
     );
   }
 
-  Widget _buildRecommendationItem({required String iconPath, required String title, required String text}) {
-    return Container(
+  Widget _buildRecommendationItem(
+      {required String iconPath,
+      required String title,
+      required String text}) {
+     return Container(
       width: 250,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.2), spreadRadius: 1, blurRadius: 5)]),
+          boxShadow: [
+            BoxShadow(
+                color: Colors.grey.withOpacity(0.2),
+                spreadRadius: 1,
+                blurRadius: 5)
+          ]),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -729,13 +730,17 @@ class _LocationDetailsScreenState extends State<LocationDetailsScreen> {
             children: [
               Image.asset(iconPath, width: 24, height: 24),
               const SizedBox(width: 8),
-              Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              Text(title,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 16)),
             ],
           ),
           const SizedBox(height: 8),
           Text(text, maxLines: 2, overflow: TextOverflow.ellipsis),
           const Spacer(),
-          const Text('Show More', style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold)),
+          const Text('Show More',
+              style:
+                  TextStyle(color: Colors.blue, fontWeight: FontWeight.bold)),
         ],
       ),
     );

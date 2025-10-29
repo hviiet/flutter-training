@@ -1,32 +1,45 @@
-class AirQualityData {
-  final int aqi;
-  final String cityName;
-  final double o3;
-  final double pm10;
-  final double no;
-  final double no2;
-  final double pm1;
-  final double pm25;
+// lib/models/air_quality_model.dart
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  AirQualityData({
-    required this.aqi,
-    required this.cityName,
-    required this.o3,
-    required this.pm10,
-    required this.no,
-    required this.no2,
-    required this.pm1,
-    required this.pm25,
-  });
+part 'air_quality_model.freezed.dart';
+
+@freezed
+class AirQualityData with _$AirQualityData {
+  const factory AirQualityData({
+    required int aqi,
+    required String cityName,
+    required double o3,
+    required double pm10,
+    required double no,
+    required double no2,
+    required double pm1,
+    required double pm25,
+  }) = _AirQualityData;
 
   factory AirQualityData.fromJson(Map<String, dynamic> json) {
-    double getValue(dynamic data) => (data?['v'] ?? 0.0).toDouble();
+    double getValue(dynamic pollutantData) {
+      if (pollutantData is Map && pollutantData.containsKey('v')) {
+        final value = num.tryParse(pollutantData['v']?.toString() ?? '');
+        return value?.toDouble() ?? 0.0;
+      }
+      return 0.0;
+    }
 
-    final iaqi = json['data']?['iaqi'] ?? {};
+    final dataMap = (json['data'] is Map<String, dynamic>)
+        ? json['data'] as Map<String, dynamic>
+        : null;
+
+    final iaqi = (dataMap?['iaqi'] is Map<String, dynamic>)
+        ? dataMap!['iaqi'] as Map<String, dynamic>
+        : <String, dynamic>{};
+
+    final cityMap = (dataMap?['city'] is Map<String, dynamic>)
+        ? dataMap!['city'] as Map<String, dynamic>
+        : null;
 
     return AirQualityData(
-      aqi: json['data']?['aqi'] ?? 0,
-      cityName: json['data']?['city']?['name'] ?? 'Unknown City',
+      aqi: (dataMap?['aqi'] as num?)?.toInt() ?? 0,
+      cityName: cityMap?['name'] as String? ?? 'Unknown City',
       o3: getValue(iaqi['o3']),
       pm10: getValue(iaqi['pm10']),
       no: getValue(iaqi['no']),

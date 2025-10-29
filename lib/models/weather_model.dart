@@ -1,17 +1,18 @@
-class WeatherData {
-  final double currentTemp;
-  final String condition;
-  final double feelsLike;
-  final List<HourlyForecast> hourlyForecast;
-  final List<DailyForecast> dailyForecast;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  WeatherData({
-    required this.currentTemp,
-    required this.condition,
-    required this.feelsLike,
-    required this.hourlyForecast,
-    required this.dailyForecast,
-  });
+part 'weather_model.freezed.dart';
+
+@freezed
+class WeatherData with _$WeatherData {
+  
+  // 1. Chuyển constructor thành 'const factory'
+  const factory WeatherData({
+    required double currentTemp,
+    required String condition,
+    required double feelsLike,
+    required List<HourlyForecast> hourlyForecast,
+    required List<DailyForecast> dailyForecast,
+  }) = _WeatherData;
 
   factory WeatherData.fromJson(Map<String, dynamic> json) {
     var hourlyList = (json['forecast']['forecastday'][0]['hour'] as List)
@@ -32,12 +33,15 @@ class WeatherData {
   }
 }
 
-class HourlyForecast {
-  final String time;
-  final double temp;
-  final String condition;
-
-  HourlyForecast({required this.time, required this.temp, required this.condition});
+@freezed
+class HourlyForecast with _$HourlyForecast {
+  
+  // 1. Chuyển constructor thành 'const factory'
+  const factory HourlyForecast({
+    required String time,
+    required double temp,
+    required String condition,
+  }) = _HourlyForecast;
 
   factory HourlyForecast.fromJson(Map<String, dynamic> json) {
     String timeString = json['time'] ?? '00:00';
@@ -51,18 +55,16 @@ class HourlyForecast {
   }
 }
 
-class DailyForecast {
-  final String date;
-  final double maxTemp;
-  final double minTemp;
-  final String condition;
-
-  DailyForecast({
-    required this.date,
-    required this.maxTemp,
-    required this.minTemp,
-    required this.condition,
-  });
+@freezed
+class DailyForecast with _$DailyForecast {
+  
+  // 1. Chuyển constructor thành 'const factory'
+  const factory DailyForecast({
+    required String date,
+    required double maxTemp,
+    required double minTemp,
+    required String condition,
+  }) = _DailyForecast;
 
   factory DailyForecast.fromJson(Map<String, dynamic> json) {
     return DailyForecast(

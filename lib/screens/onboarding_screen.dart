@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+// Import LoginScreen
+import 'package:air_quality/screens/login_screen.dart';
 
 final List<Map<String, String>> onboardingData = [
   {
@@ -30,13 +32,11 @@ class OnboardingScreen extends StatefulWidget {
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _pageController = PageController();
-  // Biến để lưu trang hiện tại
   int _currentPage = 0;
 
   @override
   void initState() {
     super.initState();
-    // Lắng nghe sự kiện chuyển trang để cập nhật dấu chấm chỉ báo
     _pageController.addListener(() {
       setState(() {
         _currentPage = _pageController.page!.round();
@@ -50,25 +50,28 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     super.dispose();
   }
 
+  // Hàm chuyển sang màn hình Login
+  void _goToLoginScreen() {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (context) => const LoginScreen()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        // child: Padding(
-        //   padding: const EdgeInsets.all(24.0),
         child: Column(
           children: [
-            // 1. Nút "Skip"
             Align(
               alignment: Alignment.topRight,
               child: TextButton(
-                onPressed: () {},
+                // SỬA Ở ĐÂY: Gọi hàm _goToLoginScreen khi nhấn Skip
+                onPressed: _goToLoginScreen,
                 child: const Text('Skip', style: TextStyle(fontSize: 16)),
               ),
             ),
-
-            // 2. PageView để hiển thị các màn hình trượt
             Expanded(
               child: PageView.builder(
                 controller: _pageController,
@@ -78,8 +81,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 },
               ),
             ),
-
-            // 3. Các dấu chấm chỉ báo trang
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(
@@ -88,14 +89,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
             ),
             const SizedBox(height: 40),
-
-            // 4. Nút "Get Started"
             Padding(
               padding: const EdgeInsets.all(20.0),
               child: SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: _goToLoginScreen,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blueAccent,
                     padding: const EdgeInsets.symmetric(vertical: 16),
@@ -112,20 +111,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ),
           ],
         ),
-        //),
       ),
     );
   }
 
-  // Hàm helper để vẽ các dấu chấm
   AnimatedContainer buildDot({required int index}) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       margin: const EdgeInsets.only(right: 5),
       height: 6,
-      width: _currentPage == index
-          ? 20
-          : 6, // Dấu chấm của trang hiện tại sẽ dài hơn
+      width: _currentPage == index ? 20 : 6,
       decoration: BoxDecoration(
         color: _currentPage == index ? Colors.blueAccent : Colors.grey,
         borderRadius: BorderRadius.circular(3),
@@ -134,7 +129,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 }
 
-// Widget con, tái sử dụng cho mỗi trang onboarding
 class OnboardingPage extends StatelessWidget {
   final Map<String, String> data;
 
@@ -143,25 +137,20 @@ class OnboardingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      // Canh lề các phần tử con theo chiều dọc
-      mainAxisAlignment: MainAxisAlignment.start, // Bắt đầu từ trên xuống
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         const Spacer(flex: 2),
-
         Image.asset(
           data['image']!,
-          height: 300, // Giữ chiều cao cố định
-          width: double.infinity, // Chiếm hết chiều ngang
-          fit: BoxFit.cover, // Co giãn ảnh cho vừa
+          height: 300,
+          width: double.infinity,
+          fit: BoxFit.cover,
         ),
         const SizedBox(height: 40),
-
         Padding(
-          // Thêm padding cho text để không bị sát lề
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
           child: Column(
             children: [
-              // Tiêu đề
               Text(
                 data['title']!,
                 style: const TextStyle(
@@ -172,7 +161,6 @@ class OnboardingPage extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
-              // Mô tả
               Text(
                 data['description']!,
                 style: TextStyle(fontSize: 16, color: Colors.grey[700]),
@@ -181,8 +169,6 @@ class OnboardingPage extends StatelessWidget {
             ],
           ),
         ),
-
-        // Phần không gian trống ở dưới
         const Spacer(flex: 3),
       ],
     );
