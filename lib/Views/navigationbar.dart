@@ -33,11 +33,11 @@ class _NavigationBarPageState extends State<NavigationBarPage> {
         },
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: "Home",
+            icon: Icon(Icons.apps),
+            label: "Data Bank",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.storage),
+            icon: Icon(Icons.data_usage),
             label: "Data Bank",
           ),
           BottomNavigationBarItem(

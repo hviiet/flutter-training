@@ -41,21 +41,20 @@ class LoginBloc {
       // Gọi API đăng nhập
       final response = await _authApi.login(username, pass);
 
-      // ✅ Kiểm tra key đúng theo response thật
       if (response['access_token'] != null && response['refresh_token'] != null) {
-        // Lưu token vào local storage
+        
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('access_token', response['access_token']);
         await prefs.setString('refresh_token', response['refresh_token']);
 
-        debugPrint("✅ Login successful!");
+        debugPrint(" Login successful!");
         _loginResultController.sink.add(true);
       } else {
-        debugPrint("⚠️ Login failed: Missing token fields");
+        debugPrint("Login failed: Missing token fields");
         _loginResultController.sink.add(false);
       }
     } catch (e) {
-      debugPrint("❌ Login error: $e");
+      debugPrint("Login error: $e");
       _loginResultController.sink.add(false);
     } finally {
       _loadingController.sink.add(false);
