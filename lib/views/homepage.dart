@@ -32,9 +32,6 @@ class _HomeScreenState extends State<HomeScreen> {
     // Use selected city from databank or default
     if (widget.selectedCity != null && widget.selectedCity!.isNotEmpty) {
       _currentCity = widget.selectedCity!;
-      debugPrint('🌍 HomeScreen: Loading city from databank: $_currentCity');
-    } else {
-      debugPrint('🌍 HomeScreen: Using default city: $_currentCity');
     }
     
     // Only load if we haven't loaded data yet
@@ -47,21 +44,17 @@ class _HomeScreenState extends State<HomeScreen> {
     final currentState = _locationBloc.state;
     
     if (currentState is LocationDetailsInitial) {
-      debugPrint('🔄 HomeScreen: No data yet, loading $_currentCity');
       _locationBloc.add(LoadLocationDetails(location: _currentCity));
       _hasLoadedData = true;
     } else if (currentState is LocationDetailsLoaded) {
       // Check if loaded data is for different city
       if (currentState.weatherData.location.toLowerCase() != _currentCity.toLowerCase()) {
-        debugPrint('🔄 HomeScreen: City changed, loading $_currentCity');
         _locationBloc.add(LoadLocationDetails(location: _currentCity));
         _hasLoadedData = true;
       } else {
-        debugPrint('✅ HomeScreen: Using existing data for $_currentCity');
         _hasLoadedData = true;
       }
     } else if (currentState is LocationDetailsError) {
-      debugPrint('⚠️ HomeScreen: Previous error, retrying $_currentCity');
       _locationBloc.add(LoadLocationDetails(location: _currentCity));
       _hasLoadedData = true;
     }
@@ -75,7 +68,6 @@ class _HomeScreenState extends State<HomeScreen> {
         widget.selectedCity != oldWidget.selectedCity &&
         widget.selectedCity != _currentCity) {
       _currentCity = widget.selectedCity!;
-      debugPrint('🌍 HomeScreen: City updated to: $_currentCity');
       _locationBloc.add(LoadLocationDetails(location: _currentCity));
     }
   }

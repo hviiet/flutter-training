@@ -25,14 +25,12 @@ class LocationDetailsBloc extends Bloc<LocationDetailsEvent, LocationDetailsStat
     
     // Check cache first - if data exists and it's the same location, use cached data
     if (_cache.containsKey(location) && _lastLoadedLocation == location) {
-      print('📦 BLoC: Using cached data for $location');
       emit(LocationDetailsLoaded(weatherData: _cache[location]!));
       return;
     }
     
     // Only show loading if we don't have data yet
     if (state is! LocationDetailsLoaded || _lastLoadedLocation != location) {
-      print('🔄 BLoC: Loading data for $location');
       emit(LocationDetailsLoading());
     }
     
@@ -44,7 +42,6 @@ class LocationDetailsBloc extends Bloc<LocationDetailsEvent, LocationDetailsStat
     Emitter<LocationDetailsState> emit,
   ) async {
     final location = event.location.trim();
-    print('🔃 BLoC: Force refreshing data for $location');
     // Don't show loading state on refresh, but clear cache for this location
     _cache.remove(location);
     await _fetchLocationData(location, emit);
@@ -64,14 +61,11 @@ class LocationDetailsBloc extends Bloc<LocationDetailsEvent, LocationDetailsStat
       // Store in cache
       _cache[location] = weatherData;
       _lastLoadedLocation = location;
-      
-      print('✅ BLoC: Data loaded and cached for $location');
 
       emit(LocationDetailsLoaded(
         weatherData: weatherData,
       ));
     } catch (e) {
-      print('❌ BLoC: Error loading data for $location: $e');
       emit(LocationDetailsError(message: e.toString()));
     }
   }

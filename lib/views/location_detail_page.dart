@@ -34,18 +34,13 @@ class _LocationDetailPageState extends State<LocationDetailPage> {
     
     // Only load if we don't have data for this location
     if (currentState is LocationDetailsInitial) {
-      debugPrint('🔄 LocationDetail: No data, loading ${widget.location}');
       bloc.add(LoadLocationDetails(location: widget.location));
     } else if (currentState is LocationDetailsLoaded) {
       // Check if current data is for a different location
       if (currentState.weatherData.location.toLowerCase() != widget.location.toLowerCase()) {
-        debugPrint('🔄 LocationDetail: Different location, loading ${widget.location}');
         bloc.add(LoadLocationDetails(location: widget.location));
-      } else {
-        debugPrint('✅ LocationDetail: Using existing data for ${widget.location}');
       }
     } else if (currentState is LocationDetailsError) {
-      debugPrint('⚠️ LocationDetail: Previous error, retrying ${widget.location}');
       bloc.add(LoadLocationDetails(location: widget.location));
     }
   }

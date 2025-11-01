@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-class PlaceInfo {
-  final String title;
-  final String address;
-  final int aqi;
-  final IconData aqiIcon;
-  final IconData weatherIcon;
-  final int temp;
+part 'place_info.freezed.dart';
 
-  PlaceInfo({
-    required this.title,
-    required this.address,
-    required this.aqi,
-    required this.aqiIcon,
-    required this.weatherIcon,
-    required this.temp,
-  });
+@freezed
+class PlaceInfo with _$PlaceInfo {
+  const factory PlaceInfo({
+    required String title,
+    required String address,
+    required int aqi,
+    required IconData aqiIcon,
+    required IconData weatherIcon,
+    required int temp,
+  }) = _PlaceInfo;
 }
