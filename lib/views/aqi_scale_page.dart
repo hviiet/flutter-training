@@ -1,8 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_training/models/aqi_scale_info.dart';
+import 'package:flutter_training/models/weather_data.dart';
 
 class AQIScalePage extends StatelessWidget {
-  const AQIScalePage({super.key});
+  final String location;
+  final String region;
+  final Current current;
+  final int aqi;
+  final AQIScaleInfo aqiInfo;
+
+  const AQIScalePage({
+    super.key,
+    required this.location,
+    required this.region,
+    required this.current,
+    required this.aqi,
+    required this.aqiInfo,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +45,7 @@ class AQIScalePage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header Card with current location info (mock data)
+              // Header Card with current location info from API
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -53,44 +67,48 @@ class AQIScalePage extends StatelessWidget {
                       size: 20,
                     ),
                     const SizedBox(width: 8),
-                    const Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Church Street Square',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            location,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
-                        ),
-                        Text(
-                          'Birmingham',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey,
+                          Text(
+                            region,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey,
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                    const Spacer(),
+                    const SizedBox(width: 8),
                     Column(
                       children: [
-                        const Text(
-                          '19°',
-                          style: TextStyle(
+                        Text(
+                          '${current.tempC.toInt()}°',
+                          style: const TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.w300,
                           ),
                         ),
                         Text(
-                          'Rain Shower',
+                          current.condition,
                           style: TextStyle(
                             fontSize: 10,
                             color: Colors.grey[600],
                           ),
                         ),
                         Text(
-                          'Feels like 11°C',
+                          'Feels like ${current.feelsLikeC.toInt()}°C',
                           style: TextStyle(
                             fontSize: 10,
                             color: Colors.grey[600],
@@ -104,20 +122,20 @@ class AQIScalePage extends StatelessWidget {
                       height: 60,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Colors.green.withOpacity(0.2),
+                        color: aqiInfo.color.withOpacity(0.2),
                       ),
-                      child: const Column(
+                      child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            '3',
+                            aqi.toString(),
                             style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
-                              color: Colors.green,
+                              color: aqiInfo.color,
                             ),
                           ),
-                          Text(
+                          const Text(
                             'AQI',
                             style: TextStyle(
                               fontSize: 10,
@@ -128,9 +146,9 @@ class AQIScalePage extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    const Icon(
-                      Icons.sentiment_satisfied,
-                      color: Colors.green,
+                    Icon(
+                      aqiInfo.icon,
+                      color: aqiInfo.color,
                       size: 24,
                     ),
                   ],

@@ -44,6 +44,7 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       body: PageView(
         controller: _pageController,
+        physics: const NeverScrollableScrollPhysics(), // Disable swipe to keep state
         children: [
           HomeScreen(selectedCity: widget.selectedCity),
           const DataBankScreen(),

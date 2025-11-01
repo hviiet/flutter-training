@@ -22,6 +22,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late LocationDetailsBloc _locationBloc;
   String _currentCity = 'Birmingham'; // Default city
+  bool _hasLoadedData = false; // Track if we've loaded data for this instance
 
   @override
   void initState() {
@@ -36,8 +37,34 @@ class _HomeScreenState extends State<HomeScreen> {
       debugPrint('🌍 HomeScreen: Using default city: $_currentCity');
     }
     
-    // Load weather data for current city
-    _locationBloc.add(LoadLocationDetails(location: _currentCity));
+    // Only load if we haven't loaded data yet
+    if (!_hasLoadedData) {
+      _loadDataIfNeeded();
+    }
+  }
+
+  void _loadDataIfNeeded() {
+    final currentState = _locationBloc.state;
+    
+    if (currentState is LocationDetailsInitial) {
+      debugPrint('🔄 HomeScreen: No data yet, loading $_currentCity');
+      _locationBloc.add(LoadLocationDetails(location: _currentCity));
+      _hasLoadedData = true;
+    } else if (currentState is LocationDetailsLoaded) {
+      // Check if loaded data is for different city
+      if (currentState.weatherData.location.toLowerCase() != _currentCity.toLowerCase()) {
+        debugPrint('🔄 HomeScreen: City changed, loading $_currentCity');
+        _locationBloc.add(LoadLocationDetails(location: _currentCity));
+        _hasLoadedData = true;
+      } else {
+        debugPrint('✅ HomeScreen: Using existing data for $_currentCity');
+        _hasLoadedData = true;
+      }
+    } else if (currentState is LocationDetailsError) {
+      debugPrint('⚠️ HomeScreen: Previous error, retrying $_currentCity');
+      _locationBloc.add(LoadLocationDetails(location: _currentCity));
+      _hasLoadedData = true;
+    }
   }
 
   @override
@@ -59,7 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
       PlaceInfo(
         title: 'Work',
         address: 'Coventry ST, Birmingham',
-        aqi: 3,
+        aqi: 6,  // Moderate (4-6)
         aqiIcon: Icons.sentiment_satisfied,
         weatherIcon: Icons.cloud,
         temp: 25,
@@ -67,7 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
       PlaceInfo(
         title: 'Home',
         address: 'Coventry ST, Birmingham',
-        aqi: 2,
+        aqi: 4,  // Moderate (4-6)
         aqiIcon: Icons.sentiment_satisfied,
         weatherIcon: Icons.cloud,
         temp: 22,
@@ -78,7 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
       Location(
         title: 'Edmund Street',
         address: 'Birmingham',
-        aqi: 5,
+        aqi: 9,  // Very High (9-10)
         aqiIcon: Icons.sentiment_satisfied,
         temp: 21,
         weatherIcon: Icons.ac_unit,
@@ -87,7 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
       Location(
         title: 'Berkley Street',
         address: 'Birmingham',
-        aqi: 4,
+        aqi: 7,  // High (7-8)
         aqiIcon: Icons.sentiment_satisfied,
         temp: 20,
       ),
@@ -204,12 +231,12 @@ class _HomeScreenState extends State<HomeScreen> {
       final weather = state.weatherData;
       final current = weather.current;
       final airQuality = current.airQuality;
-      final aqi = airQuality?.usEpaIndex ?? 3;
+      final aqi = airQuality?.aqi ?? 4;  // Use AQI 1-10 scale, default to 4 (moderate)
       
       // Convert forecast data
       final forecastDays = weather.forecast.take(6).map((day) {
-        // Mock AQI for forecast (API doesn't provide forecast AQI)
-        final dayAqi = aqi; // Use current AQI as fallback
+        // Use real AQI from forecast day API data
+        final dayAqi = day.airQuality?.aqi ?? aqi; // Use day's AQI or fallback to current
         final avgTemp = ((day.maxTempC + day.minTempC) / 2).toInt();
         
         return ForecastDay(
@@ -239,11 +266,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   IconData _getAqiIcon(int aqi) {
-    if (aqi <= 50) return Icons.sentiment_very_satisfied;
-    if (aqi <= 100) return Icons.sentiment_satisfied;
-    if (aqi <= 150) return Icons.sentiment_neutral;
-    if (aqi <= 200) return Icons.sentiment_dissatisfied;
-    return Icons.sentiment_very_dissatisfied;
+    // AQI scale 1-10
+    if (aqi <= 3) return Icons.sentiment_very_satisfied;  // Low: 1-3
+    if (aqi <= 6) return Icons.sentiment_satisfied;       // Moderate: 4-6
+    if (aqi <= 8) return Icons.sentiment_neutral;         // High: 7-8
+    return Icons.sentiment_very_dissatisfied;             // Very High: 9-10
   }
 
   IconData _getWeatherIcon(String condition) {

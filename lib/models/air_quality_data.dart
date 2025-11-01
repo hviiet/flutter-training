@@ -39,9 +39,10 @@ class AirQualityData extends Equatable {
   }
 
   String getAqiLevel() {
-    if (aqi <= 50) return 'Low';
-    if (aqi <= 100) return 'Moderate';
-    if (aqi <= 150) return 'High';
+    // This assumes aqi is on 1-10 scale
+    if (aqi <= 3) return 'Low';
+    if (aqi <= 6) return 'Moderate';
+    if (aqi <= 8) return 'High';
     return 'Very High';
   }
 

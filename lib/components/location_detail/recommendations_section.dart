@@ -25,23 +25,31 @@ class RecommendationsSection extends StatelessWidget {
           const Text(
             'Recommendations',
             style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
+              fontSize: 24,
+              fontWeight: FontWeight.w800,
             ),
           ),
           const SizedBox(height: 16),
-          _RecommendationItem(
-            icon: Icons.check_circle,
-            color: Colors.green,
-            title: 'General',
-            description: 'With the world air quality as it is, you have to breathe. Enjoy the...',
-          ),
-          const SizedBox(height: 12),
-          _RecommendationItem(
-            icon: Icons.error,
-            color: Colors.orange,
-            title: 'Asthma',
-            description: 'If you start to feel respiratory issues such as coughing or breathe...',
+          SizedBox(
+            height: 140,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: const [
+                _RecommendationItem(
+                  icon: Icons.check_circle,
+                  color: Colors.green,
+                  title: 'General',
+                  description: 'With the world air quality as it is, you have to breathe. Enjoy the...',
+                ),
+                SizedBox(width: 12),
+                _RecommendationItem(
+                  icon: Icons.error,
+                  color: Colors.orange,
+                  title: 'Asthma',
+                  description: 'If you start to feel respiratory issues such as coughing or breathe...',
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -64,43 +72,55 @@ class _RecommendationItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(icon, color: color, size: 20),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    return Container(
+      width: 200,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF7F8FA),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
             children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                description,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
-                ),
-              ),
-              const SizedBox(height: 4),
-              const Text(
-                'Show More',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.blue,
-                  fontWeight: FontWeight.w600,
+              Icon(icon, color: color, size: 18),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ],
           ),
-        ),
-      ],
+          const SizedBox(height: 6),
+          Flexible(
+            child: Text(
+              description,
+              style: TextStyle(
+                fontSize: 11,
+                color: Colors.grey[600],
+              ),
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          const SizedBox(height: 6),
+          const Text(
+            'Show More',
+            style: TextStyle(
+              fontSize: 11,
+              color: Colors.blue,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

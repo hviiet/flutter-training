@@ -12,6 +12,10 @@ class WeatherForecastSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final tomorrow = today.add(const Duration(days: 1));
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -31,13 +35,13 @@ class WeatherForecastSection extends StatelessWidget {
           const Text(
             'Weather Forecast',
             style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
+              fontSize: 24,
+              fontWeight: FontWeight.w800,
             ),
           ),
           const SizedBox(height: 4),
           const Text(
-            'NEXT 7 days',
+            'Next 7 days',
             style: TextStyle(
               fontSize: 12,
               color: Colors.grey,
@@ -45,19 +49,47 @@ class WeatherForecastSection extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           ...forecast.map((day) {
-            final date = DateFormat('EEE dd MMM yy').format(day.date);
+            final dateStr = DateFormat('EEE dd MMM yy').format(day.date).toUpperCase();
+            
+            // Determine if this is today or tomorrow
+            String label = '';
+            if (day.date.year == today.year && 
+                day.date.month == today.month && 
+                day.date.day == today.day) {
+              label = 'TODAY';
+            } else if (day.date.year == tomorrow.year && 
+                       day.date.month == tomorrow.month && 
+                       day.date.day == tomorrow.day) {
+              label = 'TOMORROW';
+            }
+            
             return Padding(
-              padding: const EdgeInsets.only(bottom: 12),
+              padding: const EdgeInsets.only(bottom: 16),
               child: Row(
                 children: [
                   SizedBox(
-                    width: 100,
-                    child: Text(
-                      date,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                      ),
+                    width: 120,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          dateStr,
+                          style: const TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                          ),
+                        ),
+                        if (label.isNotEmpty)
+                          Text(
+                            label,
+                            style: const TextStyle(
+                              fontSize: 9,
+                              color: Colors.grey,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                      ],
                     ),
                   ),
                   const Spacer(),
@@ -68,7 +100,13 @@ class WeatherForecastSection extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 4),
+                  Icon(
+                    Icons.arrow_forward,
+                    size: 14,
+                    color: Colors.grey[400],
+                  ),
+                  const SizedBox(width: 4),
                   Text(
                     '${day.minTempC.toInt()}°',
                     style: TextStyle(

@@ -80,11 +80,20 @@ class CurrentState extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 8),
-                Text(weather, style: const TextStyle(fontSize: 16)),
+                Flexible(
+                  child: Text(
+                    weather,
+                    style: const TextStyle(fontSize: 16),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
                 const SizedBox(width: 8),
-                Text(
-                  'Feels like $feelsLike',
-                  style: const TextStyle(color: Colors.grey),
+                Flexible(
+                  child: Text(
+                    'Feels like $feelsLike',
+                    style: const TextStyle(color: Colors.grey),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
               ],
             ),

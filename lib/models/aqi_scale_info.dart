@@ -20,7 +20,7 @@ class AQIScaleInfo {
       level: 'Low',
       range: 'Air Quality Index: 1 to 3',
       description: 'Air quality can change quickly due to weather and human activity. Air quality forecasts are often published based on whether current conditions are more or less favorable to pollution from human activity can dramatically...',
-      color: Color(0xFF4CAF50),
+      color: Color.fromARGB(255, 112, 232, 116),
       icon: Icons.sentiment_satisfied,
     ),
     const AQIScaleInfo(
@@ -47,9 +47,10 @@ class AQIScaleInfo {
   ];
 
   static AQIScaleInfo fromAQI(int aqi) {
-    if (aqi <= 50) return allLevels[0];
-    if (aqi <= 100) return allLevels[1];
-    if (aqi <= 150) return allLevels[2];
-    return allLevels[3];
+    // AQI scale 1-10
+    if (aqi <= 3) return allLevels[0];  // Low: 1-3
+    if (aqi <= 6) return allLevels[1];  // Moderate: 4-6
+    if (aqi <= 8) return allLevels[2];  // High: 7-8
+    return allLevels[3];                 // Very High: 9-10
   }
 }

@@ -1,9 +1,14 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_training/bloc/location_details/location_details_event.dart';
 import 'package:flutter_training/services/weather.dart';
+import 'package:flutter_training/models/weather_data.dart';
 
 class LocationDetailsBloc extends Bloc<LocationDetailsEvent, LocationDetailsState> {
   final WeatherApiService weatherService;
+  
+  // Cache for storing location data
+  final Map<String, WeatherData> _cache = {};
+  String? _lastLoadedLocation;
 
   LocationDetailsBloc({
     required this.weatherService,
@@ -16,16 +21,33 @@ class LocationDetailsBloc extends Bloc<LocationDetailsEvent, LocationDetailsStat
     LoadLocationDetails event,
     Emitter<LocationDetailsState> emit,
   ) async {
-    emit(LocationDetailsLoading());
-    await _fetchLocationData(event.location, emit);
+    final location = event.location.trim();
+    
+    // Check cache first - if data exists and it's the same location, use cached data
+    if (_cache.containsKey(location) && _lastLoadedLocation == location) {
+      print('📦 BLoC: Using cached data for $location');
+      emit(LocationDetailsLoaded(weatherData: _cache[location]!));
+      return;
+    }
+    
+    // Only show loading if we don't have data yet
+    if (state is! LocationDetailsLoaded || _lastLoadedLocation != location) {
+      print('🔄 BLoC: Loading data for $location');
+      emit(LocationDetailsLoading());
+    }
+    
+    await _fetchLocationData(location, emit);
   }
 
   Future<void> _onRefreshLocationDetails(
     RefreshLocationDetails event,
     Emitter<LocationDetailsState> emit,
   ) async {
-    // Don't show loading state on refresh
-    await _fetchLocationData(event.location, emit);
+    final location = event.location.trim();
+    print('🔃 BLoC: Force refreshing data for $location');
+    // Don't show loading state on refresh, but clear cache for this location
+    _cache.remove(location);
+    await _fetchLocationData(location, emit);
   }
 
   Future<void> _fetchLocationData(
@@ -39,11 +61,29 @@ class LocationDetailsBloc extends Bloc<LocationDetailsEvent, LocationDetailsStat
         days: 7,
       );
 
+      // Store in cache
+      _cache[location] = weatherData;
+      _lastLoadedLocation = location;
+      
+      print('✅ BLoC: Data loaded and cached for $location');
+
       emit(LocationDetailsLoaded(
         weatherData: weatherData,
       ));
     } catch (e) {
+      print('❌ BLoC: Error loading data for $location: $e');
       emit(LocationDetailsError(message: e.toString()));
     }
+  }
+  
+  // Helper method to check if data exists for a location
+  bool hasDataFor(String location) {
+    return _cache.containsKey(location.trim());
+  }
+  
+  // Helper method to clear cache (useful for testing)
+  void clearCache() {
+    _cache.clear();
+    _lastLoadedLocation = null;
   }
 }

@@ -8,37 +8,69 @@ class AirQualityCard extends StatelessWidget {
   final int aqi;
   final AQIScaleInfo aqiInfo;
   final AirQuality? airQuality;
+  final String location;
+  final String region;
+  final Current current;
 
   const AirQualityCard({
     super.key,
     required this.aqi,
     required this.aqiInfo,
     this.airQuality,
+    required this.location,
+    required this.region,
+    required this.current,
   });
 
   @override
   Widget build(BuildContext context) {
-    // Build pollutants list from Weather API air quality data
+    // Build pollutants list using real API data
+    // API provides: CO, NO2, O3, SO2, PM2.5, PM10
     final pollutants = <Map<String, dynamic>>[];
     
     if (airQuality != null) {
-      if (airQuality!.pm25 != null) {
-        pollutants.add({'label': 'PM2.5', 'value': airQuality!.pm25!.toInt()});
+      // Order: O3, PM10, CO, NO2, SO2, PM2.5 (6 items for 3x2 grid)
+      if (airQuality!.o3 != null) {
+        pollutants.add({
+          'label': 'O3 (ug/m3)',
+          'shortLabel': 'O3',
+          'value': airQuality!.o3!.toInt()
+        });
       }
       if (airQuality!.pm10 != null) {
-        pollutants.add({'label': 'PM10', 'value': airQuality!.pm10!.toInt()});
-      }
-      if (airQuality!.o3 != null) {
-        pollutants.add({'label': 'O₃', 'value': airQuality!.o3!.toInt()});
-      }
-      if (airQuality!.no2 != null) {
-        pollutants.add({'label': 'NO₂', 'value': airQuality!.no2!.toInt()});
+        pollutants.add({
+          'label': 'PM10 (ug/m3)',
+          'shortLabel': 'PM10',
+          'value': airQuality!.pm10!.toInt()
+        });
       }
       if (airQuality!.co != null) {
-        pollutants.add({'label': 'CO', 'value': airQuality!.co!.toInt()});
+        pollutants.add({
+          'label': 'CO (ug/m3)',
+          'shortLabel': 'CO',
+          'value': airQuality!.co!.toInt()
+        });
+      }
+      if (airQuality!.no2 != null) {
+        pollutants.add({
+          'label': 'NO2 (ug/m3)',
+          'shortLabel': 'NO2',
+          'value': airQuality!.no2!.toInt()
+        });
       }
       if (airQuality!.so2 != null) {
-        pollutants.add({'label': 'SO₂', 'value': airQuality!.so2!.toInt()});
+        pollutants.add({
+          'label': 'SO2 (ug/m3)',
+          'shortLabel': 'SO2',
+          'value': airQuality!.so2!.toInt()
+        });
+      }
+      if (airQuality!.pm25 != null) {
+        pollutants.add({
+          'label': 'PM2.5 (ug/m3)',
+          'shortLabel': 'PM2.5',
+          'value': airQuality!.pm25!.toInt()
+        });
       }
     }
 
@@ -63,8 +95,8 @@ class AirQualityCard extends StatelessWidget {
               const Text(
                 'Air Quality',
                 style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
+                  fontSize: 24,
+                  fontWeight: FontWeight.w800,
                 ),
               ),
               const Spacer(),
@@ -73,7 +105,13 @@ class AirQualityCard extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const AQIScalePage(),
+                      builder: (context) => AQIScalePage(
+                        location: location,
+                        region: region,
+                        current: current,
+                        aqi: aqi,
+                        aqiInfo: aqiInfo,
+                      ),
                     ),
                   );
                 },
@@ -96,32 +134,68 @@ class AirQualityCard extends StatelessWidget {
           Center(
             child: Column(
               children: [
-                Container(
-                  width: 120,
-                  height: 120,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: aqiInfo.color,
-                      width: 8,
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                SizedBox(
+                  width: 180,
+                  height: 100,
+                  child: Stack(
+                    alignment: Alignment.bottomCenter,
                     children: [
-                      Text(
-                        aqi.toString(),
-                        style: TextStyle(
-                          fontSize: 36,
-                          fontWeight: FontWeight.bold,
-                          color: aqiInfo.color,
+                      // Background semi-circle
+                      Positioned(
+                        bottom: 0,
+                        child: Container(
+                          width: 180,
+                          height: 90,
+                          decoration: BoxDecoration(
+                            color: aqiInfo.color.withOpacity(1),
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(90),
+                              topRight: Radius.circular(90),
+                            ),
+                          ),
                         ),
                       ),
-                      const Text(
-                        'AQI',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey,
+                      // Inner semi-circle
+                      Positioned(
+                        bottom: 0,
+                        child: Container(
+                          width: 150,
+                          height: 75,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(75),
+                              topRight: Radius.circular(75),
+                            ),
+                          ),
+                        ),
+                      ),
+                      // AQI value
+                      Positioned(
+                        bottom: 10,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              aqi.toString(),
+                              style: const TextStyle(
+                                fontSize: 40,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                                height: 1.0,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            const Text(
+                              'AQI',
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: Colors.grey,
+                                fontWeight: FontWeight.w500,
+                                height: 1.0,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -131,12 +205,12 @@ class AirQualityCard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(aqiInfo.icon, color: aqiInfo.color, size: 20),
-                    const SizedBox(width: 4),
+                    Icon(Icons.check_circle, color: aqiInfo.color, size: 18),
+                    const SizedBox(width: 6),
                     Text(
                       aqiInfo.level,
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 15,
                         fontWeight: FontWeight.w600,
                         color: aqiInfo.color,
                       ),
@@ -147,19 +221,21 @@ class AirQualityCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 24),
-          // Pollutants Grid
+          // Pollutants Grid (3x2)
           if (pollutants.isNotEmpty)
             GridView.count(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               crossAxisCount: 3,
-              childAspectRatio: 1.2,
-              mainAxisSpacing: 12,
-              crossAxisSpacing: 12,
+              childAspectRatio: 1.0,
+              mainAxisSpacing: 8,
+              crossAxisSpacing: 8,
               children: pollutants.take(6).map((pollutant) {
                 return _PollutantItem(
                   label: pollutant['label'] as String,
+                  shortLabel: pollutant['shortLabel'] as String,
                   value: pollutant['value'].toString(),
+                  color: aqiInfo.color,
                 );
               }).toList(),
             )
@@ -170,7 +246,7 @@ class AirQualityCard extends StatelessWidget {
                 child: Text(
                   'Air quality data not available',
                   style: TextStyle(
-                    color: Colors.grey[600],
+                    color: const Color.fromARGB(255, 0, 0, 0),
                     fontSize: 14,
                   ),
                 ),
@@ -184,38 +260,101 @@ class AirQualityCard extends StatelessWidget {
 
 class _PollutantItem extends StatelessWidget {
   final String label;
+  final String shortLabel;
   final String value;
+  final Color color;
 
   const _PollutantItem({
     required this.label,
+    required this.shortLabel,
     required this.value,
+    required this.color,
   });
 
   @override
   Widget build(BuildContext context) {
+    // Calculate fill percentage (mock calculation based on value)
+    final numValue = int.tryParse(value) ?? 0;
+    final fillPercentage = (numValue / 100).clamp(0.2, 1.0);
+    
     return Container(
-      padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF7F8FA),
-        borderRadius: BorderRadius.circular(12),
-      ),
+      padding: const EdgeInsets.all(10),
+
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Label on top
           Text(
             label,
             style: const TextStyle(
-              fontSize: 10,
-              color: Colors.grey,
+              fontSize: 9,
+              color: Colors.black,
+              fontWeight: FontWeight.w500,
             ),
-            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
-          const SizedBox(height: 4),
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
+          const SizedBox(height: 8),
+          // Row with test tube on left and value on right
+          Expanded(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                // Test tube / liquid indicator on LEFT
+                SizedBox(
+                  width: 20,
+                  child: Stack(
+                    alignment: Alignment.bottomCenter,
+                    children: [
+                      // Test tube container (border)
+                      Container(
+                        width: 15,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.grey.shade300,
+                            width: 2,
+                          ),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      // Liquid fill
+                      FractionallySizedBox(
+                        heightFactor: fillPercentage,
+                        child: Container(
+                          width: 15,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                color.withOpacity(0.4),
+                                color.withOpacity(1),
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                // Value text on RIGHT (separated from tube)
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.bottomLeft,
+                    child: Text(
+                      value,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],

@@ -97,28 +97,35 @@ class AirQuality extends Equatable {
     );
   }
 
-  // Convert US EPA Index to AQI value (approximation)
+  // Convert US EPA Index to AQI value on scale 1-10
+  // UK Defra Index already uses 1-10 scale
   int get aqi {
+    // Prefer UK Defra Index if available (already 1-10)
+    if (gbDefraIndex != null && gbDefraIndex! >= 1 && gbDefraIndex! <= 10) {
+      return gbDefraIndex!;
+    }
+    
+    // Otherwise convert US EPA Index (1-6) to 1-10 scale
     if (usEpaIndex != null) {
       // US EPA Index: 1=Good, 2=Moderate, 3=Unhealthy for sensitive, 4=Unhealthy, 5=Very Unhealthy, 6=Hazardous
       switch (usEpaIndex!) {
-        case 1: return 25;   // Good
-        case 2: return 75;   // Moderate
-        case 3: return 125;  // Unhealthy for sensitive
-        case 4: return 175;  // Unhealthy
-        case 5: return 225;  // Very Unhealthy
-        case 6: return 325;  // Hazardous
-        default: return 50;
+        case 1: return 1;   // Good -> Low (1-3)
+        case 2: return 4;   // Moderate -> Moderate (4-6)
+        case 3: return 6;   // Unhealthy for sensitive -> Moderate (4-6)
+        case 4: return 7;   // Unhealthy -> High (7-8)
+        case 5: return 9;   // Very Unhealthy -> Very High (9-10)
+        case 6: return 10;  // Hazardous -> Very High (9-10)
+        default: return 4;  // Default to moderate
       }
     }
-    return 50; // Default moderate value
+    return 4; // Default moderate value
   }
 
   String getAqiLevel() {
     final aqiValue = aqi;
-    if (aqiValue <= 50) return 'Low';
-    if (aqiValue <= 100) return 'Moderate';
-    if (aqiValue <= 150) return 'High';
+    if (aqiValue <= 3) return 'Low';
+    if (aqiValue <= 6) return 'Moderate';
+    if (aqiValue <= 8) return 'High';
     return 'Very High';
   }
 
@@ -133,6 +140,7 @@ class ForecastDay extends Equatable {
   final String condition;
   final String conditionIcon;
   final List<HourlyForecast> hourly;
+  final AirQuality? airQuality; // Add air quality for forecast
 
   const ForecastDay({
     required this.date,
@@ -141,6 +149,7 @@ class ForecastDay extends Equatable {
     required this.condition,
     required this.conditionIcon,
     required this.hourly,
+    this.airQuality,
   });
 
   factory ForecastDay.fromJson(Map<String, dynamic> json) {
@@ -153,6 +162,9 @@ class ForecastDay extends Equatable {
       hourly: (json['hour'] as List)
           .map((hour) => HourlyForecast.fromJson(hour))
           .toList(),
+      airQuality: json['day']['air_quality'] != null 
+          ? AirQuality.fromJson(json['day']['air_quality'])
+          : null,
     );
   }
 
@@ -162,7 +174,7 @@ class ForecastDay extends Equatable {
   }
 
   @override
-  List<Object?> get props => [date, maxTempC, minTempC, condition, conditionIcon, hourly];
+  List<Object?> get props => [date, maxTempC, minTempC, condition, conditionIcon, hourly, airQuality];
 }
 
 class HourlyForecast extends Equatable {
@@ -170,12 +182,14 @@ class HourlyForecast extends Equatable {
   final double tempC;
   final String condition;
   final String conditionIcon;
+  final AirQuality? airQuality; // Add hourly air quality
 
   const HourlyForecast({
     required this.time,
     required this.tempC,
     required this.condition,
     required this.conditionIcon,
+    this.airQuality,
   });
 
   factory HourlyForecast.fromJson(Map<String, dynamic> json) {
@@ -184,9 +198,12 @@ class HourlyForecast extends Equatable {
       tempC: (json['temp_c'] as num).toDouble(),
       condition: json['condition']['text'] ?? '',
       conditionIcon: json['condition']['icon'] ?? '',
+      airQuality: json['air_quality'] != null 
+          ? AirQuality.fromJson(json['air_quality'])
+          : null,
     );
   }
 
   @override
-  List<Object?> get props => [time, tempC, condition, conditionIcon];
+  List<Object?> get props => [time, tempC, condition, conditionIcon, airQuality];
 }

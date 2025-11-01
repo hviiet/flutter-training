@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_training/utils/navigation_helper.dart';
-import 'package:flutter_training/views/aqi_scale_page.dart';
+// import 'package:flutter_training/views/aqi_scale_page.dart'; // Disabled in example
 
 /// Example widget showing how to integrate the new Location Details and AQI Scale screens
 /// Chỉ cần Weather API - không cần Air Quality API nữa!
@@ -92,21 +92,28 @@ class LocationIntegrationExample extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             
-            // Navigate to AQI Scale page
+            // Navigate to AQI Scale page (requires real weather data)
             ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const AQIScalePage(),
-                  ),
-                );
-              },
+              onPressed: null, // Disabled in example - requires weather data from API
+              // onPressed: () {
+              //   Navigator.push(
+              //     context,
+              //     MaterialPageRoute(
+              //       builder: (context) => AQIScalePage(
+              //         location: 'Example Location',
+              //         region: 'Example Region',
+              //         current: currentWeather, // Need real data
+              //         aqi: 4,  // AQI 1-10 scale
+              //         aqiInfo: AQIScaleInfo.fromAQI(4),
+              //       ),
+              //     ),
+              //   );
+              // },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
+                backgroundColor: Colors.grey,
                 foregroundColor: Colors.white,
               ),
-              child: const Text('📊 View AQI Scale'),
+              child: const Text('📊 View AQI Scale (Disabled in Example)'),
             ),
             
             const SizedBox(height: 32),
