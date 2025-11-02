@@ -1,19 +1,36 @@
-import 'package:equatable/equatable.dart';
+// import 'package:equatable/equatable.dart';
 
-class AirQualityData extends Equatable {
-  final String city;
-  final int aqi;
-  final String dominantPollutant;
-  final DateTime time;
-  final Map<String, Pollutant> pollutants;
+// class AirQualityData extends Equatable {
+//   final String city;
+//   final int aqi;
+//   final String dominantPollutant;
+//   final DateTime time;
+//   final Map<String, Pollutant> pollutants;
+  // const AirQualityData({
+  //   required this.city,
+  //   required this.aqi,
+  //   required this.dominantPollutant,
+  //   required this.time,
+  //   required this.pollutants,
+  // });
 
-  const AirQualityData({
-    required this.city,
-    required this.aqi,
-    required this.dominantPollutant,
-    required this.time,
-    required this.pollutants,
-  });
+
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part 'air_quality_data.freezed.dart';
+part 'air_quality_data.g.dart';
+
+@freezed
+class AirQualityData with _$AirQualityData {
+  const AirQualityData._();
+  
+  const factory AirQualityData({
+    required String city,
+    required int aqi,
+    required String dominantPollutant,
+    required DateTime time,
+    required Map<String, Pollutant> pollutants,
+  }) = _AirQualityData;
 
   factory AirQualityData.fromJson(Map<String, dynamic> json) {
     final data = json['data'];
@@ -45,19 +62,33 @@ class AirQualityData extends Equatable {
     if (aqi <= 8) return 'High';
     return 'Very High';
   }
-
-  @override
-  List<Object?> get props => [city, aqi, dominantPollutant, time, pollutants];
 }
 
-class Pollutant extends Equatable {
-  final String name;
-  final double value;
+//   @override
+//   List<Object?> get props => [city, aqi, dominantPollutant, time, pollutants];
+// }
 
-  const Pollutant({
-    required this.name,
-    required this.value,
-  });
+// class Pollutant extends Equatable {
+//   final String name;
+//   final double value;
+
+//   const Pollutant({
+//     required this.name,
+//     required this.value,
+//   });
+
+
+@freezed
+class Pollutant with _$Pollutant {
+  const Pollutant._();
+  
+  const factory Pollutant({
+    required String name,
+    required double value,
+  }) = _Pollutant;
+
+  factory Pollutant.fromJson(Map<String, dynamic> json) =>
+      _$PollutantFromJson(json);
 
   String get displayName {
     switch (name.toLowerCase()) {
@@ -77,7 +108,4 @@ class Pollutant extends Equatable {
         return name.toUpperCase();
     }
   }
-
-  @override
-  List<Object?> get props => [name, value];
 }

@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-class AQIScaleInfo {
-  final String level;
-  final String range;
-  final String description;
-  final Color color;
-  final IconData icon;
+part 'aqi_scale_info.freezed.dart';
 
-  const AQIScaleInfo({
-    required this.level,
-    required this.range,
-    required this.description,
-    required this.color,
-    required this.icon,
-  });
+@freezed
+class AQIScaleInfo with _$AQIScaleInfo {
+  const AQIScaleInfo._();
+  
+  const factory AQIScaleInfo({
+    required String level,
+    required String range,
+    required String description,
+    required Color color,
+    required IconData icon,
+  }) = _AQIScaleInfo;
 
   static List<AQIScaleInfo> get allLevels => [
     const AQIScaleInfo(
