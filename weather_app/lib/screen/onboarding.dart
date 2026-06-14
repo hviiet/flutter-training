@@ -33,67 +33,64 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
 
-            //page view
+            //skip
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 10,
+              ),
+              child:  Align(
+                alignment: Alignment.topRight,
+                child: TextButton(
+                  onPressed: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => LoginScreen()));
+                  }, 
+                  child: Text("Skip"),
+                )
+              ),
+            ),
+
+            //pageView
             Expanded(
+              flex: 5,
               child: PageView.builder(
                 controller: controller,
                 itemCount: onboardingData.length,
-                onPageChanged: (index) {
+                onPageChanged: (index){
                   setState(() {
                     currentPage = index;
                   });
                 },
                 itemBuilder: (context, index){
                   final item = onboardingData[index];
-                  return Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      children: [
-                        Align(
-                          alignment: Alignment.topRight,
-                          child: Text("Skip"),
-                        ),
-
-                        Expanded(
-                          child: Image.asset(item["image"]!)
-                        ),
-
-                        Text(
-                          item["title"]!,
-                          style: TextStyle(
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-
-                        SizedBox(height: 16,),
-
-                        Text(item["desc"]!, textAlign: TextAlign.center,)
-
-                      ],
-                    ),
-                  );
-                },
+                  return Image.asset(
+                    item["image"]!,
+                    width: double.infinity,
+                    fit: BoxFit.contain,
+                  ); 
+                }
               )
             ),
-
-            //Dots
+            const SizedBox(height: 10,),
+            
+            //dot
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(
-                onboardingData.length,
+                onboardingData.length, 
                 (index){
                   return Container(
                     margin: EdgeInsets.all(4),
-                    width: currentPage == index ?20:8,
+                    width: currentPage == index? 20:8,
                     height: 8,
                     decoration: BoxDecoration(
-                      color: currentPage == index? Colors.blue : Colors.grey,
+                      color: currentPage == index? Colors.blue:Colors.grey,
                       borderRadius: BorderRadius.circular(10),
                     ),
                   );
@@ -101,31 +98,58 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
             ),
 
-            SizedBox(height: 30,),
+            const SizedBox(height: 20,),
 
-            ///Button
+            //title
+            Text(
+              onboardingData[currentPage]["title"]!,
+              style: const TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            const SizedBox(height: 10,),
+
+            //decs
             Padding(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Text(
+                onboardingData[currentPage]["desc"]!,
+                textAlign: TextAlign.center,
+              ),
+            ),
+
+            // const Spacer(),
+
+            //button
+            Padding(
+              padding: const EdgeInsets.only(bottom: 50, left: 20, right: 20, top: 20),
               child: SizedBox(
                 width: double.infinity,
                 height: 55,
-
                 child: ElevatedButton(
                   onPressed: (){
                     Navigator.push(context, MaterialPageRoute(builder: (_) => LoginScreen()));
-                  }, 
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
                     foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadiusGeometry.circular(10),
+                    )
                   ),
-                  child: Text("Get Started")
+                  
+                  child: Text("Get Started"),
                 ),
               ),
-            )
+            ),
+
+
 
           ],
-        )
-      )
+        ),
+      ),
     );
   }
 }

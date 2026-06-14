@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:weather_app/screen/dashboard_page.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -9,7 +10,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
 
-  bool obscureText = true;
+  bool obscureText = false;
   bool rememberMe = false;
 
   @override
@@ -75,7 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           obscureText = !obscureText;
                         });
                       }, 
-                      icon: Icon(obscureText? Icons.visibility: Icons.visibility_off),
+                      icon: Icon(obscureText?  Icons.visibility_off: Icons.visibility),
                     ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -108,7 +109,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(
                   width: double.infinity,
                   height: 55,
-                  child: ElevatedButton(onPressed: (){}, child: Text("Login"), 
+                  child: ElevatedButton(onPressed: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => DashboardPage()));
+                  }, child: Text("Login"), 
                     style: ElevatedButton.styleFrom(backgroundColor: Colors.blue, foregroundColor: Colors.white),
                   ),
                 )
