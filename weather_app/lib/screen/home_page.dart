@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:weather_app/providers/authProvider.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
@@ -6,6 +8,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final auth = context.watch<Authprovider>();
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       body: SafeArea(
@@ -19,7 +22,7 @@ class HomePage extends StatelessWidget {
                 children: [
                   Text("Welcome Back 👋", style: TextStyle(color: Colors.grey),),
                   SizedBox(height: 5,),
-                  Text("Anamoul", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),),
+                  Text(auth.currentUser?.name?? "Anamoul", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),),
                 ],
               ),
 

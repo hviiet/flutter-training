@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:weather_app/providers/authProvider.dart';
 import 'package:weather_app/screen/dashboard_page.dart';
+import 'package:weather_app/services/auth_service.dart';
+import 'package:weather_app/services/storage_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -9,6 +13,10 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final authService = AuthService();
+  final storage = StorageService();
 
   bool obscureText = false;
   bool rememberMe = false;
@@ -52,6 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 ///email
                 TextField(
+                  controller: emailController,
                   decoration: InputDecoration(
                     hintText: "Email",
                     prefixIcon: Icon(Icons.email_outlined),
@@ -65,6 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 ///password
                 TextField(
+                  controller: passwordController,
                   obscureText: obscureText,
                   obscuringCharacter: '*',
                   decoration: InputDecoration(
@@ -109,9 +119,17 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(
                   width: double.infinity,
                   height: 55,
-                  child: ElevatedButton(onPressed: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => DashboardPage()));
-                  }, child: Text("Login"), 
+                  child: ElevatedButton(onPressed: () async{
+                    final authProvider = context.read<Authprovider>();
+                    bool success = await authProvider.login(emailController.text.trim(), passwordController.text.trim());
+                    if(success) Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => DashboardPage()));
+                    else{
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Login failed"))
+                      );
+                    }
+                  }, 
+                  child: Text("Login"), 
                     style: ElevatedButton.styleFrom(backgroundColor: Colors.blue, foregroundColor: Colors.white),
                   ),
                 )

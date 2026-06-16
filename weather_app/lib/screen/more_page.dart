@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:weather_app/providers/authProvider.dart';
+import 'package:weather_app/screen/login.dart';
+import 'package:weather_app/services/storage_service.dart';
 
 class MorePage extends StatelessWidget {
   const MorePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final auth = context.watch<Authprovider>();
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       body: Stack(
@@ -12,7 +17,7 @@ class MorePage extends StatelessWidget {
           SizedBox(
             height: 220,
             width: double.infinity,
-            child: Image.asset("lib/assets/images/background.png", fit: BoxFit.cover,), 
+            child: Image.asset( "lib/assets/images/background.png", fit: BoxFit.cover,), 
           ),
           SafeArea(
           child: Column(
@@ -20,21 +25,21 @@ class MorePage extends StatelessWidget {
               SizedBox(height: 20,),
               CircleAvatar(
                 radius: 50,
-                backgroundImage: AssetImage("lib/assets/images/avata.png"),
+                backgroundImage: NetworkImage(auth.currentUser?.avatar??""), //AssetImage("lib/assets/images/avata.png"),
                 // child: Icon(Icons.person, size: 50,),
               ),
         
               SizedBox(height: 10,),
         
               Text(
-                "Anamoul",
+                auth.currentUser?.name?? "Anamoul",
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
               ),
         
-              Text("anamoulrouf.bd@gmail.com"),
+              Text( auth.currentUser?.email?? "anamoulrouf.bd@gmail.com"),
         
               SizedBox(height: 20,),
       
@@ -151,7 +156,7 @@ class MorePage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: ListTile(
-                        leading: Icon(Icons.contact_phone),
+                        leading: Icon(Icons.phone_outlined),
                         title: Text("Contact Us"),
                         trailing: Icon(Icons.chevron_right),
                       ),
@@ -170,7 +175,11 @@ class MorePage extends StatelessWidget {
                         leading: Icon(Icons.logout),
                         title: Text("Logout"),
                         trailing: Icon(Icons.chevron_right),
-                        onTap: (){Navigator.pop(context);},
+                        onTap: (){
+                          final storage = StorageService();
+                          storage.clearAuth();
+                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => LoginScreen()));
+                        },
                       ),
                     ),
       
