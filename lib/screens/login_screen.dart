@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_training/providers/auth_provider.dart';
+import 'package:flutter_training/widgets/app_text_field.dart';
+import 'package:provider/provider.dart';
 import 'main_screen.dart';
 
 class LoginScreen extends StatefulWidget{
@@ -22,13 +25,30 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  void login(){
-    Navigator.pushReplacement(
-      context, 
-      MaterialPageRoute(
-        builder: (context) => const MainScreen(),
-      )
-    );
+  void login(AuthProvider authProvider) async {
+    if(emailController.text.trim().isEmpty || passwordController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter both email and password')),
+      );
+      return;
+    }
+
+    try {
+      await authProvider.login(emailController.text.trim(), passwordController.text.trim());
+      if (mounted) {
+        Navigator.pushReplacement(
+          context, 
+          MaterialPageRoute(builder: (context) => const MainScreen()),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Login failed. Please check your email and password and try again.')),
+        );
+      }
+    }
+
   }
 
   @override
@@ -89,112 +109,34 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   const SizedBox(height: 32),
 
-                  SizedBox(
-                    width: double.infinity,
-                    height: 56,
-                    child: TextField(
-                      controller: emailController,
-                      keyboardType: TextInputType.emailAddress,
-
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color:  Color.fromRGBO(34, 34, 34, 1),
-                      ),
-
-                      decoration: InputDecoration(
-                        hintText: 'Your email',
-                        hintStyle: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                        ),
-                        
-                        prefixIcon: const Icon(
-                          Icons.email_rounded,
-                          color: Color.fromRGBO(178, 174, 174, 1),
-                          size: 24,
-                        ),
-                        
-                        contentPadding: const EdgeInsets.all(16),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(
-                            color: Color.fromRGBO(209, 209, 209, 1),
-                            width: 1,
-                          ),
-                        ),
-
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(
-                            color:  Color.fromRGBO(51, 141, 244, 1),
-                            width: 1,
-                          ),
-                        ),
-                      ),
-                    )
+                  AppTextField(
+                    controller: emailController, 
+                    hintText: 'Your email', 
+                    prefixIcon: Icons.email_outlined,
+                    keyboardType: TextInputType.emailAddress,
                   ),
 
                   const SizedBox(height: 12),
     
-                  SizedBox(
-                    width: double.infinity,
-                    height: 56,
-                    child: TextField(
-                      controller: passwordController,
-                      obscureText: !isPasswordVisible,
+                  AppTextField(
+                    controller: passwordController, 
+                    hintText: 'Your password', 
+                    prefixIcon: Icons.lock_outline,
+                    obscureText: !isPasswordVisible,
 
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color:  Color.fromRGBO(34, 34, 34, 1),
+                    suffixIcon: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          isPasswordVisible = !isPasswordVisible;
+                        });
+                      },
+
+                      child: Icon(
+                        isPasswordVisible ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                        color: Colors.grey.shade400,
+                        size: 20,
                       ),
-
-                      decoration: InputDecoration(
-                        hintText: 'Your password',
-                        hintStyle: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                        ),
-                        
-                        prefixIcon: const Icon(
-                          Icons.vpn_key_rounded,
-                          color: Color.fromRGBO(178, 174, 174, 1),
-                          size: 24,
-                        ),
-
-                        suffixIcon: IconButton(
-                          onPressed: (){
-                            setState(() {
-                              isPasswordVisible = !isPasswordVisible;
-                            });
-                          }, 
-                          
-                          icon: Icon(
-                            isPasswordVisible? Icons.visibility_off_outlined : Icons.visibility_outlined,
-                            color: Color.fromRGBO(178, 174, 174, 1),
-                            size: 24,
-                          )
-                        ),
-                        
-                        contentPadding: const EdgeInsets.all(16),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(
-                            color: Color.fromRGBO(209, 209, 209, 1),
-                            width: 1,
-                          ),
-                        ),
-
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(
-                            color:  Color.fromRGBO(51, 141, 244, 1),
-                            width: 1,
-                          ),
-                        ),
-                      ),
-                    )
+                    ),
                   ),
 
                   const SizedBox(height: 12),
@@ -262,24 +204,37 @@ class _LoginScreenState extends State<LoginScreen> {
                   SizedBox(
                     width: double.infinity,
                     height: 56,
-                    child: ElevatedButton(
-                      onPressed: login, 
+                    child: Consumer<AuthProvider>(
+                      builder: (context, authProvider, child) {
+                        return ElevatedButton(
+                          onPressed:  authProvider.isLoading ? null : () => login(authProvider),
 
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromRGBO(30, 136, 255, 1),
-                        foregroundColor: Colors.white,
-                        elevation: 6,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: const Text(
-                        'Login',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color.fromRGBO(14, 142, 255, 1),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+
+                          child: authProvider.isLoading 
+                            ? const SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const Text(
+                                'Login',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
+                        );
+                      },
                     ),
                   ),
                   

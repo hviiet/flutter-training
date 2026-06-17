@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_training/providers/auth_provider.dart';
+import 'package:flutter_training/screens/onboarding_screen.dart';
+import 'package:provider/provider.dart';
 
-import '../data/mock_data.dart';
 import '../widgets/action_list_tile.dart';
 
 class MoreScreen extends StatelessWidget {
@@ -8,7 +10,6 @@ class MoreScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = MockData.userProfile;
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -30,31 +31,45 @@ class MoreScreen extends StatelessWidget {
                   padding: const EdgeInsets.fromLTRB(24, 92, 24, 24),
                   child: Column(
                     children: [
-                      _Avatar(avatarUrl: user.avatarUrl),
+                      Consumer<AuthProvider>(
+                        builder: (context, authProvider, child) {
+                          final userProfile = authProvider.userProfile;
+                          if (userProfile == null) {
+                            return const CircularProgressIndicator();
+                          } else {
+                            return Column(
+                              children: [
+                                _Avatar(avatarUrl: userProfile.avatar),
 
-                      const SizedBox(height: 14),
+                                const SizedBox(height: 12),
 
-                      Text(
-                        user.name,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w700,
-                          color: Color.fromRGBO(15, 22, 35, 1),
-                        ),
+                                Text(
+                                  userProfile.name,
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w700,
+                                    color: Color.fromRGBO(15, 22, 35, 1),
+                                  ),
+                                ),
+                        
+                                const SizedBox(height: 4),
+
+                                Text(
+                                  userProfile.email,
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400,
+                                    color: Color.fromRGBO(15, 22, 35, 0.6),
+                                  ),
+                                ),
+                              ],
+                            );
+                         }
+                        },
                       ),
 
-                      const SizedBox(height: 4),
-
-                      Text(
-                        user.email,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: Color.fromRGBO(15, 22, 35, 0.6),
-                        ),
-                      ),
+                      
 
                       const SizedBox(height: 20),
 
@@ -108,7 +123,12 @@ class MoreScreen extends StatelessWidget {
                       ActionListTile(
                         icon: Icons.logout_outlined,
                         title: 'Logout',
-                        onTap: () {},
+                        onTap: () {
+                          context.read<AuthProvider>().logout();
+                          if (context.mounted) {
+                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const OnboardingScreen()));
+                          }
+                        },
                       ),
 
                       const SizedBox(height: 15),
@@ -154,7 +174,7 @@ class _Avatar extends StatelessWidget {
           child: SizedBox(
             width: 92,
             height: 92,
-            child: Image.asset(
+            child: Image.network(
               avatarUrl,
               fit: BoxFit.cover,
             ),

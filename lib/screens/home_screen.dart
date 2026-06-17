@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_training/providers/auth_provider.dart';
+import 'package:provider/provider.dart';
 
 import '../data/mock_data.dart';
 import '../widgets/location_card.dart';
@@ -7,11 +9,13 @@ import '../widgets/weather_summary_card.dart';
 import '../widgets/large_locations_carousel.dart';
 
 class HomeScreen extends StatelessWidget {
+
   const HomeScreen({super.key});
+
 
   @override
   Widget build(BuildContext context) {
-    final user = MockData.userProfile;
+    
     final mainLocation = MockData.mainLocation;
     final forecasts = MockData.forecasts;
     final smallLocations = MockData.smallLocations;
@@ -48,13 +52,17 @@ class HomeScreen extends StatelessWidget {
                   ],
                 ),
 
-                Text(
-                  user.name,
-                  style: const TextStyle(
-                    fontSize: 30.0,
-                    fontWeight: FontWeight.w700,
-                    color: Color.fromRGBO(17, 24, 39, 1.0),
-                  ),
+                Consumer<AuthProvider>(
+                  builder: (context, authProvider, child) {
+                    return Text(
+                      authProvider.userProfile != null ? authProvider.userProfile!.name : 'User',
+                      style: const TextStyle(
+                        fontSize: 28.0,
+                        fontWeight: FontWeight.w700,
+                        color:  Color.fromRGBO(17, 24, 39, 1.0),
+                      ),
+                    );
+                  },
                 ),
 
                 const SizedBox(height: 8.0),

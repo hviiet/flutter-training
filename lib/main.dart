@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_training/providers/auth_provider.dart';
 import 'package:flutter_training/providers/navigation_provider.dart';
+import 'package:flutter_training/screens/main_screen.dart';
 import 'package:provider/provider.dart';
 import 'screens/onboarding_screen.dart';
 
@@ -9,6 +11,10 @@ void main() {
       providers: [
         ChangeNotifierProvider(
           create: (_) => NavigationProvider()
+        ),
+
+        ChangeNotifierProvider(
+          create: (_) => AuthProvider(),
         ),
       ],
       child: const MyApp(),
@@ -40,7 +46,28 @@ class MyApp extends StatelessWidget {
 
       ),
 
-      home: const OnboardingScreen(),
+      home: FutureBuilder(
+        future: context.read<AuthProvider>().checkAuth(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          } else if(snapshot.hasError) {
+            return const Scaffold(
+              body: Center(
+                child: Text('An error occurred. Please try again later.'),
+              ),
+            );
+          } else if (snapshot.hasData && snapshot.data == true) {
+            return const MainScreen();
+          } else {
+            return const OnboardingScreen();
+          }
+        },
+      ),
     );
   }
 }

@@ -5,9 +5,12 @@ import '../models/weather_status.dart';
 
 class MockData {
   static final UserProfile userProfile = UserProfile(
+    id: 1,
     name: 'Anamoul Rouf',
     email: 'anamoulrouf.bd@gmail.com',
-    avatarUrl: 'assets/images/avatar.png',
+    password: 'password123',
+    role: 'user',
+    avatar: 'assets/images/avatar.png',
   );
 
   static final WeatherLocation mainLocation = WeatherLocation(

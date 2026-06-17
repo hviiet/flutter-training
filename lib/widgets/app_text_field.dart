@@ -24,7 +24,6 @@ class AppTextField extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
-    // Đã bỏ SizedBox bọc ngoài để tránh lỗi tràn/cắt chữ
     return TextFormField(
       controller: controller,
       readOnly: readOnly,
@@ -69,15 +68,6 @@ class AppTextField extends StatelessWidget {
           borderSide: const BorderSide(color: Color.fromRGBO(13, 125, 246, 1), width: 1.4),
         ),
         
-        // Thêm border cho trạng thái lỗi
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.red, width: 1),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.red, width: 1.4),
-        ),
       ),
     );
   }
