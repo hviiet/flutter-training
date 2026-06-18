@@ -1,10 +1,83 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:weather_app/providers/authProvider.dart';
+import 'package:weather_app/screen/location_details/location_detail.dart';
+import 'package:weather_app/utils/utils.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
-  final dayInWeek = ["MON", "TUE", "WEN", "THU", "FRI", "SAT", "SUN"];
+  final mockData = [
+    {
+      "day": "MON",
+      "aqi": "30",
+      "temp": "20",
+    },
+    {
+      "day": "MON",
+      "aqi": "50",
+      "temp": "21",
+    },
+    {
+      "day": "WEN",
+      "aqi": "40",
+      "temp": "19",
+    },
+    {
+      "day": "THU",
+      "aqi": "60",
+      "temp": "22",
+    },
+    {
+      "day": "FRI",
+      "aqi": "27",
+      "temp": "18",
+    },
+    {
+      "day": "SAT",
+      "aqi": "155",
+      "temp": "20",
+    },
+    {
+      "day": "SUN",
+      "aqi": "400",
+      "temp": "21",
+    },
+    {
+      "day": "MON",
+      "aqi": "30",
+      "temp": "20",
+    },
+    {
+      "day": "MON",
+      "aqi": "50",
+      "temp": "21",
+    },
+    {
+      "day": "WEN",
+      "aqi": "40",
+      "temp": "19",
+    },
+    {
+      "day": "THU",
+      "aqi": "60",
+      "temp": "22",
+    },
+    {
+      "day": "FRI",
+      "aqi": "27",
+      "temp": "18",
+    },
+    {
+      "day": "SAT",
+      "aqi": "215",
+      "temp": "20",
+    },
+    {
+      "day": "SUN",
+      "aqi": "22",
+      "temp": "21",
+    }
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -13,6 +86,7 @@ class HomePage extends StatelessWidget {
       backgroundColor: const Color(0xFFF5F5F5),
       body: SafeArea(
         child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
           padding: EdgeInsets.all(20),
           child: Column(
             children: [
@@ -77,32 +151,13 @@ class HomePage extends StatelessWidget {
                       height: 140,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
-                        itemCount: 10,
+                        itemCount: mockData.length,
                         itemBuilder: (context, index) {
-                          return Container(
-                            width: 55,
-                            margin: EdgeInsets.only(right: 8, ),
-                            decoration: BoxDecoration(
-                              color: Colors.grey.shade100,
-                              borderRadius: BorderRadius.circular(7),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(dayInWeek[index%7]),
-                                SizedBox(height: 8),
-                                Icon(Icons.mood, size: 20, color: Colors.green,),
-                                Text("1 AQI"),
-
-                                Divider(),
-
-                                SizedBox(height: 8),
-
-                                Icon(Icons.cloud),
-
-                                Text("20°C"),
-                              ],
-                            ),
+                          final data = mockData[index % mockData.length];
+                          return ForecastCard(
+                            aqi: data["aqi"]!,
+                            temp: data["temp"]!,
+                            day: data["day"]!,
                           );
                         },
                       ),
@@ -136,66 +191,18 @@ class HomePage extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(
-                    padding: EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("Work", style: TextStyle( fontWeight: FontWeight.bold, fontSize: 12),),
-                        Text("Coventry ST, Birmingham", style: TextStyle(color: Colors.grey, fontSize: 10)),
-                        SizedBox(height: 5,),
-                        Row(
-                          children: [
-                            Icon(Icons.mood, color: Colors.green, size: 20,),
-                            SizedBox(width: 8,),
-                            Text("3", style: TextStyle(fontWeight: FontWeight.bold,),),
-                            SizedBox(width: 8,),
-                            Text("AQI", style: TextStyle(color: Colors.grey,),),
-                            // Spacer(),
-                            SizedBox(width: 15,),
-                            Icon(Icons.cloud, size: 20,),
-                            SizedBox(width: 8,),
-                            Text("25", style: TextStyle(fontWeight: FontWeight.bold,),),
-                            Text("°C", style: TextStyle(color: Colors.grey,),),
-                          ],
-                        ),
-                      ],
-                    ),
+                  HomeCard(
+                    aqi: "3",
+                    temp: "25",
+                    title: "Work",
+                    position: "Coventry ST, Birmingham",
                   ),
 
-                  Container(
-                    padding: EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("Home", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),),
-                        Text("Coventry ST, Birmingham", style: TextStyle(color: Colors.grey, fontSize: 10)),
-                        SizedBox(height: 5,),
-                        Row(
-                          children: [
-                            Icon(Icons.mood, color: Colors.green, size: 20,),
-                            SizedBox(width: 8,),
-                            Text("3", style: TextStyle(fontWeight: FontWeight.bold,),),
-                            SizedBox(width: 8,),
-                            Text("AQI", style: TextStyle(color: Colors.grey,),),
-                            // Spacer(),
-                            SizedBox(width: 15,),
-                            Icon(Icons.cloud, size:  20,),
-                            SizedBox(width: 8,),
-                            Text("25", style: TextStyle(fontWeight: FontWeight.bold,),),
-                            Text("°C", style: TextStyle(color: Colors.grey,),),
-                          ],
-                        ),
-                      ],
-                    ),
+                  HomeCard(
+                    aqi: "5",
+                    temp: "21",
+                    title: "Home",
+                    position: "Edmund ST, Birmingham",
                   ),
                 ],
               ),
@@ -207,45 +214,11 @@ class HomePage extends StatelessWidget {
                   scrollDirection: Axis.horizontal,
                   itemCount: 5,
                   itemBuilder: (context, index){
-                    return Container(
-                      width: 200,
-                      margin: EdgeInsets.only(right: 15),
-                      padding: EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        color: Colors.white,
-                      ),
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text("Edmund Street", style: TextStyle(fontWeight: FontWeight.bold),),
-                                  Text("Birmingham", style: TextStyle(color: Colors.grey, fontSize: 12),),
-                                ],
-                              ),
-                              Spacer(),
-                              Icon(Icons.bookmark, color: Colors.deepPurpleAccent,),
-                            ],
-                          ),
-                          Spacer(),
-                          Row(
-                            children: [
-                              Icon(Icons.mood, color: Colors.orange,),
-                              SizedBox(width: 5,),
-                              Text("5 ", style: TextStyle(fontWeight: FontWeight.bold),),
-                              Text("AQI", style: TextStyle(fontSize: 12, color: Colors.grey,),),
-
-                              Spacer(),
-                              Text("21°C", style: TextStyle(fontWeight: FontWeight.bold),),
-                              SizedBox(width: 5,),
-                              Icon(Icons.sunny_snowing, color: Colors.orange,),
-                            ],
-                          ),
-                        ],
-                      ),
+                    return WeatherCard(
+                      street: "Church Street Square",
+                      city: "Birmingham",
+                      aqi: "5",
+                      temp: "21°C",
                     );
                   }
                 ),
@@ -282,6 +255,9 @@ class HomePage extends StatelessWidget {
                   leading: Icon(Icons.priority_high, color: Colors.blue,),
                   title: Text("Detail Air Quality", ),
                   trailing: Icon(Icons.chevron_right, color: Colors.blue,),
+                  onTap: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => LocationDetail()));
+                  },
                 ),
               ),
 
@@ -291,5 +267,157 @@ class HomePage extends StatelessWidget {
         ) ,
       ),
     );
+  }
+}
+
+class ForecastCard extends StatelessWidget {
+  const ForecastCard({
+    super.key,
+    required this.day,
+    required this.aqi,
+    required this.temp,
+  });
+
+  final String day;
+  final String aqi;
+  final String temp;
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 55,
+      margin: EdgeInsets.only(right: 8, ),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(7),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(day),
+          SizedBox(height: 8),
+          // Icon(Icons.mood, size: 20, color: Colors.green,),
+          Utils().mapAQIToIcon(aqi),
+          Text("$aqi AQI"),
+
+          Divider(),
+
+          SizedBox(height: 8),
+
+          Icon(Icons.cloud),
+
+          Text("$temp°C"),
+        ],
+      ),
+    );
+  }
+}
+
+class HomeCard extends StatelessWidget {
+  final String aqi;
+  final String temp;
+  final String title;
+  final String position;
+
+  const HomeCard({
+    super.key,
+    required this.aqi,
+    required this.temp,
+    required this.title,
+    required this.position
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+            padding: EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(5),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: TextStyle( fontWeight: FontWeight.bold, fontSize: 12),),
+                Text(position, style: TextStyle(color: Colors.grey, fontSize: 10)),
+                SizedBox(height: 5,),
+                Row(
+                  children: [
+                    Utils().mapAQIToIcon(aqi),
+                    SizedBox(width: 8,),
+                    Text(aqi, style: TextStyle(fontWeight: FontWeight.bold,),),
+                    SizedBox(width: 8,),
+                    Text("AQI", style: TextStyle(color: Colors.grey,),),
+                    // Spacer(),
+                    SizedBox(width: 15,),
+                    Icon(Icons.cloud, size: 20,),
+                    SizedBox(width: 8,),
+                    Text(temp, style: TextStyle(fontWeight: FontWeight.bold,),),
+                    Text("°C", style: TextStyle(color: Colors.grey,),),
+                  ],
+                ),
+              ],
+            ),
+          );
+  }
+}
+
+class WeatherCard extends StatelessWidget {
+  final String street;
+  final String city;
+  final String aqi;
+  final String temp;
+
+  const WeatherCard({
+    super.key, 
+    required this.street, 
+    required this.city, 
+    required this.aqi, 
+    required this.temp
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+            width: 200,
+            margin: EdgeInsets.only(right: 15),
+            padding: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: Colors.white,
+            ),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(street, style: TextStyle(fontWeight: FontWeight.bold),),
+                        Text(city, style: TextStyle(color: Colors.grey, fontSize: 12),),
+                      ],
+                    ),
+                    Spacer(),
+                    Icon(Icons.bookmark, color: Colors.deepPurpleAccent,),
+                  ],
+                ),
+                Spacer(),
+                Row(
+                  children: [
+                    Utils().mapAQIToIcon(aqi),
+                    SizedBox(width: 5,),
+                    Text(aqi, style: TextStyle(fontWeight: FontWeight.bold),),
+                    Text("AQI", style: TextStyle(fontSize: 12, color: Colors.grey,),),
+
+                    Spacer(),
+                    Text(temp, style: TextStyle(fontWeight: FontWeight.bold),),
+                    SizedBox(width: 5,),
+                    Icon(Icons.sunny_snowing, color: Colors.orange,),
+                  ],
+                ),
+              ],
+            ),
+          );
   }
 }

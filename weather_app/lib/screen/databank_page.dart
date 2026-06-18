@@ -19,11 +19,6 @@ class DatabankPage extends StatelessWidget {
     }
   }
 
-  // void sendRequest(){
-  //   ScaffoldMessenger.of(context)
-  //   .showSnackBar(
-  //     SnackBar(content: content))
-  // }
 
   @override
   Widget build(BuildContext context) {
