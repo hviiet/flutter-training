@@ -18,6 +18,7 @@ class RecommendationsWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
@@ -28,18 +29,19 @@ class RecommendationsWidget extends StatelessWidget {
 
           //list recommendations
           Container(
-            height: 120,
+            constraints: BoxConstraints(minHeight: 120),
             decoration: BoxDecoration(
               color: Colors.grey.shade100,
               borderRadius: BorderRadius.circular(12),
             ),
             padding: EdgeInsets.only(bottom: 4, right: 8),
             child: ListView.builder(
-              scrollDirection: Axis.horizontal,
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
               itemCount: recommendations.length,
               itemBuilder: (context, index){
-                return SizedBox(
-                  width: 260,
+                return Padding(
+                  padding: EdgeInsets.only(bottom: 8),
                   child: DataCard(
                     title: recommendations[index]['title']!,
                     description: recommendations[index]['description']!,

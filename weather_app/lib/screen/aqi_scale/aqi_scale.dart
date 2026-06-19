@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:readmore/readmore.dart';
+import 'package:weather_app/blocs/city/city_cubit.dart';
+import 'package:weather_app/blocs/city/city_state.dart';
 
 class AQIScale extends StatelessWidget {
   AQIScale({super.key});
@@ -45,35 +48,93 @@ class AQIScale extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("AQI Scale"),
-      ),
-      body: Center(
-        child: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
-          child: Padding(
-            padding: EdgeInsets.all(16),
-            child: Column(
-              children: [
-                MainWeatherCard(),
-                SizedBox(height: 16,),
+    return BlocBuilder<CityCubit, CityState>(
+      builder: (context, state) {
+        if(state.isLoading && state.citiesData.isEmpty){
+        return const Center(child: CircularProgressIndicator(),);
+        }
 
-                //list scale
-                Column(
-                  children: data.map( (item) => ScaleCard(
-                    title: item['title'], 
-                    subtitle: item['subtitle'], 
-                    description: item['description'], 
-                    icon: item['icon'],
-                  )).toList(),
-                ),
-
-              ],
-            ),
+        final cityData = state.citiesData["danang"];
+        if(cityData == null){
+        return const Center(child: Text("No data available"),);
+        }
+        
+        return Scaffold(
+          appBar: AppBar(
+            title: Text("AQI Scale"),
           ),
-        )
-      ),
+          body: Center(
+            child: SingleChildScrollView(
+              physics: BouncingScrollPhysics(),
+              child: Padding(
+                padding: EdgeInsets.all(16),
+                child: Column(
+                  children: [
+
+                    //main card
+                    Container(
+                      padding: EdgeInsets.all(16),
+                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20),),
+                      child: Column(
+                        children: [
+                          //header
+                          Row(
+                            children: [
+                              Icon(Icons.gps_fixed, color: Colors.blue,),
+                              SizedBox(width: 8,),
+                              Column(
+                                crossAxisAlignment:  CrossAxisAlignment.start,
+                                children: [
+                                  Text(cityData.weather!.location , style: TextStyle(fontWeight: FontWeight.bold),),
+                                  Text(cityData.weather!.location , style: TextStyle(color: Colors.grey),),
+                                ],
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 10,),
+                          Row(
+                            children: [
+                              // Icon(Icons.cloud),
+                              Image.network(cityData.weather!.conditionIcon, width: 24, height: 24,),
+                              SizedBox(width: 8,),
+                              Column(
+                                crossAxisAlignment:  CrossAxisAlignment.start,
+                                children: [
+                                  Text("${cityData.weather!.temp_c.toStringAsFixed(0)}°C", style: TextStyle(fontWeight: FontWeight.bold),),
+                                  Text("${cityData.weather!.conditionText}  ${cityData.weather!.feelslike_c.toStringAsFixed(0)}°C", style: TextStyle(color: Colors.grey),),
+                                ],
+                              ),
+                              Spacer(),
+                              Text(cityData.airQuality!.aqi.toStringAsFixed(0), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 23,),),
+                              Text("AQI", style: TextStyle(color: Colors.grey),),
+                              SizedBox(width: 8,),
+                              Icon(Icons.mood, color: Colors.green,),
+                            ],
+                          ),
+
+                          SizedBox(height: 20,),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 16,),
+        
+                    //list scale
+                    Column(
+                      children: data.map( (item) => ScaleCard(
+                        title: item['title'], 
+                        subtitle: item['subtitle'], 
+                        description: item['description'], 
+                        icon: item['icon'],
+                      )).toList(),
+                    ),
+        
+                  ],
+                ),
+              ),
+            )
+          ),
+        );
+      }
     );
   }
 }

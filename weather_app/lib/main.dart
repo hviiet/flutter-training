@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:weather_app/blocs/city/city_cubit.dart';
 import 'package:weather_app/providers/authProvider.dart';
 import 'package:weather_app/providers/navigation_provider.dart';
 import 'package:weather_app/providers/requestProvider.dart';
 import 'package:weather_app/screen/dashboard_page.dart';
-import 'package:weather_app/services/auth_service.dart';
-import 'package:weather_app/services/storage_service.dart';
+import 'package:weather_app/services/air_quality_service.dart';
+import 'package:weather_app/services/weather_service.dart';
 import 'screen/onboarding.dart';
 import 'package:provider/provider.dart';
 
@@ -22,7 +24,14 @@ void main() {
           create:(_) => Authprovider(), 
         )
       ], 
-      child: MyApp(),
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (_) => CityCubit(airService: AirQualityService(), weatherService: WeatherService()) ,
+          )
+        ], 
+        child: MyApp(),
+      ),
     )
   );
 }

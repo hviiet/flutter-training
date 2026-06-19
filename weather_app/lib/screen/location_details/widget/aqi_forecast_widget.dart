@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:weather_app/models/air_quality_model.dart';
 import 'package:weather_app/screen/aqi_scale/aqi_scale.dart';
+import 'package:weather_app/utils/utils.dart';
 
 class AQIForeCastWidget extends StatelessWidget {
-  AQIForeCastWidget({super.key});
-  final List<Map<String, dynamic>> forecastData = [
-    {'day': 'SAT', 'aqi': 2, 'color': Colors.green},
-    {'day': 'SUN', 'aqi': 5, 'color': Colors.green},
-    {'day': 'MON', 'aqi': 7, 'color': Colors.yellow},
-    {'day': 'TUE', 'aqi': 4, 'color': Colors.green},
-    {'day': 'WED', 'aqi': 3, 'color': Colors.green},
-    {'day': 'THU', 'aqi': 8, 'color': Colors.yellow},
-    {'day': 'FRI', 'aqi': 2, 'color': Colors.green},
-  ];
+  const AQIForeCastWidget({super.key, required this.airQualityModel});
+
+  final AirQualityModel airQualityModel;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +24,7 @@ class AQIForeCastWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text("AQI Forecast", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                  Text("Next ${forecastData.length} Days",),
+                  Text("Next ${airQualityModel.forecast.length} Days",),
                 ],
               ),
               Spacer(),
@@ -80,11 +75,10 @@ class AQIForeCastWidget extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.end,
-                      children: forecastData.map((data) {
+                      children: airQualityModel.forecast.map((data) {
                         return AQIBarItem(
-                          day: data['day'],
-                          aqi: data['aqi'],
-                          color: data['color'],
+                          day: Utils().mapDayInWeek(data.day.weekday),
+                          aqi: data.avg,
                         );
                       }).toList(),
                     ),
@@ -102,18 +96,16 @@ class AQIForeCastWidget extends StatelessWidget {
 class AQIBarItem extends StatelessWidget {
   final String day;
   final int aqi;
-  final Color color;
   const AQIBarItem({
     super.key,
     required this.day,
     required this.aqi,
-    required this.color
   });
 
   @override
   Widget build(BuildContext context) {
     final double maxBarHeight = 120.0; // Chiều cao tối đa của thanh
-    final double barHeight = (aqi / 10) * maxBarHeight; // Chiều cao của thanh dựa trên giá trị AQI
+    final double barHeight = (aqi / 150) * maxBarHeight; // Chiều cao của thanh dựa trên giá trị AQI
     return SizedBox(
       width: 30,
       height: maxBarHeight + 38,
@@ -133,7 +125,7 @@ class AQIBarItem extends StatelessWidget {
                     width: 30,
                     height: barHeight,
                     decoration: BoxDecoration(
-                      color: color.withAlpha(100), // Màu nền nhạt hơn
+                      color: Utils().mapAQIToColor(aqi.toString()).withAlpha(100), // Màu nền nhạt hơn
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
@@ -146,7 +138,7 @@ class AQIBarItem extends StatelessWidget {
                     width: 30,
                     height: 30,
                     decoration: BoxDecoration(
-                      color: color,
+                      color: Utils().mapAQIToColor(aqi.toString()),
                       shape: BoxShape.circle,
                     ),
                     alignment: Alignment.center,

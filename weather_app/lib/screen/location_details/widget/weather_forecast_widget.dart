@@ -1,17 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:weather_app/models/weather_model.dart';
+import 'package:weather_app/utils/utils.dart';
 
 class WeatherForecastWidget extends StatelessWidget {
-  WeatherForecastWidget({super.key});
-  // Dữ liệu 7 ngày
-    final List<Map<String, dynamic>> forecastData = [
-      {'day': 'THU 11 NOV 21', 'label': 'TODAY', 'high': '25°C', 'low': '20°C', 'icon': Icons.cloudy_snowing},
-      {'day': 'FRI 12 NOV 21', 'label': 'TOMORROW', 'high': '25°C', 'low': '20°C', 'icon': Icons.wb_cloudy_outlined},
-      {'day': 'SAT 13 NOV 21', 'label': '', 'high': '25°C', 'low': '20°C', 'icon': Icons.wb_sunny_outlined},
-      {'day': 'SAT 14 NOV 21', 'label': '', 'high': '25°C', 'low': '20°C', 'icon': Icons.cloudy_snowing},
-      {'day': 'FRI 15 NOV 21', 'label': '', 'high': '25°C', 'low': '20°C', 'icon': Icons.cloud_outlined},
-      {'day': 'SAT 16 NOV 21', 'label': '', 'high': '25°C', 'low': '20°C', 'icon': Icons.thunderstorm_outlined},
-      {'day': 'FRI 17 NOV 21', 'label': '', 'high': '25°C', 'low': '20°C', 'icon': Icons.wind_power_outlined},
-    ];
+  const WeatherForecastWidget({super.key, required this.weatherModel});
+
+    final WeatherModel weatherModel;
   
 
   @override
@@ -29,18 +23,18 @@ class WeatherForecastWidget extends StatelessWidget {
             "Weather Forecast",
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
-          Text("Next ${forecastData.length} Days"),
+          Text("Next ${weatherModel.forecast.length} Days"),
           SizedBox(height: 16),
 
           //list weather forecast
           Column(
-            children: forecastData.map((data){
+            children: weatherModel.forecast.map((data){
               return WeatherRow(
-                day: data['day'],
-                high: data['high'],
-                low: data['low'],
-                label: data['label'],
-                icon: data['icon'],
+                day: Utils().mapDayInWeek(data.date.weekday),
+                high: data.maxtemp_c.toStringAsFixed(0),
+                low: data.mintemp_c.toStringAsFixed(0),
+                label: Utils().mapCurrentDay(data.date),
+                iconUrl: data.conditionIcon,
               );
             }).toList(),
           ),
@@ -55,7 +49,7 @@ class WeatherRow extends StatelessWidget {
   final String label;
   final String high;
   final String low;
-  final IconData icon;
+  final String iconUrl;
 
   const WeatherRow({
     super.key,
@@ -63,7 +57,7 @@ class WeatherRow extends StatelessWidget {
     required this.label,
     required this.high,
     required this.low,
-    required this.icon
+    required this.iconUrl,
   });
 
   @override
@@ -94,19 +88,23 @@ class WeatherRow extends StatelessWidget {
             ],
           ),
           Spacer(),
-          Text("$high", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
+          Text(high, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
           Text("°C", style: TextStyle(fontSize: 12, color: Colors.grey),),
           Icon(Icons.arrow_upward, color: Colors.green, size: 12,),
 
           SizedBox(width: 8,),
 
-          Text("$low", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
+          Text(low, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
           Text("°C", style: TextStyle(fontSize: 12, color: Colors.grey),),
           Icon(Icons.arrow_downward, color: Colors.red, size: 12,),
 
           SizedBox(width: 8,),
 
-          Icon(icon, color: Colors.blue, size: 24,),
+          Image.network(
+            iconUrl,
+            width: 24,
+            height: 24,
+          ),
         ],
       ),
     );

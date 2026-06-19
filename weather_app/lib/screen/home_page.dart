@@ -1,271 +1,223 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
+import 'package:weather_app/blocs/city/city_cubit.dart';
+import 'package:weather_app/blocs/city/city_state.dart';
 import 'package:weather_app/providers/authProvider.dart';
 import 'package:weather_app/screen/location_details/location_detail.dart';
 import 'package:weather_app/utils/utils.dart';
 
 class HomePage extends StatelessWidget {
-  HomePage({super.key});
-  final mockData = [
-    {
-      "day": "MON",
-      "aqi": "30",
-      "temp": "20",
-    },
-    {
-      "day": "MON",
-      "aqi": "50",
-      "temp": "21",
-    },
-    {
-      "day": "WEN",
-      "aqi": "40",
-      "temp": "19",
-    },
-    {
-      "day": "THU",
-      "aqi": "60",
-      "temp": "22",
-    },
-    {
-      "day": "FRI",
-      "aqi": "27",
-      "temp": "18",
-    },
-    {
-      "day": "SAT",
-      "aqi": "155",
-      "temp": "20",
-    },
-    {
-      "day": "SUN",
-      "aqi": "400",
-      "temp": "21",
-    },
-    {
-      "day": "MON",
-      "aqi": "30",
-      "temp": "20",
-    },
-    {
-      "day": "MON",
-      "aqi": "50",
-      "temp": "21",
-    },
-    {
-      "day": "WEN",
-      "aqi": "40",
-      "temp": "19",
-    },
-    {
-      "day": "THU",
-      "aqi": "60",
-      "temp": "22",
-    },
-    {
-      "day": "FRI",
-      "aqi": "27",
-      "temp": "18",
-    },
-    {
-      "day": "SAT",
-      "aqi": "215",
-      "temp": "20",
-    },
-    {
-      "day": "SUN",
-      "aqi": "22",
-      "temp": "21",
-    }
-  ];
-
+  const HomePage({super.key});
+  
   @override
   Widget build(BuildContext context) {
     final auth = context.watch<Authprovider>();
-    return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          padding: EdgeInsets.all(20),
-          child: Column(
-            children: [
-              //welcome header
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+    return BlocBuilder<CityCubit, CityState>(
+      builder: (context, state) {
+        if(state.isLoading && state.citiesData.isEmpty){
+          return const Center(child: CircularProgressIndicator(),);
+        }
+
+        final cityData = state.citiesData[0];
+        final allCityData = state.citiesData.values.toList();
+        // final cityCount = state.citiesData.length;
+        if(cityData == null){
+          return const Center(child: Text("No data available"),);
+        }
+
+        return Scaffold(
+          backgroundColor: const Color(0xFFF5F5F5),
+          body: SafeArea(
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              padding: EdgeInsets.all(20),
+              child: Column(
                 children: [
-                  Text("Welcome Back 👋", style: TextStyle(color: Colors.grey),),
-                  SizedBox(height: 5,),
-                  Text(auth.currentUser?.name?? "Anamoul", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),),
-                ],
-              ),
-
-              SizedBox(height: 20,),
-
-              //main weather card
-              Container(
-                padding: EdgeInsets.all(16),
-                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20),),
-                child: Column(
-                  children: [
-                    //header
-                    Row(
+                  //welcome header
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Welcome Back 👋", style: TextStyle(color: Colors.grey),),
+                      SizedBox(height: 5,),
+                      Text(auth.currentUser?.name?? "Anamoul", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),),
+                    ],
+                  ),
+        
+                  SizedBox(height: 20,),
+        
+                  //main weather card
+                  Container(
+                    padding: EdgeInsets.all(16),
+                    decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20),),
+                    child: Column(
                       children: [
-                        Icon(Icons.gps_fixed, color: Colors.blue,),
-                        SizedBox(width: 8,),
-                        Column(
-                          crossAxisAlignment:  CrossAxisAlignment.start,
+                        //header
+                        Row(
                           children: [
-                            Text("Church Street Square", style: TextStyle(fontWeight: FontWeight.bold),),
-                            Text("Bimingham", style: TextStyle(color: Colors.grey),),
-                          ],
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 10,),
-                    Row(
-                      children: [
-                        Icon(Icons.cloud),
-                        SizedBox(width: 8,),
-                        Column(
-                          crossAxisAlignment:  CrossAxisAlignment.start,
-                          children: [
-                            Text("19°C", style: TextStyle(fontWeight: FontWeight.bold),),
-                            Text("Rain Shower", style: TextStyle(color: Colors.grey),),
-                          ],
-                        ),
-                        Spacer(),
-                        Text("3", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 23,),),
-                        Text("AQI", style: TextStyle(color: Colors.grey),),
-                        SizedBox(width: 8,),
-                        Icon(Icons.mood, color: Colors.green,),
-                      ],
-                    ),
-
-                    SizedBox(height: 20,),
-
-                    //forecard
-                    Text("Forecast", style: TextStyle(fontSize: 20),),
-                    SizedBox(height: 10,),
-                    SizedBox(
-                      height: 140,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: mockData.length,
-                        itemBuilder: (context, index) {
-                          final data = mockData[index % mockData.length];
-                          return ForecastCard(
-                            aqi: data["aqi"]!,
-                            temp: data["temp"]!,
-                            day: data["day"]!,
-                          );
-                        },
-                      ),
-                    ),
-                    SizedBox(height: 20,),
-
-                    //dot
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(
-                        4, 
-                        (index){
-                          return Container(
-                            margin: EdgeInsets.all(4),
-                            width: index == 0? 20:8,
-                            height: 8,
-                            decoration: BoxDecoration(
-                              color: index == 0? Colors.blue:Colors.grey,
-                              borderRadius: BorderRadius.circular(10),
+                            Icon(Icons.gps_fixed, color: Colors.blue,),
+                            SizedBox(width: 8,),
+                            Column(
+                              crossAxisAlignment:  CrossAxisAlignment.start,
+                              children: [
+                                Text(cityData.weather!.location, style: TextStyle(fontWeight: FontWeight.bold),),
+                                Text(cityData.weather!.location, style: TextStyle(color: Colors.grey),),
+                              ],
                             ),
-                          );
-                        }
-                      ),
+                          ],
+                        ),
+                        SizedBox(height: 10,),
+                        Row(
+                          children: [
+                            // Icon(Icons.cloud),
+                            Image.network(cityData.weather!.conditionIcon, width: 30, height: 30,),
+                            SizedBox(width: 8,),
+                            Column(
+                              crossAxisAlignment:  CrossAxisAlignment.start,
+                              children: [
+                                Text('${cityData.weather!.temp_c}°C', style: TextStyle(fontWeight: FontWeight.bold),),
+                                Text(cityData.weather!.conditionText , style: TextStyle(color: Colors.grey),),
+                              ],
+                            ),
+                            Spacer(),
+                            Text(cityData.airQuality!.aqi.toStringAsFixed(0), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 23,),),
+                            Text(" AQI", style: TextStyle(color: Colors.grey),),
+                            SizedBox(width: 8,),
+                            // Icon(Icons.mood, color: Colors.green,),
+                            Utils().mapAQIToIcon(cityData.airQuality!.aqi.toString()),
+                          ],
+                        ),
+        
+                        SizedBox(height: 20,),
+        
+                        //forecard
+                        Text("Forecast", style: TextStyle(fontSize: 20),),
+                        SizedBox(height: 10,),
+                        SizedBox(
+                          height: 140,
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: min(cityData.airQuality!.forecast.length, cityData.weather!.forecast.length),
+                            itemBuilder: (context, index) {
+                              // final data = mockData[index % mockData.length];
+                              return ForecastCard(
+                                aqi: cityData.airQuality!.forecast[index].avg.toStringAsFixed(0),
+                                temp: cityData.weather!.forecast[index].avgtemp_c.toString(),
+                                day: "MON",
+                                iconUrl: cityData.weather!.forecast[index].conditionIcon,
+                              );
+                            },
+                          ),
+                        ),
+                        SizedBox(height: 20,),
+        
+                        //dot
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: List.generate(
+                            4, 
+                            (index){
+                              return Container(
+                                margin: EdgeInsets.all(4),
+                                width: index == 0? 20:8,
+                                height: 8,
+                                decoration: BoxDecoration(
+                                  color: index == 0? Colors.blue:Colors.grey,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              );
+                            }
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 20,),
-
-              //work, home
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  HomeCard(
-                    aqi: "3",
-                    temp: "25",
-                    title: "Work",
-                    position: "Coventry ST, Birmingham",
                   ),
-
-                  HomeCard(
-                    aqi: "5",
-                    temp: "21",
-                    title: "Home",
-                    position: "Edmund ST, Birmingham",
+                  SizedBox(height: 20,),
+        
+                  //work, home
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      HomeCard(
+                        aqi: cityData.airQuality!.aqi.toStringAsFixed(0),
+                        temp: cityData.weather!.temp_c.toString(),
+                        iconUrl: cityData.weather!.conditionIcon,
+                        title: "Work",
+                        position: "Nguyen Van Linh, Da Nang",
+                      ),
+        
+                      HomeCard(
+                        aqi: cityData.airQuality!.aqi.toStringAsFixed(0),
+                        temp: cityData.weather!.temp_c.toString(),
+                        iconUrl: cityData.weather!.conditionIcon,
+                        title: "Home",
+                        position: "Le Loi, Da Nang",
+                      ),
+                    ],
                   ),
+        
+                  SizedBox(height: 10,),
+                  SizedBox(
+                    height: 90,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: allCityData.length,
+                      itemBuilder: (context, index){
+                        return WeatherCard(
+                          street: allCityData[index].weather!.location,
+                          city: allCityData[index].weather!.location,
+                          aqi: allCityData[index].airQuality!.aqi.toStringAsFixed(0),
+                          temp: allCityData[index].weather!.temp_c.toString(),
+                          iconUrl: allCityData[index].weather!.conditionIcon,
+                        );
+                      }
+                    ),
+                  ),
+        
+                  SizedBox(height: 10,),
+        
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(min(4, allCityData.length), (index){
+                        return Container(
+                          margin: EdgeInsets.all(4),
+                          width: index == 0? 20:8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: index == 0? Colors.blue:Colors.grey,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        );
+                      }
+                    ),
+                  ),
+                  SizedBox(height: 20,),
+        
+                  //Airqualitycard
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: ListTile(
+                      leading: Icon(Icons.priority_high, color: Colors.blue,),
+                      title: Text("Detail Air Quality", ),
+                      trailing: Icon(Icons.chevron_right, color: Colors.blue,),
+                      onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => LocationDetail()));
+                      },
+                    ),
+                  ),
+        
+        
                 ],
               ),
-
-              SizedBox(height: 10,),
-              SizedBox(
-                height: 90,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: 5,
-                  itemBuilder: (context, index){
-                    return WeatherCard(
-                      street: "Church Street Square",
-                      city: "Birmingham",
-                      aqi: "5",
-                      temp: "21°C",
-                    );
-                  }
-                ),
-              ),
-
-              SizedBox(height: 10,),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(
-                  4, 
-                  (index){
-                    return Container(
-                      margin: EdgeInsets.all(4),
-                      width: index == 0? 20:8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: index == 0? Colors.blue:Colors.grey,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    );
-                  }
-                ),
-              ),
-              SizedBox(height: 20,),
-
-              //Airqualitycard
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                child: ListTile(
-                  leading: Icon(Icons.priority_high, color: Colors.blue,),
-                  title: Text("Detail Air Quality", ),
-                  trailing: Icon(Icons.chevron_right, color: Colors.blue,),
-                  onTap: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => LocationDetail()));
-                  },
-                ),
-              ),
-
-
-            ],
+            ) ,
           ),
-        ) ,
-      ),
+        );
+      }
     );
   }
 }
@@ -276,11 +228,13 @@ class ForecastCard extends StatelessWidget {
     required this.day,
     required this.aqi,
     required this.temp,
+    required this.iconUrl,
   });
 
   final String day;
   final String aqi;
   final String temp;
+  final String iconUrl;
 
 
   @override
@@ -305,7 +259,8 @@ class ForecastCard extends StatelessWidget {
 
           SizedBox(height: 8),
 
-          Icon(Icons.cloud),
+          // Icon(Icons.cloud),
+          Image.network(iconUrl, width: 20, height: 20,),
 
           Text("$temp°C"),
         ],
@@ -319,13 +274,15 @@ class HomeCard extends StatelessWidget {
   final String temp;
   final String title;
   final String position;
+  final String iconUrl;
 
   const HomeCard({
     super.key,
     required this.aqi,
     required this.temp,
     required this.title,
-    required this.position
+    required this.position,
+    required this.iconUrl,
   });
 
   @override
@@ -340,21 +297,22 @@ class HomeCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(title, style: TextStyle( fontWeight: FontWeight.bold, fontSize: 12),),
-                Text(position, style: TextStyle(color: Colors.grey, fontSize: 10)),
+                Text(position, style: TextStyle(color: Colors.grey, fontSize: 12)),
                 SizedBox(height: 5,),
                 Row(
                   children: [
                     Utils().mapAQIToIcon(aqi),
-                    SizedBox(width: 8,),
-                    Text(aqi, style: TextStyle(fontWeight: FontWeight.bold,),),
-                    SizedBox(width: 8,),
-                    Text("AQI", style: TextStyle(color: Colors.grey,),),
+                    SizedBox(width: 4,),
+                    Text(aqi, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),),
+                    // SizedBox(width: 8,),
+                    Text(" AQI", style: TextStyle(color: Colors.grey, fontSize: 12),),
                     // Spacer(),
                     SizedBox(width: 15,),
-                    Icon(Icons.cloud, size: 20,),
+                    // Icon(Icons.cloud, size: 20,),
+                    Image.network(iconUrl, width: 20, height: 20,),
                     SizedBox(width: 8,),
-                    Text(temp, style: TextStyle(fontWeight: FontWeight.bold,),),
-                    Text("°C", style: TextStyle(color: Colors.grey,),),
+                    Text(temp, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),),
+                    Text("°C", style: TextStyle(color: Colors.grey, fontSize: 12),),
                   ],
                 ),
               ],
@@ -368,13 +326,15 @@ class WeatherCard extends StatelessWidget {
   final String city;
   final String aqi;
   final String temp;
+  final String iconUrl;
 
   const WeatherCard({
     super.key, 
     required this.street, 
     required this.city, 
     required this.aqi, 
-    required this.temp
+    required this.temp,
+    required this.iconUrl,
   });
 
   @override
@@ -413,7 +373,7 @@ class WeatherCard extends StatelessWidget {
                     Spacer(),
                     Text(temp, style: TextStyle(fontWeight: FontWeight.bold),),
                     SizedBox(width: 5,),
-                    Icon(Icons.sunny_snowing, color: Colors.orange,),
+                    Image.network(iconUrl, width: 20, height: 20,),
                   ],
                 ),
               ],

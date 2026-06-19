@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:weather_app/models/air_quality_model.dart';
 import 'package:weather_app/utils/air_quality_painter.dart';
 import 'package:weather_app/utils/utils.dart';
 
 class AirQualityWidget extends StatelessWidget {
-  final aqiValue = 12; // Giá trị AQI mẫu, bạn có thể thay đổi hoặc lấy từ dữ liệu thực tế
-  const AirQualityWidget({super.key});
+  const AirQualityWidget({super.key, required this.airQuality});
+
+  final AirQualityModel airQuality;
 
 
 
@@ -47,7 +49,7 @@ class AirQualityWidget extends StatelessWidget {
               alignment: Alignment.center,
               children: [
                 //background circle
-                Positioned.fill(child: CustomPaint(painter: AirQualityPainter(progress: aqiValue / 500),)),
+                Positioned.fill(child: CustomPaint(painter: AirQualityPainter(progress: airQuality.aqi / 500),)),
                 //aqi value
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -55,14 +57,14 @@ class AirQualityWidget extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text('$aqiValue', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),),
+                        Text(airQuality.aqi.toStringAsFixed(0), style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),),
                         Text(' AQI', style: TextStyle(fontSize: 16, color: Colors.grey),),
                       ],
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Utils().mapAQIToIcon('$aqiValue'),
+                        Utils().mapAQIToIcon(airQuality.aqi.toStringAsFixed(0)),
                         Text("Low", style: TextStyle(fontSize: 16, color: Colors.green),),
                       ],
                     )
@@ -80,18 +82,18 @@ class AirQualityWidget extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(child: AirAQualityItem(title: "O3", value: "52")),
-                  Expanded(child: AirAQualityItem(title: "PM10", value: "25")),
-                  Expanded(child: AirAQualityItem(title: "NO", value: "22")),
+                  Expanded(child: AirAQualityItem(title: "O3", value: airQuality.o3.toString())),
+                  Expanded(child: AirAQualityItem(title: "PM10", value: airQuality.pm10.toString())),
+                  Expanded(child: AirAQualityItem(title: "NO", value: airQuality.no2.toString())),
                 ],
               ),
               SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(child: AirAQualityItem(title: "NO2", value: "12")),
-                  Expanded(child: AirAQualityItem(title: "PM1", value: "16")),
-                  Expanded(child: AirAQualityItem(title: "PM2.5", value: "2.2")),
+                  Expanded(child: AirAQualityItem(title: "NO2", value: airQuality.no2.toString())),
+                  Expanded(child: AirAQualityItem(title: "PM1", value: airQuality.pm10.toString())),
+                  Expanded(child: AirAQualityItem(title: "PM2.5", value: airQuality.pm25.toString())),
                 ],
               ),
             ],

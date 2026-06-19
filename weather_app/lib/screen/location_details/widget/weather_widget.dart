@@ -1,21 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:weather_app/models/weather_model.dart';
 
 class WeatherWidget extends StatelessWidget {
-  WeatherWidget({super.key});
-  // Dữ liệu cho thanh thời gian
-  final List<Map<String, String>> hourlyData = [
-    {'time': '08:00', 'temp': '15°C'},
-    {'time': '09:00', 'temp': '14°C'},
-    {'time': '10:00', 'temp': '13°C'},
-    {'time': '11:00', 'temp': '12°C'},
-    {'time': '12:00', 'temp': '12°C'},
-    {'time': '13:00', 'temp': '11°C'},
-  ];
+  WeatherWidget({super.key, required this.weatherData});
+  final WeatherModel weatherData;
+  final int currentHour = DateTime.now().hour;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      // margin: EdgeInsets.symmetric(horizontal: 16),
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -35,16 +28,17 @@ class WeatherWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text("Now",),
-                  Text("Rain Showers",
+                  Text(weatherData.conditionText,
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
-                  Text("Feels Like 11°C",),
+                  Text("Feels Like ${weatherData.feelslike_c.toStringAsFixed(0)}°C",),
                 ],
               ),
               Spacer(),
-              Text("15°C", style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),),
+              Text("${weatherData.temp_c.toStringAsFixed(0)}°C", style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),),
               SizedBox(width: 8,),
-              Icon(Icons.cloud, color: Colors.blue, size: 32,),
+              // Icon(Icons.cloud, color: Colors.blue, size: 32,),
+                Image.network(weatherData.conditionIcon, width: 32, height: 32,),
             ],
           ),
           SizedBox(height: 6,),
@@ -59,10 +53,10 @@ class WeatherWidget extends StatelessWidget {
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               physics: BouncingScrollPhysics(),
-              itemCount: hourlyData.length,
+              itemCount: weatherData.hourlyForecast.length - currentHour,
               itemBuilder: (context, index) {
-                final item = hourlyData[index];
-                return HourlyItem(time: item['time']!, temp: item['temp']!);
+                final item = weatherData.hourlyForecast[index + currentHour];
+                return HourlyItem(time: item.time.hour.toString(), temp: item.temp_c.toStringAsFixed(0), iconUrl: item.conditionIcon);
               },
             ),
           ),
@@ -70,7 +64,7 @@ class WeatherWidget extends StatelessWidget {
           //navigation dots
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(hourlyData.length > 6? 6 : hourlyData.length, (index) {
+            children: List.generate(weatherData.hourlyForecast.length > 6? 6 : weatherData.hourlyForecast.length, (index) {
               return Container(
                 margin: EdgeInsets.symmetric(horizontal: 4),
                 width: 8,
@@ -94,7 +88,8 @@ class WeatherWidget extends StatelessWidget {
 class HourlyItem extends StatelessWidget {
   final String time;
   final String temp;
-  const HourlyItem({super.key, required this.time, required this.temp});
+  final String iconUrl;
+  const HourlyItem({super.key, required this.time, required this.temp, required this.iconUrl});
 
   @override
   Widget build(BuildContext context) {
@@ -110,11 +105,11 @@ class HourlyItem extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Icon(Icons.cloud, color: Colors.blue, size: 24,),
+          Image.network(iconUrl, width: 24, height: 24,),
           SizedBox(height: 4,),
-          Text("$temp", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),),
+          Text('$temp°C', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),),
           SizedBox(height: 4,),
-          Text("$time", style: TextStyle(fontSize: 14, color: Colors.grey),),
+          Text('$time:00', style: TextStyle(fontSize: 14, color: Colors.grey),),
         ],
       ),
     );
