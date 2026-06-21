@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/navigation_provider.dart';
+import '../../providers/navigation_provider.dart';
 
 class AppBottomNavBar extends StatelessWidget {
   const AppBottomNavBar({super.key});

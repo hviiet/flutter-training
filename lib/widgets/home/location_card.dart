@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-
-import '../models/weather_location.dart';
-import '../models/weather_status.dart';
-import 'aqi_status_icon.dart';
+import '../../models/weather_location.dart';
+import '../common/aqi_status_icon.dart';
 
 enum LocationCardType {
   small,
@@ -24,7 +22,7 @@ class LocationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: isLarge ? 240 : 165.0,
+      width: isLarge ? 240 : 170.0,
       height: isLarge ? 96 : 92.0,
       padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
       margin: const EdgeInsets.only(right: 8.0, left: 8.0),
@@ -62,7 +60,7 @@ class LocationCard extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
-              fontSize: 11.0,
+              fontSize: isLarge ? 13.0 : 11.0,
               fontWeight: FontWeight.w400,
               color: const Color.fromRGBO(90, 90, 90, 1.0),
             ),
@@ -72,34 +70,34 @@ class LocationCard extends StatelessWidget {
 
           Row(
             children: [
-              AqiStatusIcon(aqi: location.aqi, size: 20.0),
+              AqiStatusIcon(aqi: location.aqi, size: isLarge ? 24.0 : 18.0),
 
-              const SizedBox(width: 6.0),
+              SizedBox(width: isLarge ? 6.0 : 4.0),
 
               Text(
                 location.aqi.toString(),
-                style: const TextStyle(
-                  fontSize: 20.0,
+                style: TextStyle(
+                  fontSize: isLarge ? 17.0 : 15.0,
                   fontWeight: FontWeight.w700,
-                  color: Color.fromRGBO(17, 24, 39, 1.0),
+                  color: const Color.fromRGBO(17, 24, 39, 1.0),
                 ),
               ),
 
-              const SizedBox(width: 6.0),
+              const SizedBox(width: 2.0),
 
               Text(
                 'AQI',
                 style: TextStyle(
-                  fontSize: 11.0,
+                  fontSize: isLarge ? 13.0 : 11.0,
                   color: const Color.fromRGBO(90, 90, 90, 1.0),
                 ),
               ),
 
               const Spacer(),
 
-              isLarge ? buildTextTemperature(location) : buildIconWetherStatus(location.weatherStatus),
-              const SizedBox(width: 6.0),
-              isLarge ? buildIconWetherStatus(location.weatherStatus) : buildTextTemperature(location),
+              isLarge ? buildTextTemperature(location.temp, 17.0) : buildIconWetherStatus(location.conditionIcon, 20.0),
+              SizedBox(width: isLarge ? 6.0 : 4.0),
+              isLarge ? buildIconWetherStatus(location.conditionIcon, 24.0) : buildTextTemperature(location.temp, 14.0),
             ],
           )
           
@@ -110,19 +108,19 @@ class LocationCard extends StatelessWidget {
   }
 }
 
-Widget buildIconWetherStatus(WeatherStatus status) {
-  return Icon(
-    status.getIcon,
-    size: 20.0,
-    color: status.getColor,
+Widget buildIconWetherStatus(String conditionIcon, double size) {
+  return Image.network(
+    conditionIcon,
+    width: size,
+    height: size,
   );
 }
 
-Widget buildTextTemperature(WeatherLocation location) {
+Widget buildTextTemperature(double temperature, double fontSize) {
   return Text(
-    '${location.temperature}°C',
-    style: const TextStyle(
-      fontSize: 16.0,
+    '${temperature.toStringAsFixed(1).replaceAll('.0', '')}°C',
+    style: TextStyle(
+      fontSize: fontSize,
       fontWeight: FontWeight.w700,
       color: Color.fromRGBO(17, 24, 39, 1.0),
     ),

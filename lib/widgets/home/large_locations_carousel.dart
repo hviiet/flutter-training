@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'location_card.dart';
-import '../models/weather_location.dart';
+import '../../models/weather_location.dart';
 
 class LargeLocationsCarousel extends StatefulWidget {
   final List<WeatherLocation> locations;

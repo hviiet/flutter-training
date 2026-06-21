@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 
-import '../models/forecast.dart';
-import '../models/weather_status.dart';
-import '../models/weather_location.dart';
-import '../widgets/aqi_status_icon.dart';
-import '../widgets/forecast_item_card.dart';
+import '../../models/weather_location.dart';
+import '../common/aqi_status_icon.dart';
+import 'forecast_item_card.dart';
+import '../../models/home_data.dart';
 
 class WeatherSummaryCard extends StatefulWidget {
   final WeatherLocation location;
-  final List<Forecast> forecasts;
+  final List<HomeForecastItem> forecasts;
 
   const WeatherSummaryCard({
     super.key, 
@@ -51,11 +50,11 @@ class _WeatherSummaryCardState extends State<WeatherSummaryCard> {
             children: [
               Icon(
                 Icons.my_location_outlined,
-                size: 30.0,
+                size: 25.0,
                 color: const Color.fromARGB(255, 28, 115, 255),
               ),
 
-              const SizedBox(width: 12.0),
+              const SizedBox(width: 8.0),
 
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -90,13 +89,13 @@ class _WeatherSummaryCardState extends State<WeatherSummaryCard> {
 
           Row(
             children: [
-              Icon(
-                widget.location.weatherStatus.getIcon,
-                color: widget.location.weatherStatus.getColor,
-                size: 30.0,
+              Image.network(
+                widget.location.conditionIcon,
+                width: 25.0,
+                height: 25.0,
               ),
 
-              const SizedBox(width: 12.0),
+              const SizedBox(width: 8.0),
 
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -104,7 +103,7 @@ class _WeatherSummaryCardState extends State<WeatherSummaryCard> {
                   Row(
                     children: [
                       Text(
-                        '${widget.location.temperature}°C',
+                        '${widget.location.temp.toStringAsFixed(1).replaceAll('.0', '')}°C',
                         style: const TextStyle(
                           fontSize: 18.0,
                           fontWeight: FontWeight.w700,
@@ -114,7 +113,7 @@ class _WeatherSummaryCardState extends State<WeatherSummaryCard> {
 
                       const Icon(
                         Icons.arrow_upward,
-                        size: 14.0,
+                        size: 12.0,
                         color: Color.fromRGBO(54, 232, 47, 1),
                       ),
                     ],
@@ -123,9 +122,9 @@ class _WeatherSummaryCardState extends State<WeatherSummaryCard> {
                   Row(
                     children: [
                       Text(
-                        widget.location.weatherStatus.getLabel,
+                        widget.location.conditionText,
                         style: const TextStyle(
-                          fontSize: 14.0,
+                          fontSize: 13.0,
                           fontWeight: FontWeight.w400,
                           color: Color.fromRGBO(90, 90, 90, 1.0),
                         ),
@@ -134,9 +133,9 @@ class _WeatherSummaryCardState extends State<WeatherSummaryCard> {
                       const SizedBox(width: 4.0),
 
                       Text(
-                        'Feels like ${widget.location.feelsLike}°C',
+                        'Feels like ${widget.location.feelsLike.toStringAsFixed(1).replaceAll('.0', '')}°C',
                         style: const TextStyle(
-                          fontSize: 12.0,
+                          fontSize: 11.0,
                           fontWeight: FontWeight.w400,
                           color: Color.fromRGBO(90, 90, 90, 1.0),
                         ),
@@ -176,7 +175,7 @@ class _WeatherSummaryCardState extends State<WeatherSummaryCard> {
           ),
 
 
-          const SizedBox(height: 10.0),
+          const SizedBox(height: 12.0),
 
           const Text(
             'Forecast',
@@ -187,7 +186,7 @@ class _WeatherSummaryCardState extends State<WeatherSummaryCard> {
             ),
           ),
 
-          const SizedBox(height: 6.0),
+          const SizedBox(height: 8.0),
 
           SizedBox(
             height: 160.0,
@@ -197,7 +196,7 @@ class _WeatherSummaryCardState extends State<WeatherSummaryCard> {
               padEnds: false,
               onPageChanged: (index) {
                 setState(() {
-                  _currentForecastPage = index ~/ 3;
+                  _currentForecastPage = index ~/ 2;
                 });
               },
               itemBuilder: (context, index) => ForecastItemCard(forecast: widget.forecasts[index]),

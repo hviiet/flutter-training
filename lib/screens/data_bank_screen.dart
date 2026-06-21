@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import '../widgets/app_text_field.dart';
+import '../widgets/common/app_text_field.dart';
 
 class DataBankScreen extends StatefulWidget {
   const DataBankScreen({super.key});

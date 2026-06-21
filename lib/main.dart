@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_training/bloc/aqi_scale/aqi_scale_bloc.dart';
+import 'package:flutter_training/bloc/home/home_bloc.dart';
+import 'package:flutter_training/bloc/location_detail/location_detail_bloc.dart';
 import 'package:flutter_training/providers/auth_provider.dart';
 import 'package:flutter_training/providers/navigation_provider.dart';
 import 'package:flutter_training/screens/main_screen.dart';
+import 'package:flutter_training/services/aqi_service.dart';
+import 'package:flutter_training/services/weather_service.dart';
 import 'package:provider/provider.dart';
 import 'screens/onboarding_screen.dart';
 
 void main() {
+
   runApp(
     MultiProvider(
       providers: [
@@ -16,6 +23,27 @@ void main() {
         ChangeNotifierProvider(
           create: (_) => AuthProvider(),
         ),
+
+        BlocProvider(
+          create: (context) => LocationDetailBloc(
+            weatherService: WeatherService(),
+            aqiService: AqiService(),
+          ),
+        ),
+
+        BlocProvider(
+          create: (context) => HomeBloc(
+            weatherService: WeatherService(),
+            aqiService: AqiService(),
+          ),
+        ), 
+
+        BlocProvider(
+            create: (context) => AqiScaleBloc(
+              weatherService: WeatherService(),
+              aqiService: AqiService(),
+            ),
+          ),
       ],
       child: const MyApp(),
     ),

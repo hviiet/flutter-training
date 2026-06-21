@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_training/models/home_data.dart';
 
-import '../models/forecast.dart';
-import '../models/weather_status.dart';
-import 'aqi_status_icon.dart';
+import '../common/aqi_status_icon.dart';
 
 class ForecastItemCard extends StatelessWidget {
-  final Forecast forecast;
+  final HomeForecastItem forecast;
 
   const ForecastItemCard({super.key, required this.forecast});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 2.0, vertical: 4.0),
+      padding: const EdgeInsets.symmetric(horizontal: 2.0, vertical: 6.0),
       margin: const EdgeInsets.only(right: 5.0, left: 5.0),
 
       decoration: BoxDecoration(
@@ -42,22 +41,24 @@ class ForecastItemCard extends StatelessWidget {
 
           AqiStatusIcon(aqi: forecast.aqi, size: 24.0),
 
+          const SizedBox(height: 4.0),
+
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
                 forecast.aqi.toString(),
                 style: const TextStyle(
-                  fontSize: 20.0,
+                  fontSize: 14.0,
                   fontWeight: FontWeight.w700,
                   color: Color.fromRGBO(17, 24, 39, 1.0),
                 ),
               ),
 
-              const SizedBox(width: 2.0),
+              const SizedBox(width: 3.0),
 
               Text(
-                'AQI',
+                'pm2.5',
                 style: const TextStyle(
                   fontSize: 10.0,
                   color: Color.fromRGBO(90, 90, 90, 1.0),
@@ -73,18 +74,18 @@ class ForecastItemCard extends StatelessWidget {
           ),
           const SizedBox(height: 1.0),
 
-          Icon(
-            forecast.weatherStatus.getIcon,
-            size: 24.0,
-            color: forecast.weatherStatus.getColor,
+          Image.network(
+            forecast.conditionIcon,
+            width: 26.0,
+            height: 26.0,
           ),
 
-          const SizedBox(height: 3.0),
+          const SizedBox(height: 4.0),
 
           Text(
-            '${forecast.temperature}°C',
+            '${forecast.avgTemp.toStringAsFixed(1).replaceAll('.0', '')}°C',
             style: const TextStyle(
-              fontSize: 18.0,
+              fontSize: 16.0,
               fontWeight: FontWeight.w600,
               color: Color.fromRGBO(17, 24, 39, 1.0),
             ),

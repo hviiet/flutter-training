@@ -3,7 +3,7 @@ import 'home_screen.dart';
 import 'data_bank_screen.dart';
 import 'more_screen.dart';
 
-import '../widgets/app_bottom_nav_bar.dart';
+import '../widgets/common/app_bottom_nav_bar.dart';
 import '../providers/navigation_provider.dart';
 import 'package:provider/provider.dart';
 

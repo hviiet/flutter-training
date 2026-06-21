@@ -3,7 +3,7 @@ import 'package:flutter_training/providers/auth_provider.dart';
 import 'package:flutter_training/screens/onboarding_screen.dart';
 import 'package:provider/provider.dart';
 
-import '../widgets/action_list_tile.dart';
+import '../widgets/common/action_list_tile.dart';
 
 class MoreScreen extends StatelessWidget {
   const MoreScreen({super.key});

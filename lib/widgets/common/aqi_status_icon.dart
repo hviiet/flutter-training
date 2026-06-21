@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../core/extension/aqi_extension.dart';
+import '../../core/extension/aqi_extension.dart';
 
 class AqiStatusIcon extends StatelessWidget {
   final int aqi;
@@ -25,7 +25,7 @@ class AqiStatusIcon extends StatelessWidget {
       child: Icon(
         aqi.aqiIcon,
         color: Colors.white,
-        size: size * 0.72,
+        size: size * 0.85,
       ),
     );
   }

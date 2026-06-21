@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_training/providers/auth_provider.dart';
-import 'package:flutter_training/widgets/app_text_field.dart';
+import 'package:flutter_training/widgets/common/app_text_field.dart';
 import 'package:provider/provider.dart';
 import 'main_screen.dart';
 
