@@ -20,6 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   bool obscureText = false;
   bool rememberMe = false;
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -119,9 +120,19 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(
                   width: double.infinity,
                   height: 55,
-                  child: ElevatedButton(onPressed: () async{
+                  child: ElevatedButton(onPressed: isLoading ? null : () async{
+                    setState(() {
+                      isLoading = true;
+                    });
                     final authProvider = context.read<Authprovider>();
-                    bool success = await authProvider.login(emailController.text.trim(), passwordController.text.trim());
+                    bool success = await authProvider.login(
+                      emailController.text.trim(), 
+                      passwordController.text.trim());
+
+                    setState(() {
+                      isLoading = false;
+                    });
+
                     if(success) Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => DashboardPage()));
                     else{
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -129,7 +140,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       );
                     }
                   }, 
-                  child: Text("Login"), 
+                  child: isLoading? CircularProgressIndicator() 
+                  : Text("Login"),
                     style: ElevatedButton.styleFrom(backgroundColor: Colors.blue, foregroundColor: Colors.white),
                   ),
                 )

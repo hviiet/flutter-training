@@ -1,34 +1,15 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:weather_app/models/city_data.dart';
 
-class CityState {
-  final bool isLoading;
-  final String? error;
+part 'city_state.freezed.dart';
 
-  final Map<String, CityData> citiesData;
+@freezed
+abstract class CityState with _$CityState {
 
-  CityState({
-    required this.isLoading,
-    required this.error,
-    required this.citiesData,
-  });
-
-  factory CityState.initial() {
-    return CityState(
-      isLoading: false,
-      error: null,
-      citiesData: {},
-    );
-  }
-
-  CityState copyWith({
-    bool? isLoading,
+  const factory CityState({
+    @Default(false) bool isLoading,
     String? error,
-    Map<String, CityData>? citiesData,
-  }) {
-    return CityState(
-      isLoading: isLoading ?? this.isLoading,
-      error: error ?? this.error,
-      citiesData: citiesData ?? this.citiesData,
-    );
-  }
+    @Default({}) Map<String, CityData> citiesData,
+  }) = _CityState;
+
 }

@@ -78,7 +78,7 @@ class AQIForeCastWidget extends StatelessWidget {
                       children: airQualityModel.forecast.map((data) {
                         return AQIBarItem(
                           day: Utils().mapDayInWeek(data.day.weekday),
-                          aqi: data.avg,
+                          aqi: data.avg.toInt(),
                         );
                       }).toList(),
                     ),

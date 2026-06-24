@@ -5,6 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:weather_app/blocs/city/city_cubit.dart';
 import 'package:weather_app/blocs/city/city_state.dart';
+import 'package:weather_app/extension/weather_extension.dart';
+import 'package:weather_app/models/city_data.dart';
 import 'package:weather_app/providers/authProvider.dart';
 import 'package:weather_app/screen/location_details/location_detail.dart';
 import 'package:weather_app/utils/utils.dart';
@@ -21,7 +23,7 @@ class HomePage extends StatelessWidget {
           return const Center(child: CircularProgressIndicator(),);
         }
 
-        final cityData = state.citiesData[0];
+        final cityData = state.citiesData["danang"];
         final allCityData = state.citiesData.values.toList();
         // final cityCount = state.citiesData.length;
         if(cityData == null){
@@ -35,6 +37,7 @@ class HomePage extends StatelessWidget {
               physics: const BouncingScrollPhysics(),
               padding: EdgeInsets.all(20),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   //welcome header
                   Column(
@@ -53,6 +56,7 @@ class HomePage extends StatelessWidget {
                     padding: EdgeInsets.all(16),
                     decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20),),
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         //header
                         Row(
@@ -77,7 +81,7 @@ class HomePage extends StatelessWidget {
                             Column(
                               crossAxisAlignment:  CrossAxisAlignment.start,
                               children: [
-                                Text('${cityData.weather!.temp_c}°C', style: TextStyle(fontWeight: FontWeight.bold),),
+                                Text('${cityData.weather!.temp_c.toStringAsFixed(0)}°C', style: TextStyle(fontWeight: FontWeight.bold),),
                                 Text(cityData.weather!.conditionText , style: TextStyle(color: Colors.grey),),
                               ],
                             ),
@@ -92,45 +96,8 @@ class HomePage extends StatelessWidget {
         
                         SizedBox(height: 20,),
         
-                        //forecard
-                        Text("Forecast", style: TextStyle(fontSize: 20),),
-                        SizedBox(height: 10,),
-                        SizedBox(
-                          height: 140,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: min(cityData.airQuality!.forecast.length, cityData.weather!.forecast.length),
-                            itemBuilder: (context, index) {
-                              // final data = mockData[index % mockData.length];
-                              return ForecastCard(
-                                aqi: cityData.airQuality!.forecast[index].avg.toStringAsFixed(0),
-                                temp: cityData.weather!.forecast[index].avgtemp_c.toString(),
-                                day: "MON",
-                                iconUrl: cityData.weather!.forecast[index].conditionIcon,
-                              );
-                            },
-                          ),
-                        ),
-                        SizedBox(height: 20,),
-        
-                        //dot
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: List.generate(
-                            4, 
-                            (index){
-                              return Container(
-                                margin: EdgeInsets.all(4),
-                                width: index == 0? 20:8,
-                                height: 8,
-                                decoration: BoxDecoration(
-                                  color: index == 0? Colors.blue:Colors.grey,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              );
-                            }
-                          ),
-                        ),
+                        //forecart
+                        ForecastCard(cityData: cityData),
                       ],
                     ),
                   ),
@@ -142,7 +109,7 @@ class HomePage extends StatelessWidget {
                     children: [
                       HomeCard(
                         aqi: cityData.airQuality!.aqi.toStringAsFixed(0),
-                        temp: cityData.weather!.temp_c.toString(),
+                        temp: cityData.weather!.temp_c.toStringAsFixed(0),
                         iconUrl: cityData.weather!.conditionIcon,
                         title: "Work",
                         position: "Nguyen Van Linh, Da Nang",
@@ -150,7 +117,7 @@ class HomePage extends StatelessWidget {
         
                       HomeCard(
                         aqi: cityData.airQuality!.aqi.toStringAsFixed(0),
-                        temp: cityData.weather!.temp_c.toString(),
+                        temp: cityData.weather!.temp_c.toStringAsFixed(0),
                         iconUrl: cityData.weather!.conditionIcon,
                         title: "Home",
                         position: "Le Loi, Da Nang",
@@ -159,40 +126,9 @@ class HomePage extends StatelessWidget {
                   ),
         
                   SizedBox(height: 10,),
-                  SizedBox(
-                    height: 90,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: allCityData.length,
-                      itemBuilder: (context, index){
-                        return WeatherCard(
-                          street: allCityData[index].weather!.location,
-                          city: allCityData[index].weather!.location,
-                          aqi: allCityData[index].airQuality!.aqi.toStringAsFixed(0),
-                          temp: allCityData[index].weather!.temp_c.toString(),
-                          iconUrl: allCityData[index].weather!.conditionIcon,
-                        );
-                      }
-                    ),
-                  ),
-        
-                  SizedBox(height: 10,),
-        
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(min(4, allCityData.length), (index){
-                        return Container(
-                          margin: EdgeInsets.all(4),
-                          width: index == 0? 20:8,
-                          height: 8,
-                          decoration: BoxDecoration(
-                            color: index == 0? Colors.blue:Colors.grey,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        );
-                      }
-                    ),
-                  ),
+                  
+                  WeatherCard(allCityData: allCityData),
+
                   SizedBox(height: 20,),
         
                   //Airqualitycard
@@ -222,8 +158,8 @@ class HomePage extends StatelessWidget {
   }
 }
 
-class ForecastCard extends StatelessWidget {
-  const ForecastCard({
+class ForecastItem extends StatelessWidget {
+  const ForecastItem({
     super.key,
     required this.day,
     required this.aqi,
@@ -268,6 +204,82 @@ class ForecastCard extends StatelessWidget {
     );
   }
 }
+
+//forecast card
+class ForecastCard extends StatefulWidget {
+  final CityData cityData;
+  const ForecastCard({super.key, required this.cityData});
+
+  @override
+  State<ForecastCard> createState() => _ForecastCardState();
+}
+class _ForecastCardState extends State<ForecastCard> {
+  final PageController pageController = PageController(viewportFraction: 0.2);
+  int currentPage = 0;
+  int totalItems = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    totalItems = min(widget.cityData.airQuality!.forecast.length, widget.cityData.weather!.forecast.length);
+    pageController.addListener((){
+      setState(() {
+        double page = pageController.page ?? 0;
+        currentPage = (page).round();
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("Forecast", style: TextStyle(fontSize: 20),),
+        SizedBox(height: 10,),
+        SizedBox(
+          height: 140,
+          child: ListView.builder(
+            controller: pageController,
+            scrollDirection: Axis.horizontal,
+            itemCount: totalItems,
+            itemBuilder: (context, index) {
+              return ForecastItem(
+                aqi: widget.cityData.airQuality!.forecast[index].avg.toStringAsFixed(0),
+                temp: widget.cityData.weather!.forecast[index].day.avgtemp_c.toStringAsFixed(0),
+                day: Utils().mapDayInWeek(widget.cityData.weather!.forecast[index].date.weekday),
+                iconUrl: widget.cityData.weather!.forecast[index].day.condition.conditionIconUrl,
+              );
+            },
+          ),
+        ),
+        SizedBox(height: 20,),
+
+        //dot
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List.generate(
+            totalItems - 4 > 0? totalItems - 4 : 0, 
+            (index){
+              return Container(
+                margin: EdgeInsets.all(4),
+                width: index == currentPage? 20:8,
+                height: 8,
+                decoration: BoxDecoration(
+                  color: index == currentPage? Colors.blue:Colors.grey,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              );
+            }
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+
+
 
 class HomeCard extends StatelessWidget {
   final String aqi;
@@ -321,14 +333,14 @@ class HomeCard extends StatelessWidget {
   }
 }
 
-class WeatherCard extends StatelessWidget {
+class CityWeatherItem extends StatelessWidget {
   final String street;
   final String city;
   final String aqi;
   final String temp;
   final String iconUrl;
 
-  const WeatherCard({
+  const CityWeatherItem({
     super.key, 
     required this.street, 
     required this.city, 
@@ -371,7 +383,7 @@ class WeatherCard extends StatelessWidget {
                     Text("AQI", style: TextStyle(fontSize: 12, color: Colors.grey,),),
 
                     Spacer(),
-                    Text(temp, style: TextStyle(fontWeight: FontWeight.bold),),
+                    Text('$temp°C', style: TextStyle(fontWeight: FontWeight.bold),),
                     SizedBox(width: 5,),
                     Image.network(iconUrl, width: 20, height: 20,),
                   ],
@@ -379,5 +391,74 @@ class WeatherCard extends StatelessWidget {
               ],
             ),
           );
+  }
+}
+
+class WeatherCard extends StatefulWidget {
+  final List<CityData> allCityData;
+  const WeatherCard({super.key, required this.allCityData});
+
+  @override
+  State<WeatherCard> createState() => WeatherCardState();
+}
+
+class WeatherCardState extends State<WeatherCard> {
+  final PageController pageController = PageController(viewportFraction: 0.5);
+  int currentPage = 0;
+  int totalItems = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    totalItems = widget.allCityData.length;
+    pageController.addListener((){
+      setState(() {
+        double page = pageController.page ?? 0;
+        currentPage = (page).round();
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        SizedBox(
+          height: 90,
+          child: ListView.builder(
+            controller: pageController,
+            scrollDirection: Axis.horizontal,
+            itemCount: totalItems,
+            itemBuilder: (context, index){
+              return CityWeatherItem(
+                street: widget.allCityData[index].weather!.location,
+                city: widget.allCityData[index].weather!.location,
+                aqi: widget.allCityData[index].airQuality!.aqi.toStringAsFixed(0),
+                temp: widget.allCityData[index].weather!.temp_c.toStringAsFixed(0),
+                iconUrl: widget.allCityData[index].weather!.conditionIcon,
+              );
+            }
+          ),
+        ),
+
+        SizedBox(height: 10,),
+
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List.generate( totalItems, (index){
+              return Container(
+                margin: EdgeInsets.all(4),
+                width: index == currentPage ? 20:8,
+                height: 8,
+                decoration: BoxDecoration(
+                  color: index == currentPage ? Colors.blue:Colors.grey,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              );
+            }
+          ),
+        ),
+      ],
+    );
   }
 }

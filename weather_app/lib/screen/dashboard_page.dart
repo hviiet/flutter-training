@@ -20,6 +20,14 @@ class _DashboardPageState extends State<DashboardPage> {
     DatabankPage(),
     MorePage(),
   ];
+  int currentPage = 0;
+
+  void ontap(int index){
+    setState(() {
+      currentPage = index;
+    });
+    context.read<NavigationProvider>().changeTab(index);
+  }
 
   @override
   void initState() {
@@ -36,13 +44,13 @@ class _DashboardPageState extends State<DashboardPage> {
     return Consumer<NavigationProvider>(
       builder: (context, provider, child){
         return Scaffold(
-          body: pages[provider.currentPage],
+          body: pages[currentPage],
           bottomNavigationBar: BottomNavigationBar(
             currentIndex: provider.currentPage,
-            onTap: provider.changeTab,
+            onTap: ontap,
             items: const [
               BottomNavigationBarItem(
-                icon: Icon(Icons.home),
+                icon: Icon(Icons.dataset),
                 label: "Home", 
               ),
               BottomNavigationBarItem(

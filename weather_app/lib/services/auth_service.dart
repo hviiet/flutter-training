@@ -8,7 +8,8 @@ class AuthService {
 
   // login
   Future<LoginResponse> login(String email, String password) async {
-    final response =  await dio.post(
+    try{
+      final response =  await dio.post(
       "https://api.escuelajs.co/api/v1/auth/login",
       data: {
         "email": email,
@@ -17,33 +18,50 @@ class AuthService {
     );
 
     return LoginResponse.fromJson(response.data);
+    }catch(e){
+      print("Error during login: $e");
+      rethrow;
+    }
   }
 
   //profile
   Future<UserModel> getProfile(String accessToken) async {
-    final response = await dio.get(
-      "https://api.escuelajs.co/api/v1/auth/profile",
-      options: Options(
-        headers: {
-          "Authorization": "Bearer $accessToken",
-        },
-      )
-    );
+    try{
+      final response = await dio.get(
+        "https://api.escuelajs.co/api/v1/auth/profile",
+        options: Options(
+          headers: {
+            "Authorization": "Bearer $accessToken",
+          },
+        ),
+      );
 
-    return UserModel.fromJson(response.data);
+      return UserModel.fromJson(response.data);
+    }
+    catch(e){
+      print("Error fetching profile: $e");
+      rethrow;
+    }
   }
 
   //refreshtoken
   Future<LoginResponse> refreshToken() async{
     final StorageService storage = StorageService();
     final refresh_token = await storage.getRefreshToken();
-    final response = await dio.post("https://api.escuelajs.co/api/v1/auth/refresh-token",
-      data: {
-        "refreshToken":refresh_token,
-      },
-    );
+    try{
+      final response = await dio.post(
+        "https://api.escuelajs.co/api/v1/auth/refresh-token",
+        data: {
+          "refreshToken": refresh_token,
+        },
+      );
 
-    return LoginResponse.fromJson(response.data);
+      return LoginResponse.fromJson(response.data);
+    }
+    catch(e){
+      print("Error refreshing token: $e");
+      rethrow;
+    }
   }
   
 }

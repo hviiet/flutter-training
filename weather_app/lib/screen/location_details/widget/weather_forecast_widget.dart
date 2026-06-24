@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:weather_app/extension/weather_extension.dart';
 import 'package:weather_app/models/weather_model.dart';
 import 'package:weather_app/utils/utils.dart';
 
@@ -31,10 +32,10 @@ class WeatherForecastWidget extends StatelessWidget {
             children: weatherModel.forecast.map((data){
               return WeatherRow(
                 day: Utils().mapDayInWeek(data.date.weekday),
-                high: data.maxtemp_c.toStringAsFixed(0),
-                low: data.mintemp_c.toStringAsFixed(0),
+                high: data.day.avgtemp_c.toStringAsFixed(0),
+                low: data.day.mintemp_c.toStringAsFixed(0),
                 label: Utils().mapCurrentDay(data.date),
-                iconUrl: data.conditionIcon,
+                iconUrl: data.day.condition.conditionIconUrl,
               );
             }).toList(),
           ),

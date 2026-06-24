@@ -9,8 +9,10 @@ import 'package:weather_app/services/air_quality_service.dart';
 import 'package:weather_app/services/weather_service.dart';
 import 'screen/onboarding.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+Future<void> main() async {
+  await dotenv.load(fileName: ".env");
   runApp(
     MultiProvider(
       providers:[
@@ -37,7 +39,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({super.key});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {

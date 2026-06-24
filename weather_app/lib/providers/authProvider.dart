@@ -55,11 +55,6 @@ class Authprovider extends ChangeNotifier {
     }
   }
 
-  // Future<bool> checkLogin() async {
-  //   final token = await storageService.getAccessToken();
-  //   return token != null;
-  // }
-
   Future<bool> checkAuth() async {
     try {
       return await getProfile();

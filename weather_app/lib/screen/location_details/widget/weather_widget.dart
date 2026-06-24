@@ -1,10 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:weather_app/extension/weather_extension.dart';
 import 'package:weather_app/models/weather_model.dart';
 
-class WeatherWidget extends StatelessWidget {
+class WeatherWidget extends StatefulWidget {
   WeatherWidget({super.key, required this.weatherData});
   final WeatherModel weatherData;
   final int currentHour = DateTime.now().hour;
+  
+  @override
+  State<StatefulWidget> createState() => _WeatherWidgetState();
+}
+
+class _WeatherWidgetState extends State<WeatherWidget> {
+  final PageController pageController = PageController(viewportFraction: 0.3);
+  int currentPage = 0;
+  int totalPages = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    totalPages = widget.weatherData.hourlyForecast.length > 6 ? 6 : widget.weatherData.hourlyForecast.length;
+    pageController.addListener(() {
+      int nextPage = pageController.page?.round() ?? 0;
+      if (currentPage != nextPage) {
+        setState(() {
+          double page = pageController.page ?? 0;
+          currentPage = (page).round();
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,17 +53,17 @@ class WeatherWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text("Now",),
-                  Text(weatherData.conditionText,
+                  Text(widget.weatherData.conditionText,
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
-                  Text("Feels Like ${weatherData.feelslike_c.toStringAsFixed(0)}°C",),
+                  Text("Feels Like ${widget.weatherData.feelslike_c.toStringAsFixed(0)}°C",),
                 ],
               ),
               Spacer(),
-              Text("${weatherData.temp_c.toStringAsFixed(0)}°C", style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),),
+              Text("${widget.weatherData.temp_c.toStringAsFixed(0)}°C", style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),),
               SizedBox(width: 8,),
               // Icon(Icons.cloud, color: Colors.blue, size: 32,),
-                Image.network(weatherData.conditionIcon, width: 32, height: 32,),
+                Image.network(widget.weatherData.conditionIcon, width: 32, height: 32,),
             ],
           ),
           SizedBox(height: 6,),
@@ -51,12 +76,13 @@ class WeatherWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
             ),
             child: ListView.builder(
+              controller: pageController,
               scrollDirection: Axis.horizontal,
               physics: BouncingScrollPhysics(),
-              itemCount: weatherData.hourlyForecast.length - currentHour,
+              itemCount: widget.weatherData.hourlyForecast.length - widget.currentHour,
               itemBuilder: (context, index) {
-                final item = weatherData.hourlyForecast[index + currentHour];
-                return HourlyItem(time: item.time.hour.toString(), temp: item.temp_c.toStringAsFixed(0), iconUrl: item.conditionIcon);
+                final item = widget.weatherData.hourlyForecast[index + widget.currentHour];
+                return HourlyItem(time: item.time.hour.toString(), temp: item.temp_c.toStringAsFixed(0), iconUrl: item.condition.conditionIconUrl);
               },
             ),
           ),
@@ -64,14 +90,14 @@ class WeatherWidget extends StatelessWidget {
           //navigation dots
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(weatherData.hourlyForecast.length > 6? 6 : weatherData.hourlyForecast.length, (index) {
+            children: List.generate(widget.weatherData.hourlyForecast.length - widget.currentHour - 5 > 6? 6 : widget.weatherData.hourlyForecast.length - widget.currentHour - 5, (index) {
               return Container(
                 margin: EdgeInsets.symmetric(horizontal: 4),
                 width: 8,
                 height: 8,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: index == 0 ? Colors.blue : Colors.grey.shade300,
+                  color: index == currentPage ? Colors.blue : Colors.grey.shade300,
                 ),
               );
             }),
