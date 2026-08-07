@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../providers/app_flow_provider.dart';
 class MoreScreen extends StatelessWidget {
   const MoreScreen({super.key});
 
@@ -164,8 +166,9 @@ class MoreScreen extends StatelessWidget {
               child: const Text('Cancel'),
             ),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 Navigator.pop(dialogContext);
+                await context.read<AppFlowProvider>().logout();
               },
               child: const Text('Logout'),
             ),

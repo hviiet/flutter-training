@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:onboarding_app/screens/login_screen.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/app_flow_provider.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -54,13 +56,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
 
   //Bỏ qua onboarding sang màn login
-  void finishOnboarding(){
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => LoginScreen(),
-         ),
-    );
+  Future<void> finishOnboarding() async {
+    await context.read<AppFlowProvider>().completeOnboarding();
   }
 
 
@@ -84,7 +81,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               Align(
                 alignment: Alignment.topRight,
                 child: TextButton(
-                  onPressed: finishOnboarding,
+                  onPressed: () => finishOnboarding(),
                   child: const Text(
                    'Skip',
                    style: TextStyle(

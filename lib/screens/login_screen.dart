@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/app_flow_provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -11,8 +14,20 @@ class _LoginScreenState extends State<LoginScreen> {
   bool rememberMe = true;
   bool hidePassword = true;
 
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final appFlow = context.watch<AppFlowProvider>();
+
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -55,6 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 //Ô nhập địa chỉ email 
                 TextField(
+                  controller: emailController,
                   keyboardType: TextInputType.emailAddress,
                   decoration: const InputDecoration(
                     hintText: 'Email',
@@ -66,6 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 12),
                 // Ô nhập PassWord
                 TextField(
+                  controller: passwordController,
                   obscureText: hidePassword,
                   decoration: InputDecoration(
                     hintText: 'PassWord',
@@ -109,25 +126,62 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     TextButton(
                       onPressed: (){},
-                     child: const Text('Forgot Password'),
+                     child: const Text(
+                      'Forgot Password ?',
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      ),
                      ),
                   ],
                 ),
                 const SizedBox(height: 12),
 
+                if (appFlow.errorMessage != null) ...[
+                  Text(
+                    appFlow.errorMessage!,
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                  const SizedBox(height: 12),
+                ],
+
                 // Nút Login 
                 SizedBox(
                   height: 50,
                   child: ElevatedButton(
-                    onPressed: (){}, 
+                    onPressed: appFlow.isLoggingIn ? null : handleLogin,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
+                      backgroundColor: const Color(0xFF1882FF),
                       foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8)
+                      elevation: 7,
+                      shadowColor: const Color.fromRGBO(
+                        33, 
+                        133,
+                         245,
+                          0.3,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ), 
+                       ),
+                    child: appFlow.isLoggingIn
+                      ? const SizedBox(
+                        width: 22,
+                        height: 22,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                    
+                        ),
+                      )
+                      : const Text(
+                        'Login',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.white,
+                        ),
                       ),
-                    ),
-                    child: const Text('Login')
                     ),
                 ),
 
@@ -139,4 +193,23 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
     );
   }
+
+
+  Future<void> handleLogin() async {
+  final email = emailController.text.trim();
+  final password = passwordController.text;
+
+  if (email.isEmpty || password.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Vui lòng nhập đầy đủ email và mật khẩu')),
+    );
+    return;
+  }
+
+  await context.read<AppFlowProvider>().login(
+    email: email,
+    password: password,
+  );
 }
+}
+

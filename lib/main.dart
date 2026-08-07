@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import 'providers/app_flow_provider.dart';
 import 'providers/navigation_provider.dart';
-import 'screens/main_screen.dart';
+import 'screens/auth_gate.dart';
 
 void main() {
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => NavigationProvider(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => NavigationProvider()),
+        ChangeNotifierProvider(create: (_) => AppFlowProvider()),
+      ],
       child: const MyApp(),
     ),
   );
@@ -29,7 +32,7 @@ class MyApp extends StatelessWidget {
         ),
         fontFamily: 'Arial',
       ),
-      home: const MainScreen(),
+      home: const AuthGate(),
     );
   }
 }
