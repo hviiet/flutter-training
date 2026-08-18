@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'location_detail_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -24,33 +25,15 @@ class _HomeScreenState extends State<HomeScreen> {
   final PageController _mainPageController = PageController();
   int _mainCurrentPage = 0;
   final PageController _locationsPageController = PageController();
+  final PageController _locationsPageController1 = PageController();
   int _locationsCurrentPage = 0;
-   final PageController _locationsPageController1 = PageController();
-   int locationPageController1 = 0;
-  @override
-  void initState() {
-    super.initState();
-    _mainPageController.addListener(() {
-      setState(() {
-        _mainCurrentPage = _mainPageController.page!.round();
-      });
-    });
-    _locationsPageController.addListener(() {
-      setState(() {
-        _locationsCurrentPage = _locationsPageController.page!.round();
-      });
-    });
-    _locationsPageController1.addListener(() {
-      setState(() {
-        _locationsCurrentPage = _locationsPageController1.page!.round();
-      });
-    });
-  }
+  bool _isOpeningDetails = false;
 
   @override
   void dispose() {
     _mainPageController.dispose();
     _locationsPageController.dispose();
+    _locationsPageController1.dispose();
     super.dispose();
   }
 
@@ -94,6 +77,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   height: 310,
                   child: PageView.builder(
                     controller: _mainPageController,
+                    onPageChanged: (index) {
+                      if (_mainCurrentPage != index) {
+                        setState(() => _mainCurrentPage = index);
+                      }
+                    },
                     itemCount: 3,
                     itemBuilder: (context, index) {
                       return const _MainWeatherCard();
@@ -142,6 +130,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   width: 500,
                   child: PageView(
                     controller: _locationsPageController1,
+                    onPageChanged: (index) {
+                      if (_locationsCurrentPage != index) {
+                        setState(() => _locationsCurrentPage = index);
+                      }
+                    },
                     children: [
                       // Trang 1
                       Padding(
@@ -213,7 +206,19 @@ class _HomeScreenState extends State<HomeScreen> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: InkWell(
-                    onTap: () {},
+                    onTap: () async {
+                      if (_isOpeningDetails) return;
+                      _isOpeningDetails = true;
+
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const LocationDetailScreen(),
+                        ),
+                      );
+
+                      _isOpeningDetails = false;
+                    },
                     borderRadius: BorderRadius.circular(16),
                     child: Container(
                       padding: const EdgeInsets.all(16.0),
