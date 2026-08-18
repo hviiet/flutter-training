@@ -13,13 +13,22 @@ class AuthGate extends StatelessWidget {
   Widget build(BuildContext context) {
     final status = context.watch<AppFlowProvider>().status;
 
-    return switch (status) {
-      AppFlowStatus.loading => const Scaffold(
-          body: Center(child: CircularProgressIndicator()),
-        ),
-      AppFlowStatus.onboarding => const OnboardingScreen(),
-      AppFlowStatus.login => const LoginScreen(),
-      AppFlowStatus.authenticated => const MainScreen(),
-    };
+    switch (status) {
+      case AppFlowStatus.loading:
+        return const Scaffold(
+          body: Center(
+            child: CircularProgressIndicator(),
+          ),
+        );
+
+      case AppFlowStatus.onboarding:
+        return const OnboardingScreen();
+
+      case AppFlowStatus.login:
+        return const LoginScreen();
+
+      case AppFlowStatus.authenticated:
+        return const MainScreen();
+    }
   }
 }
