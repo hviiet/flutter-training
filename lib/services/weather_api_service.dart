@@ -18,9 +18,9 @@ class WeatherApiService {
     Dio? dio,
     required String aqicnToken,
     required String weatherApiKey,
-  })  : _dio = dio ?? Dio(),
-        _aqicnToken = aqicnToken.trim(),
-        _weatherApiKey = weatherApiKey.trim();
+  }) : _dio = dio ?? Dio(),
+       _aqicnToken = aqicnToken.trim(),
+       _weatherApiKey = weatherApiKey.trim();
 
   Future<AirQuality> getAirQualityData(String city) async {
     if (_aqicnToken.isEmpty) {
@@ -38,7 +38,7 @@ class WeatherApiService {
         throw Exception('AQICN: ${json['data'] ?? 'Không có dữ liệu'}');
       }
 
-      return AirQuality.fromAqicn(json);
+      return AirQuality.fromJson(json);
     } on DioException catch (error) {
       throw Exception('AQICN: ${error.message ?? 'Không thể kết nối API'}');
     }

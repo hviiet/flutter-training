@@ -1,112 +1,99 @@
-class WeatherHour {
-  final String time;
-  final double temperature;
-  final String condition;
-  final String iconUrl;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  const WeatherHour({
-    required this.time,
-    required this.temperature,
-    required this.condition,
-    required this.iconUrl,
-  });
+part 'weather.freezed.dart';
+part 'weather.g.dart';
 
-  factory WeatherHour.fromJson(Map<String, dynamic> json) {
-    final condition = Map<String, dynamic>.from(json['condition'] ?? {});
-    return WeatherHour(
-      time: json['time']?.toString() ?? '',
-      temperature: (json['temp_c'] as num?)?.toDouble() ?? 0,
-      condition: condition['text']?.toString() ?? '',
-      iconUrl: _normalizeIcon(condition['icon']?.toString() ?? ''),
-    );
-  }
+@freezed
+abstract class WeatherHour with _$WeatherHour {
+  const factory WeatherHour({
+    required String time,
+    required double temperature,
+    required String condition,
+    required String iconUrl,
+  }) = _WeatherHour;
+  factory WeatherHour.fromJson(Map<String, dynamic> json) =>
+      _$WeatherHourFromJson(_weatherHourJson(json));
 }
 
-class WeatherDay {
-  final String date;
-  final double maxTemp;
-  final double minTemp;
-  final String condition;
-  final String iconUrl;
-
-  const WeatherDay({
-    required this.date,
-    required this.maxTemp,
-    required this.minTemp,
-    required this.condition,
-    required this.iconUrl,
-  });
-
-  factory WeatherDay.fromJson(Map<String, dynamic> json) {
-    final day = Map<String, dynamic>.from(json['day']);
-    final condition = Map<String, dynamic>.from(day['condition']);
-
-    return WeatherDay(
-      date: json['date'] ?? '',
-      maxTemp: (day['maxtemp_c'] as num?)?.toDouble() ?? 0,
-      minTemp: (day['mintemp_c'] as num?)?.toDouble() ?? 0,
-      condition: condition['text'] ?? '',
-      iconUrl: _normalizeIcon(condition['icon'] ?? ''),
-    );
-  }
+@freezed
+abstract class WeatherDay with _$WeatherDay {
+  const factory WeatherDay({
+    required String date,
+    required double maxTemp,
+    required double minTemp,
+    required String condition,
+    required String iconUrl,
+  }) = _WeatherDay;
+  factory WeatherDay.fromJson(Map<String, dynamic> json) =>
+      _$WeatherDayFromJson(_weatherDayJson(json));
 }
 
-class Weather {
-  final String locationName;
-  final String region;
-  final double temperature;
-  final double feelsLike;
-  final String condition;
-  final String iconUrl;
-  final List<WeatherDay> forecast;
-  final List<WeatherHour> hourlyForecast;
-
-  const Weather({
-    required this.locationName,
-    required this.region,
-    required this.temperature,
-    required this.feelsLike,
-    required this.condition,
-    required this.iconUrl,
-    required this.forecast,
-    required this.hourlyForecast,
-  });
-
-  factory Weather.fromJson(Map<String, dynamic> json) {
-    final location = Map<String, dynamic>.from(json['location']);
-    final current = Map<String, dynamic>.from(json['current']);
-    final condition = Map<String, dynamic>.from(current['condition']);
-    final forecast = Map<String, dynamic>.from(json['forecast']);
-    final forecastDays = (forecast['forecastday'] as List? ?? []);
-    final firstDay = forecastDays.isEmpty
-        ? <String, dynamic>{}
-        : Map<String, dynamic>.from(forecastDays.first);
-
-    return Weather(
-      locationName: location['name'] ?? '',
-      region: location['region'] ?? location['country'] ?? '',
-      temperature: (current['temp_c'] as num?)?.toDouble() ?? 0,
-      feelsLike: (current['feelslike_c'] as num?)?.toDouble() ?? 0,
-      condition: condition['text'] ?? '',
-      iconUrl: _normalizeIcon(condition['icon'] ?? ''),
-      forecast: forecastDays
-          .map((item) => WeatherDay.fromJson(
-                Map<String, dynamic>.from(item),
-              ))
-          .toList(),
-      hourlyForecast: (firstDay['hour'] as List? ?? [])
-          .map(
-            (item) => WeatherHour.fromJson(
-              Map<String, dynamic>.from(item),
-            ),
-          )
-          .toList(),
-    );
-  }
+@freezed
+abstract class Weather with _$Weather {
+  const factory Weather({
+    required String locationName,
+    required String region,
+    required double temperature,
+    required double feelsLike,
+    required String condition,
+    required String iconUrl,
+    required List<WeatherDay> forecast,
+    required List<WeatherHour> hourlyForecast,
+  }) = _Weather;
+  factory Weather.fromJson(Map<String, dynamic> json) =>
+      _$WeatherFromJson(_weatherJson(json));
 }
 
-String _normalizeIcon(String url) {
-  return url.startsWith('//') ? 'https:$url' : url;
+Map<String, dynamic> _weatherHourJson(Map<String, dynamic> json) {
+  if (json.containsKey('temperature')) return json;
+  final condition = _asMap(json['condition']);
+  return {
+    'time': json['time']?.toString() ?? '',
+    'temperature': (json['temp_c'] as num?)?.toDouble() ?? 0,
+    'condition': condition['text']?.toString() ?? '',
+    'iconUrl': _normalizeIcon(condition['icon']?.toString() ?? ''),
+  };
 }
 
-//dùng để chuẩn hóa URL của icon thời tiết,bảo đảm URL có thể tải và hiển thị 
+Map<String, dynamic> _weatherDayJson(Map<String, dynamic> json) {
+  if (json.containsKey('maxTemp')) return json;
+  final day = _asMap(json['day']);
+  final condition = _asMap(day['condition']);
+  return {
+    'date': json['date']?.toString() ?? '',
+    'maxTemp': (day['maxtemp_c'] as num?)?.toDouble() ?? 0,
+    'minTemp': (day['mintemp_c'] as num?)?.toDouble() ?? 0,
+    'condition': condition['text']?.toString() ?? '',
+    'iconUrl': _normalizeIcon(condition['icon']?.toString() ?? ''),
+  };
+}
+
+Map<String, dynamic> _weatherJson(Map<String, dynamic> json) {
+  if (json.containsKey('locationName')) return json;
+  final location = _asMap(json['location']);
+  final current = _asMap(json['current']);
+  final condition = _asMap(current['condition']);
+  final forecastDays = _asList(_asMap(json['forecast'])['forecastday']);
+  final firstDay = forecastDays.isEmpty
+      ? <String, dynamic>{}
+      : _asMap(forecastDays.first);
+  return {
+    'locationName': location['name']?.toString() ?? '',
+    'region': (location['region'] ?? location['country'])?.toString() ?? '',
+    'temperature': (current['temp_c'] as num?)?.toDouble() ?? 0,
+    'feelsLike': (current['feelslike_c'] as num?)?.toDouble() ?? 0,
+    'condition': condition['text']?.toString() ?? '',
+    'iconUrl': _normalizeIcon(condition['icon']?.toString() ?? ''),
+    'forecast': forecastDays
+        .map((item) => _weatherDayJson(_asMap(item)))
+        .toList(),
+    'hourlyForecast': _asList(
+      firstDay['hour'],
+    ).map((item) => _weatherHourJson(_asMap(item))).toList(),
+  };
+}
+
+Map<String, dynamic> _asMap(Object? value) =>
+    value is Map ? Map<String, dynamic>.from(value) : <String, dynamic>{};
+List<dynamic> _asList(Object? value) => value is List ? value : const [];
+String _normalizeIcon(String url) => url.startsWith('//') ? 'https:$url' : url;
